@@ -1,10 +1,23 @@
 package utils;
+import org.sonatype.inject.Nullable;
 
 import java.io.*;
 
+/**
+ * <h1>ComUtils class</h1>
+ * Base library which provides essential functions for reading/writing operations and as well as data type or endianness
+ * conversions.
+ * <p>
+ * <b>Note:</b> This class may be modified during the development of the project. Original source code can be found @
+ * prac0_SD repo from GitHub user UB-GEI-SD.
+ *
+ * @author  UB-GEI-SD
+ * @version 1.0
+ * @since   11-02-2019
+ */
 public class ComUtils {
 
-    private final int STRSIZE = 20;
+    private final int STRSIZE = 4; // All commands size is 4 bytes.
     private DataInputStream dataInputStream;
     private DataOutputStream dataOutputStream;
 
@@ -37,7 +50,7 @@ public class ComUtils {
     /**
      * Writes a 32b integer.
      *
-     * @param number number to be write
+     * @param number number to write
      * @throws IOException excep
      */
     public void write_int32(int number) throws IOException {
@@ -45,28 +58,6 @@ public class ComUtils {
         byte bytes[] = int32ToBytes(number, Endianness.BIG_ENNDIAN);
 
         dataOutputStream.write(bytes, 0, 4);
-    }
-
-    /**
-     * Reads a string.
-     *
-     * @return  read string
-     * @throws IOException excep
-     */
-    public String read_string() throws IOException {
-
-        String result;
-        byte[] bStr = new byte[STRSIZE];
-        char[] cStr = new char[STRSIZE];
-
-        bStr = read_bytes(STRSIZE);
-
-        for(int i = 0; i < STRSIZE;i++)
-            cStr[i]= (char) bStr[i];
-
-        result = String.valueOf(cStr);
-
-        return result.trim();
     }
 
     /**
@@ -92,6 +83,31 @@ public class ComUtils {
     }
 
     /**
+     * Writes a command with along with its parameters.
+     *
+     * @param c command
+     * @param param parameters
+     * @throws IOException excep
+     */
+    public void write_datagram(String c, @Nullable int[] param) throws IOException {
+
+        int pLen;
+
+        if(param == null)
+            pLen = 0;
+        else
+            pLen = param.length;
+
+        write_string(c);
+
+        for(int i = 0; i < pLen; i++){
+
+            write_space();
+            write_int32(param[i]);
+        }
+    }
+
+    /**
      * Write a char.
      *
      * @param c char to write
@@ -111,16 +127,16 @@ public class ComUtils {
 
         bStr[0] = (byte) c;
 
-        /*for(int i = numBytes; i < STRSIZE; i++)
-            bStr[i] = (byte) ' ';*/
+        for(int i = numBytes; i < STRSIZE; i++)
+            bStr[i] = (byte) ' ';
 
         dataOutputStream.write(bStr, 0, STRSIZE);
     }
 
     /**
-     * Write a String.
+     * Write a string.
      *
-     * @param str string to be written
+     * @param str string
      * @throws IOException excep
      */
     public void write_string(String str) throws IOException {
@@ -142,6 +158,49 @@ public class ComUtils {
             bStr[i] = (byte) ' ';
 
         dataOutputStream.write(bStr, 0, STRSIZE);
+    }
+
+    /**
+     * Reads a string.
+     *
+     * @return  read string
+     * @throws IOException excep
+     */
+    public String read_string() throws IOException {
+
+        String result;
+        byte[] bStr = new byte[STRSIZE];
+        char[] cStr = new char[STRSIZE];
+
+        bStr = read_bytes(STRSIZE);
+
+        for(int i = 0; i < STRSIZE;i++)
+            cStr[i]= (char) bStr[i];
+
+        result = String.valueOf(cStr);
+
+        return result.trim();
+    }
+
+    /**
+     * Write a blank space (' ') to the Data Output Stream.
+     */
+    public void write_space() throws IOException {
+
+        byte bStr[] = new byte[1];
+        bStr[0] = ' ';
+        dataOutputStream.write(bStr, 0, 1);
+    }
+
+    /**
+     * Reads a blank space (' ').
+     */
+    public void read_space() throws IOException {
+
+        // Since all the function does is read a blank space, it's completely pointless save it or even returned it, at
+        // least for now. Might need to be changed once the Server's logs are implemented.
+        byte bStr[] = new byte[1];
+        bStr = read_bytes(1);
     }
 
     /**
