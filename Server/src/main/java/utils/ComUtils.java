@@ -278,6 +278,31 @@ public class ComUtils {
     }
 
     /**
+     * Writes a command with along with its parameters.
+     *
+     * @param c command
+     * @param param parameters
+     * @throws IOException excep
+     */
+    public void write_datagram(String c, @Nullable int[] param) throws IOException {
+
+        int pLen;
+
+        if(param == null)
+            pLen = 0;
+        else
+            pLen = param.length;
+
+        write_string(c);
+
+        for(int i = 0; i < pLen; i++){
+
+            write_space();
+            write_int32(param[i]);
+        }
+    }
+
+    /**
      * Endianness types
      */
     public enum Endianness {
