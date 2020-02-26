@@ -14,15 +14,15 @@ public class Client {
             serverPort = Integer.parseInt(args[3]);
             gameMode = Integer.parseInt(args[5]);
 
-            if (gameMode < 0 || gameMode > 2){
-                System.out.println("Invalid gamemode. Avaiable options are 0,1 or 2.");
+            if (gameMode < 0 || gameMode > 1){
+                System.out.println("Invalid gamemode. Avaiable options are 0 or 1.");
                 System.exit(1);
             }
 
         }else if (args.length == 1 && args[0].equals("-h")){
-            System.out.println("Usage: java Client -s <server> -p <port> [-i 0|1|2]");
+            System.out.println("Usage: java Client -s <server> -p <port> [-i 0|1]");
         }else{
-            System.out.println("Invalid parameters. Client parameters are: -s <server> -p <port> [-i 0|1|2]");
+            System.out.println("Invalid parameters. Client parameters are: -s <server> -p <port> [-i 0|1]");
             System.exit(1);
         }
 
