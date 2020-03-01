@@ -2,6 +2,7 @@ package utils;
 import org.sonatype.inject.Nullable;
 
 import java.io.*;
+import java.net.Socket;
 
 /**
  * <h1>ComUtils class</h1>
@@ -21,17 +22,11 @@ public class ComUtils {
     private DataInputStream dataInputStream;
     private DataOutputStream dataOutputStream;
 
-    /**
-     * Constructor for ComUtils class.
-     *
-     * @param inputStream   input stream
-     * @param outputStream  output stream
-     * @throws IOException  excep
-     */
-    public ComUtils(InputStream inputStream, OutputStream outputStream) throws IOException {
 
-        dataInputStream = new DataInputStream(inputStream);
-        dataOutputStream = new DataOutputStream(outputStream);
+    public ComUtils(Socket s) throws IOException {
+
+        dataInputStream = new DataInputStream(s.getInputStream());
+        dataOutputStream = new DataOutputStream(s.getOutputStream());
     }
 
     /**
@@ -60,6 +55,11 @@ public class ComUtils {
         dataOutputStream.write(bytes, 0, 4);
     }
 
+    public void write_byte(byte b) throws IOException {
+
+        dataOutputStream.write(b);
+    }
+
     /**
      * Read a char.
      *
@@ -83,27 +83,42 @@ public class ComUtils {
     }
 
     /**
-     * Writes a command with along with its parameters.
+     * Write command with an Integer as a parameter. STRT or PASS.
      *
      * @param c command
-     * @param param parameters
-     * @throws IOException excep
+     * @param id client's id
+     * @throws IOException
      */
-    public void write_datagram(String c, @Nullable int[] param) throws IOException {
-
-        int pLen;
-
-        if(param == null)
-            pLen = 0;
-        else
-            pLen = param.length;
+    public void write_command_pint(String c, int id) throws IOException {
 
         write_string(c);
+        write_space();
+        write_int32(id);
+    }
 
-        for(int i = 0; i < pLen; i++){
+    /**
+     * Write a command that requires no parameters. EXIT or BETT.
+     *
+     * @param c
+     * @throws IOException
+     */
+    public void write_command(String c) throws IOException {
+
+        write_string(c);
+    }
+
+    public void write_take(String c, int id, byte[] sel) throws IOException {
+
+        int lSel = sel.length;
+
+        write_string(c);
+        write_space();
+        write_int32(id);
+
+        for(int i = 0; i < lSel; i++){
 
             write_space();
-            write_int32(param[i]);
+            write_byte(sel[i]);
         }
     }
 

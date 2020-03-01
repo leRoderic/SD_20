@@ -1,5 +1,8 @@
 import utils.ComUtils;
+
+import javax.xml.crypto.Data;
 import java.io.*;
+import java.net.Socket;
 
 /**
  * <h1>Datagram class</h1>
@@ -11,7 +14,22 @@ import java.io.*;
  */
 public class Datagram {
 
+    private Socket socket;
     private ComUtils utils;
+
+    public Datagram(String serverAddress, int port) throws IOException {
+
+        try{
+
+            this.socket = new Socket(serverAddress, port);
+            this.socket.setSoTimeout(500*1000);
+
+        }catch (IOException e){
+
+        }finally {
+            this.utils = new ComUtils(this.socket);
+        }
+    }
 
     /**
      * Client's start command. Writes/sends ID to server.
@@ -23,10 +41,8 @@ public class Datagram {
     public void strt(int id) throws IOException {
 
         String c = Command.STRT.name();
-        int[] param = new int[1];
-        param[0] = id;
 
-        utils.write_datagram(c, param);
+        utils.write_command_pint(c, id);
     }
 
     /**
@@ -38,9 +54,8 @@ public class Datagram {
     public void bett() throws IOException {
 
         String c = Command.BETT.name();
-        int[] param = null;
 
-        utils.write_datagram(c, param);
+        utils.write_command(c);
     }
 
     /**
@@ -50,19 +65,11 @@ public class Datagram {
      * @param id client's ID
      * @param sel client's dice selection
      */
-    public void take(int id, int[] sel) throws IOException {
+    public void take(int id, byte[] sel) throws IOException {
 
         String c = Command.TAKE.name();
-        int[] param = new int[sel.length + 1];
 
-        param[0] = id;
-
-        for(int i = 1; i < param.length; i++){
-
-            param[i] = sel[i - 1];
-        }
-
-        utils.write_datagram(c, param);
+        utils.write_take(c, id, sel);
     }
 
     /**
@@ -75,11 +82,8 @@ public class Datagram {
     public void pass(int id) throws IOException {
 
         String c = Command.PASS.name();
-        int[] param = new int[1];
-        param[0] = id;
 
-        utils.write_datagram(c, param);
-
+        utils.write_command_pint(c, id);
     }
 
     /**
@@ -93,7 +97,7 @@ public class Datagram {
         String c = Command.EXIT.name();
         int[] param = null;
 
-        utils.write_datagram(c, param);
+        utils.write_command(c);
     }
 
     private enum Command {
