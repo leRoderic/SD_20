@@ -8,7 +8,7 @@ public class ComUtilsService {
     private ComUtils comUtils;
 
     public ComUtilsService(InputStream inputStream, OutputStream outputStream) throws IOException {
-        comUtils = new ComUtils(inputStream, outputStream);
+        //comUtils = new ComUtils(inputStream, outputStream);
     }
 
     public void writeTest() throws IOException {

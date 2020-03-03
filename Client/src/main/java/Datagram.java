@@ -16,11 +16,13 @@ public class Datagram {
 
     private Socket socket;
     private ComUtils utils;
+    private int gameMode;
 
-    public Datagram(String serverAddress, int port) throws IOException {
+    public Datagram(String serverAddress, int port, int gameMode) throws IOException {
 
         try{
 
+            this.gameMode = gameMode;
             this.socket = new Socket(serverAddress, port);
             this.socket.setSoTimeout(500*1000);
 

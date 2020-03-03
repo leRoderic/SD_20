@@ -1,9 +1,10 @@
+import java.io.IOException;
 
 public class Client {
 
     // Has to have -h parameter.
     // Client parameters -s [SERVER] -p [PORT] -i [0 o 1]
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
 
         String serverAdress;
         int serverPort, gameMode;
@@ -18,6 +19,8 @@ public class Client {
                 System.out.println("Invalid gamemode. Avaiable options are 0 or 1.");
                 System.exit(1);
             }
+
+            Datagram com = new Datagram(serverAdress, serverPort, gameMode);
 
         }else if (args.length == 1 && args[0].equals("-h")){
             System.out.println("Usage: java Client -s <server> -p <port> [-i 0|1]");
