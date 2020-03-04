@@ -1,8 +1,7 @@
 import utils.ComUtils;
-
-import javax.xml.crypto.Data;
 import java.io.*;
 import java.net.Socket;
+import java.net.UnknownHostException;
 
 /**
  * <h1>Datagram class</h1>
@@ -17,6 +16,9 @@ public class Datagram {
     private Socket socket;
     private ComUtils utils;
     private int gameMode;
+    private static final String RED = "\u001B[31m";
+    private static final String GREEN = "\033[0;32m";
+    private static final String RESET = "\u001B[0m";
 
     public Datagram(String serverAddress, int port, int gameMode) throws IOException {
 
@@ -26,11 +28,21 @@ public class Datagram {
             this.socket = new Socket(serverAddress, port);
             this.socket.setSoTimeout(500*1000);
 
-        }catch (IOException e){
+        }catch (Exception e){
 
-        }finally {
-            this.utils = new ComUtils(this.socket);
+            if(e instanceof UnknownHostException)
+                System.out.println(RED + "Error> " + RESET + "The IP address of the host could not be determined.");
+            else if(e instanceof SecurityException)
+                System.out.println(RED + "Error> " + RESET + "Connection not allowed for security reasons.");
+            else if(e instanceof IOException)
+                System.out.println(RED + "Error> " + RESET + "Socket could not be created.");
+            if(e instanceof IllegalArgumentException)
+                System.out.println(RED + "Error> " + RESET + "Port parameter is outside the specified range of valid " +
+                        "port values.");
+            System.exit(1);
         }
+        this.utils = new ComUtils(this.socket);
+
     }
 
     /**

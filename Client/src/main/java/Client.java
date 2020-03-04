@@ -19,8 +19,9 @@ public class Client {
                 System.out.println("Invalid gamemode. Avaiable options are 0 or 1.");
                 System.exit(1);
             }
-
-            Datagram com = new Datagram(serverAdress, serverPort, gameMode);
+            Menu asd = new Menu();
+            asd.show_cash(25);
+            //Datagram com = new Datagram(serverAdress, serverPort, gameMode);
 
         }else if (args.length == 1 && args[0].equals("-h")){
             System.out.println("Usage: java Client -s <server> -p <port> [-i 0|1]");
