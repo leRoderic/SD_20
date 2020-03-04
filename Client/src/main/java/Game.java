@@ -73,39 +73,161 @@ public class Game {
                     if (comanda.equals("DICE")){
 
                         boolean ship = false;
-                        int posShip;
+                        boolean captain = false;
+                        boolean crew = false;
+                        boolean takeShip = false;
+                        boolean takeCaptain = false;
+                        boolean takeCrew = false;
+                        int posShip,posCaptain,posCrew;
 
                         if(tirades != 0) {
                             tirades--;
                         }else{
-                            System.exit(1);
+                            this.setEstat(EstatPartida.END);
                         }
                         int[] dice = comUtils.read_dice();
-                        for(int i = 0; i<dice.length;i++){
-                            if(dice[i] == 6){
+                        for(int i = 0; i<dice.length;i++) {
+                            if (dice[i] == 6) {
                                 ship = true;
                                 posShip = i;
                             }
                         }
                         if(ship){
+                            for(int i = 0; i<dice.length;i++){
+                                if(dice[i] == 5){
+                                    captain = true;
+                                    posCaptain = i;
+                                }
+                            }
+                        }
+                        if(captain) {
+                            for (int i = 0; i < dice.length; i++) {
+                                if (dice[i] == 4) {
+                                    crew = true;
+                                    posCrew = i;
+                                }
+                            }
+                        }
+                        if(ship){
                             int[] take =  comUtils.read_take();
                             for(int j = 0; j< take.length;j++){
-                                if(take[j] ==  dice[i])
-                                    this.setEstat(EstatPartida.SHIP);
+                                if(take[j] ==  dice[posShip])
+                                    takeShip = true;
+                                else if(captain && take[j] ==  dice[posCaptain])
+                                    takeCaptain = true;
+                                else if(crew && take[j] ==  dice[posCrew])
+                                    takeCrew = true;
                             }
-                        }else{
-                            this.setEstat(EstatPartida.START);
                         }
-                    }
 
+                        if(takeShip && takeCaptain && takeCrew)
+                            this.setEstat(EstatPartida.CREW);
+                        else if(takeShip && takeCaptain)
+                            this.setEstat(EstatPartida.CAPTAIN);
+                        else if(takeShip)
+                            this.setEstat(EstatPartida.SHIP);
+                        else
+                            this.setEstat(EstatPartida.START);
+                    }
                     break;
 
                 case SHIP:
+                    try {
+                        comanda = comUtils.read_string();
+                    } catch (IOException e) {
+                        //Error de communicacio
+                        System.exit(1);
+                    }
+                    if (comanda.equals("PASS")) {
+                        this.setEstat(EstatPartida.END);
+                    }
+                    if (comanda.equals("DICE")){
 
+                        boolean captain = false;
+                        boolean crew = false;
+                        boolean takeCaptain = false;
+                        boolean takeCrew = false;
+                        int posCaptain,posCrew;
+
+                        if(tirades != 0) {
+                            tirades--;
+                        }else{
+                            this.setEstat(EstatPartida.END);
+                        }
+                        int[] dice = comUtils.read_dice();
+                        for(int i = 0; i<dice.length;i++) {
+                            if (dice[i] == 5) {
+                                captain = true;
+                                posCaptain = i;
+                            }
+                        }
+                        if(captain) {
+                            for (int i = 0; i < dice.length; i++) {
+                                if (dice[i] == 4) {
+                                    crew = true;
+                                    posCrew = i;
+                                }
+                            }
+                        }
+                        if(captain){
+                            int[] take =  comUtils.read_take();
+                            for(int j = 0; j< take.length;j++){
+                                if(take[j] ==  dice[posCaptain])
+                                    takeCaptain = true;
+                                else if(crew && take[j] ==  dice[posCrew])
+                                    takeCrew = true;
+                            }
+                        }
+                        else if(takeCaptain && takeCrew)
+                            this.setEstat(EstatPartida.CREW);
+                        else if(takeCaptain)
+                            this.setEstat(EstatPartida.CAPTAIN);
+                        else
+                            this.setEstat(EstatPartida.SHIP);
+                    }
                     break;
 
                 case CAPTAIN:
 
+                    try {
+                        comanda = comUtils.read_string();
+                    } catch (IOException e) {
+                        //Error de communicacio
+                        System.exit(1);
+                    }
+                    if (comanda.equals("PASS")) {
+                        this.setEstat(EstatPartida.END);
+                    }
+                    if (comanda.equals("DICE")){
+
+                        boolean crew = false;
+                        boolean takeCrew = false;
+                        int posCrew;
+
+                        if(tirades != 0) {
+                            tirades--;
+                        }else{
+                            this.setEstat(EstatPartida.END);
+                        }
+                        int[] dice = comUtils.read_dice();
+                        for(int i = 0; i<dice.length;i++) {
+                            if (dice[i] == 4) {
+                                crew = true;
+                                posCrew = i;
+                            }
+                        }
+                        if(crew){
+                            int[] take =  comUtils.read_take();
+                            for(int j = 0; j< take.length;j++){
+                                if(take[j] ==  dice[posCrew])
+                                    takeCrew = true;
+                            }
+                        }
+                        if(takeCrew)
+                            this.setEstat(EstatPartida.CREW);
+                        else
+                            this.setEstat(EstatPartida.CAPTAIN);
+                    }
                     break;
 
                 case CREW:
@@ -113,7 +235,8 @@ public class Game {
                     break;
 
                 case END:
-
+                        tirades = 3;
+                        this.setPartida(false);
                     break;
 
                 default:
