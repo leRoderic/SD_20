@@ -122,6 +122,42 @@ public class ComUtils {
         }
     }
 
+    public int[] read_take() throws IOException {
+
+        int[] numbers;
+        read_string();//comanda
+        read_space();
+        read_int32();//ID
+        read_space();
+        int lenBytes = read_int32();//Len
+
+        byte[] take = read_bytes(lenBytes);
+
+        for(int i = 0; i < lenBytes; i++){
+            numbers[i] =this.bytesToInt32(take[i],Endianness.BIG_ENNDIAN);
+        }
+
+        return numbers;
+    }
+
+    public int[] read_dice() throws IOException {
+
+        int[] dice;
+
+        read_string();
+        read_space();
+        read_int32();
+
+        for(int i = 0; i < 5; i++){
+
+            read_space();
+            dice[i] = Integer.parseInt(String.valueOf(read_char()));
+
+        }
+        return dice;
+    }
+
+
     /**
      * Write a char.
      *
