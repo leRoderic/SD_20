@@ -1,3 +1,5 @@
+package main;
+
 import utils.ComUtils;
 import java.io.*;
 /**
@@ -46,7 +48,7 @@ public class Game {
 
     public void partida(){
 
-        while (this.isPartida()) {
+        /*while (this.isPartida()) {
 
             switch (getEstat()) {
 
@@ -243,7 +245,7 @@ public class Game {
 
                     break;
             }
-        }
+        }*/
     }
 
 }

@@ -1,9 +1,0 @@
-.DS_Store
-*.iml
-.idea/
-.git/
-*~
-node_modules/
-target/
-*.jar
-build/

@@ -1,3 +1,5 @@
+package main;
+
 import java.io.IOException;
 
 public class Client {
@@ -19,8 +21,7 @@ public class Client {
                 System.out.println("Invalid gamemode. Avaiable options are 0 or 1.");
                 System.exit(1);
             }
-            Menu asd = new Menu();
-            asd.show_cash(25);
+
             //Datagram com = new Datagram(serverAdress, serverPort, gameMode);
 
         }else if (args.length == 1 && args[0].equals("-h")){

@@ -1,5 +1,4 @@
 package utils;
-import org.sonatype.inject.Nullable;
 
 import java.io.*;
 import java.net.Socket;
@@ -107,22 +106,24 @@ public class ComUtils {
         write_string(c);
     }
 
-    public void write_take(String c, int id, byte[] sel) throws IOException {
+    public void write_take(String c, int id, int len, byte[] sel) throws IOException {
 
         int lSel = sel.length;
 
         write_string(c);
         write_space();
         write_int32(id);
+        write_space();
+        write_int32(len);
 
-        for(int i = 0; i < lSel; i++){
+        for(int i = 0; i < len; i++){
 
             write_space();
             write_byte(sel[i]);
         }
     }
 
-    public int[] read_take() throws IOException {
+    /*public int[] read_take() throws IOException {
 
         int[] numbers;
         read_string();//comanda
@@ -134,7 +135,7 @@ public class ComUtils {
         byte[] take = read_bytes(lenBytes);
 
         for(int i = 0; i < lenBytes; i++){
-            numbers[i] =this.bytesToInt32(take[i],Endianness.BIG_ENNDIAN);
+            //TODO numbers[i] = this.bytesToInt32(take[i], Endianness.BIG_ENNDIAN);
         }
 
         return numbers;
@@ -155,7 +156,7 @@ public class ComUtils {
 
         }
         return dice;
-    }
+    }*/
 
 
     /**
@@ -252,6 +253,12 @@ public class ComUtils {
         // least for now. Might need to be changed once the Server's logs are implemented.
         byte bStr[] = new byte[1];
         bStr = read_bytes(1);
+    }
+
+    public int read_nextInt() throws IOException {
+
+        read_space();
+        return read_int32();
     }
 
     /**
