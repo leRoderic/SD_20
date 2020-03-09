@@ -330,6 +330,11 @@ public class ComUtils {
         return bStr;
     }
 
+    public int read_int_in_bytes() throws IOException {
+
+        return bytesToInt32(read_bytes(4), Endianness.BIG_ENNDIAN);
+    }
+
     /**
      * Read a variable sized String.
      *

@@ -23,43 +23,44 @@ public class Datagram {
     private static final String GREEN = "\033[0;32m";
     private static final String RESET = "\u001B[0m";
 
-    public Datagram(String serverAddress, int port, int gameMode) throws IOException {
+    public Datagram(Socket s) throws IOException {
 
-        try{
-
-            this.gameMode = gameMode;
-            this.socket = new Socket(serverAddress, port);
-            this.socket.setSoTimeout(500*1000);
-
-        }catch (Exception e){
-
-            if(e instanceof UnknownHostException)
-                System.out.println(RED + "Error> " + RESET + "The IP address of the host could not be determined.");
-            else if(e instanceof SecurityException)
-                System.out.println(RED + "Error> " + RESET + "Connection not allowed for security reasons.");
-            else if(e instanceof IOException)
-                System.out.println(RED + "Error> " + RESET + "Socket could not be created.");
-            if(e instanceof IllegalArgumentException)
-                System.out.println(RED + "Error> " + RESET + "Port parameter is outside the specified range of valid " +
-                        "port values.");
-            System.exit(1);
-        }
+        this.gameMode = gameMode;
+        this.socket = s;
         this.utils = new ComUtils(this.socket);
-
     }
 
-    /**
-     * Client's start command. Writes/sends ID to server.
-     * Format:  STRT<SP><ID>
-     *
-     * @param id client's ID
-     * @throws IOException excep
-     */
+    public int readNextInt() throws IOException {
+
+        return utils.read_nextInt();
+    }
+
+    public void dice(int id, int[] vals) throws IOException{
+
+        String c = Command.DICE.name();
+
+        char digits[] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };
+
+        utils.write_command(c);
+        utils.write_space();
+        utils.write_int32(id);
+
+        for(int i=0; i <6; i++){
+            utils.write_space();
+            utils.write_char(digits[vals[i]]);
+        }
+    }
+
     public void cash(int coins) throws IOException {
 
         String c = Command.CASH.name();
 
         utils.write_command_pint(c, coins);
+    }
+
+    public String read_command() throws IOException{
+
+        return utils.read_string();
     }
 
     /**
@@ -101,6 +102,11 @@ public class Datagram {
         String c = Command.PASS.name();
 
         utils.write_command_pint(c, id);
+    }
+
+    public int read_int_in_bytes() throws IOException {
+
+        return utils.read_int_in_bytes();
     }
 
     /**
