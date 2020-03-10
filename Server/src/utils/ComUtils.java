@@ -330,8 +330,9 @@ public class ComUtils {
         return bStr;
     }
 
-    public int read_int_in_bytes() throws IOException {
+    public int read_next_int_in_bytes() throws IOException {
 
+        read_space();
         return bytesToInt32(read_bytes(4), Endianness.BIG_ENNDIAN);
     }
 

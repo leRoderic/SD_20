@@ -30,6 +30,7 @@ public class Datagram {
         this.utils = new ComUtils(this.socket);
     }
 
+
     public int readNextInt() throws IOException {
 
         return utils.read_nextInt();
@@ -104,9 +105,9 @@ public class Datagram {
         utils.write_command_pint(c, id);
     }
 
-    public int read_int_in_bytes() throws IOException {
+    public int read_next_int_in_bytes() throws IOException {
 
-        return utils.read_int_in_bytes();
+        return utils.read_next_int_in_bytes();
     }
 
     /**
