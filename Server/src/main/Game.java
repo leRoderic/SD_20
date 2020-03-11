@@ -1,7 +1,9 @@
 package main;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Random;
 import java.util.logging.Logger;
@@ -107,15 +109,15 @@ public class Game {
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
-                        ArrayList rec = new ArrayList();
+                        ArrayList<Integer> rec = new ArrayList();
                         for(int i =0; i<len; i++){
                             try {
                                 sel = com.read_next_int_in_bytes();
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
-                            dTaken[i] = 0;
-                            rec.add(sel);
+                            dTaken[sel-1] = 0;
+                            rec.add(dices[sel-1]);
                         }
                         log.info("C: TAKE " + id + len + selection_toString(rec));
                         Collections.sort(rec);
@@ -136,6 +138,7 @@ public class Game {
                             e.printStackTrace();
                         }
                         log.info("S: PASS " + id);
+                        take_updater(arrayToArrayList(dices));
                         this.state = State.EXIT;
                     }
                     break;
@@ -152,7 +155,7 @@ public class Game {
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
-                        ArrayList rec = new ArrayList();
+                        ArrayList<Integer> rec = new ArrayList();
                         for(int i =0; i<len; i++){
                             try {
                                 sel = com.read_next_int_in_bytes();
@@ -172,6 +175,7 @@ public class Game {
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
+                        take_updater(arrayToArrayList(dices));
                         log.info("S: PASS " + id);
                     }
                     this.state = State.EXIT;
@@ -212,7 +216,7 @@ public class Game {
         log.info("S: DICE 1010 " + dices_toString());
         for(int i=0; i < 2; i++) {
 
-            if(random.nextInt(7)==0){
+            if(random.nextInt(3)==0){
                 log.info("S: PASS 1010");
                 break;
             }else{
@@ -252,6 +256,15 @@ public class Game {
         log.info("S: POINTS 1010 " + getPoints());
         
         return getPoints();
+    }
+
+    private ArrayList arrayToArrayList(int[] ar){
+
+        ArrayList n = new ArrayList();
+        for(int i=0; i<ar.length;i++){
+            n.add(ar[i]);
+        }
+        return n;
     }
 
     private boolean value_in_dices(int c){
@@ -303,12 +316,12 @@ public class Game {
         return ret;
     }
 
-    private void take_updater(ArrayList a) {
+    private void take_updater(ArrayList<Integer> a) {
 
         int i;
         for (int j = 0; j < a.size(); j++) {
 
-            i = (int) a.get(j);
+            i = a.get(j);
 
             if (i == 6 && !captain && !ship && !crew)
                 this.ship = true;

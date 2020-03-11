@@ -1,4 +1,3 @@
-package test;
 
 import org.junit.Test;
 import utils.ComUtils;
