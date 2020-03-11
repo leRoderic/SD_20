@@ -115,6 +115,46 @@ public class Datagram {
 
         utils.write_command(c);
     }
+    public String read_command() throws IOException{
+
+        return utils.read_string();
+    }
+    public int[] read_dice() throws IOException {
+
+        int[] dice = new int[0];
+
+        utils.read_string();
+        utils.read_space();
+        utils.read_int32();
+
+        for(int i = 0; i < 5; i++){
+
+            utils.read_space();
+            dice[i] = Integer.parseInt(String.valueOf(utils.read_char()));
+
+        }
+        return dice;
+    }
+
+    public int[] read_take() throws IOException {
+
+        int[] numbers = new int[0];
+        utils.read_string();//comanda
+        utils.read_space();
+        utils.read_int32();//ID
+        utils.read_space();
+        int lenBytes = utils.read_int32();//Len
+
+
+
+        for(int i = 0; i < lenBytes; i++){
+            byte[] take = utils.read_bytes(4);
+            numbers[i] = utils.bytesToInt32(take, ComUtils.Endianness.BIG_ENNDIAN);
+        }
+
+        return numbers;
+    }
+
 
     private enum Command {
         STRT,

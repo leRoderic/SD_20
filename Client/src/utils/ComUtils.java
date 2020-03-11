@@ -138,24 +138,6 @@ public class ComUtils {
         return numbers;
     }
 
-    public int[] read_dice() throws IOException {
-
-        int[] dice;
-
-        read_string();
-        read_space();
-        read_int32();
-
-        for(int i = 0; i < 5; i++){
-
-            read_space();
-            dice[i] = Integer.parseInt(String.valueOf(read_char()));
-
-        }
-        return dice;
-    }*/
-
-
     /**
      * Write a char.
      *
@@ -259,7 +241,7 @@ public class ComUtils {
      * @param endianness final endianness
      * @return the integer converted to bytes
      */
-    private byte[] int32ToBytes(int number, Endianness endianness) {
+    public byte[] int32ToBytes(int number, Endianness endianness) {
 
         byte[] bytes = new byte[4];
 
@@ -285,7 +267,7 @@ public class ComUtils {
      * @param endianness final endiannness
      * @return the integer converted
      */
-    private int bytesToInt32(byte bytes[], Endianness endianness) {
+    public int bytesToInt32(byte bytes[], Endianness endianness) {
 
         int number;
 
@@ -307,7 +289,7 @@ public class ComUtils {
      * @return whatever has been read
      * @throws IOException excep
      */
-    private byte[] read_bytes(int numBytes) throws IOException {
+    public byte[] read_bytes(int numBytes) throws IOException {
 
         int len = 0;
         byte bStr[] = new byte[numBytes];

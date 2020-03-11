@@ -55,6 +55,31 @@ public class Menu {
         return com;
     }
 
+    public String read_next_command(){
+        String comand = "";
+
+        switch (sc.next()){
+            case "START":
+                comand = "START";
+                break;
+            case "BETT":
+                comand = "BETT";
+                break;
+            case "TAKE":
+                comand = "TAKE";
+                break;
+            case "PASS":
+                comand = "PASS";
+                break;
+            case "EXIT":
+                comand = "EXIT";
+                break;
+            default:
+                break;
+        }
+        return comand;
+    }
+
     public void show_dices(){
 
         System.out.println("Current roll values are: " + CYAN + RESET);
