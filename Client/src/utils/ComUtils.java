@@ -112,6 +112,9 @@ public class ComUtils {
         write_string(c);
         write_space();
         write_int32(id);
+        write_space();
+        byte b = ((byte) lSel);
+        write_byte(b);
 
         for(int i = 0; i < lSel; i++){
 

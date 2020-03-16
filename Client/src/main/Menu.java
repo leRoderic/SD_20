@@ -58,24 +58,17 @@ public class Menu {
     public String read_next_command(){
         String comand = "";
 
-        switch (sc.next()){
-            case "START":
-                comand = "START";
-                break;
-            case "BETT":
-                comand = "BETT";
-                break;
-            case "TAKE":
-                comand = "TAKE";
-                break;
-            case "PASS":
-                comand = "PASS";
-                break;
-            case "EXIT":
-                comand = "EXIT";
-                break;
-            default:
-                break;
+        String next = sc.next();
+        if ("START".equals(next)) {
+            comand = "START";
+        } else if ("BETT".equals(next)) {
+            comand = "BETT";
+        } else if ("TAKE".equals(next)) {
+            comand = "TAKE";
+        } else if ("PASS".equals(next)) {
+            comand = "PASS";
+        } else if ("EXIT".equals(next)) {
+            comand = "EXIT";
         }
         return comand;
     }

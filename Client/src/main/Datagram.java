@@ -155,6 +155,10 @@ public class Datagram {
         return numbers;
     }
 
+    public byte[] int32ToBytes(int number, ComUtils.Endianness endianness){
+        return utils.int32ToBytes(number, endianness);
+    }
+
 
     private enum Command {
         STRT,
