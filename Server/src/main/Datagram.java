@@ -36,6 +36,17 @@ public class Datagram {
         return utils.read_nextInt();
     }
 
+    public void sendErrorMessage(String text, int len) throws IOException {
+
+        String c = Command.ERRO.name();
+
+        utils.write_string(c);
+        utils.write_space();
+        utils.write_char((char) (len + '0'));
+        utils.write_space();
+        utils.write_string_variable(len, text);
+    }
+
     public void dice(int id, int[] vals) throws IOException{
 
         String c = Command.DICE.name();
@@ -153,6 +164,7 @@ public class Datagram {
         TAKE,
         PASS,
         PNTS,
-        WINS
+        WINS,
+        ERRO
     }
 }

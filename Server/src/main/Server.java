@@ -44,7 +44,7 @@ public class Server {
                     if(com.equals("STRT")){
 
                         int pID = utils.read_nextInt();
-                        //new Thread(new Game().start());
+                        //new Thread(new Game().run());
                     }
 
                 }
