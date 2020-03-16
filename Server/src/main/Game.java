@@ -1,39 +1,44 @@
 package main;
 
+import com.sun.xml.internal.ws.api.pipe.ServerTubeAssemblerContext;
+
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
-import java.lang.reflect.Array;
+import java.net.Socket;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Random;
-import java.util.logging.Logger;
 
 public class Game {
 
-    private Datagram com;
-    private Logger log;
+    private Datagram com1, com2;
+    private BufferedWriter log;
     private State state;
     private int cash;
-    private int gameMode;
+    private boolean singlePlayer;
     private int[] dices;
     private int[] dTaken;
     private boolean captain, ship, crew;
     private Random random = new Random();
 
-    public Game(Datagram d, Logger l, int gameMode) {
+    public Game(Socket s1, Socket s2, boolean singlePlayer) throws IOException {
 
-        this.com = d;
-        this.log = l;
+        this.com1 = new Datagram(s1);
+        if(s2 != null)
+            this.com2 = new Datagram(s2);
+        this.log = new BufferedWriter(new FileWriter("Server" + Thread.currentThread().getName()  + ".log"));
         this.state = State.INIT;
         this.cash = 10;
-        this.gameMode = gameMode;
+        this.singlePlayer = singlePlayer;
         this.dices = new int[]{-1, -1, -1, -1, -1};
         this.dTaken = new int[]{-1, -1, -1, -1, -1};
     }
 
-    public void one_player (){
+    private void one_player (Datagram com) throws IOException {
 
         String command = "";
+        String errorMessage = "";
         int pID = -1;
         int len = 0, sel = 0, id = 0;
         int pPoints = 0, sPoints = 0;
@@ -47,87 +52,124 @@ public class Game {
                     try {
                         command = com.read_command();
                     } catch (IOException e) {
-                        e.printStackTrace();
+                        errorMessage = e.getMessage();
+                        log.write("S: ERRO " + errorMessage.length() + errorMessage + "\n");
+                        com.sendErrorMessage(errorMessage, errorMessage.length());
                     }
                     if(command.equals("STRT")){
                         try {
                             pID = com.readNextInt();
                         } catch (IOException e) {
-                            e.printStackTrace();
+                            errorMessage = e.getMessage();
+                            log.write("S: ERRO " + errorMessage.length() + errorMessage + "\n");
+                            com.sendErrorMessage(errorMessage, errorMessage.length());
                         }
-                        log.info("C: STRT " + pID);
+                        log.write("C: STRT " + pID + "\n");
                         this.state = State.BETT;
-                        log.info("S: CASH " + this.cash);
+                        log.write("S: CASH " + this.cash + "\n");
                         try {
                             com.cash(this.cash);
                         } catch (IOException e) {
-                            e.printStackTrace();
+                            errorMessage = e.getMessage();
+                            log.write("S: ERRO " + errorMessage.length() + errorMessage + "\n");
+                            com.sendErrorMessage(errorMessage, errorMessage.length());
                         }
+                    }else if(command.equals("EXIT")){
+                        log.write("C: EXIT\n");
+                        this.state = State.QUIT;
+                    }else{
+                        errorMessage = "Command not understood";
+                        log.write("S: ERRO " + errorMessage.length() + errorMessage + "\n");
+                        com.sendErrorMessage(errorMessage, errorMessage.length());
                     }
                     break;
                 case BETT:
                     try {
                         command = com.read_command();
                     } catch (IOException e) {
-                        e.printStackTrace();
+                        errorMessage = e.getMessage();
+                        log.write("S: ERRO " + errorMessage.length() + errorMessage + "\n");
+                        com.sendErrorMessage(errorMessage, errorMessage.length());
                     }
                     if(command.equals("BETT")){
                         this.cash -= 2;
-                        log.info("C: BETT");
-                        log.info("S: LOOT 2");
+                        log.write("C: BETT\n");
+                        log.write("S: LOOT 2\n");
                         try {
                             com.loot(2);
                         } catch (IOException e) {
-                            e.printStackTrace();
+                            errorMessage = e.getMessage();
+                            log.write("S: ERRO " + errorMessage.length() + errorMessage + "\n");
+                            com.sendErrorMessage(errorMessage, errorMessage.length());
                         }
-                        log.info("S: PLAY 0");
+                        log.write("S: PLAY 0\n");
                         try {
                             com.play(0);
                         } catch (IOException e) {
-                            e.printStackTrace();
+                            errorMessage = e.getMessage();
+                            log.write("S: ERRO " + errorMessage.length() + errorMessage + "\n");
+                            com.sendErrorMessage(errorMessage, errorMessage.length());
                         }
+                        reset_taken_values();
                         throw_dices();
-                        log.info("S: DICE " + pID + " " + dices_toString());
+                        log.write("S: DICE " + pID + " " + dices_toString() + "\n");
                         try {
                             com.dice(pID, dices);
                         } catch (IOException e) {
-                            e.printStackTrace();
+                            errorMessage = e.getMessage();
+                            log.write("S: ERRO " + errorMessage.length() + errorMessage + "\n");
+                            com.sendErrorMessage(errorMessage, errorMessage.length());
                         }
                         this.state = State.ROLL1;
-                        break;
+                    }else if (command.equals("EXIT")){
+                        log.write("C: EXIT\n");
+                        this.state = State.QUIT;
+                    }else {
+                        errorMessage = "Command not understood";
+                        log.write("S: ERRO " + errorMessage.length() + errorMessage + "\n");
+                        com.sendErrorMessage(errorMessage, errorMessage.length());
                     }
+                    break;
                 case ROLL1:
                     try {
                         command = com.read_command();
                     } catch (IOException e) {
-                        e.printStackTrace();
+                        errorMessage = e.getMessage();
+                        log.write("S: ERRO " + errorMessage.length() + errorMessage + "\n");
+                        com.sendErrorMessage(errorMessage, errorMessage.length());
                     }
                     if(command.equals("TAKE")){
                         try {
                             id = com.readNextInt();
                             len = com.read_next_int_in_bytes();
                         } catch (IOException e) {
-                            e.printStackTrace();
+                            errorMessage = e.getMessage();
+                            log.write("S: ERRO " + errorMessage.length() + errorMessage + "\n");
+                            com.sendErrorMessage(errorMessage, errorMessage.length());
                         }
                         ArrayList<Integer> rec = new ArrayList();
                         for(int i =0; i<len; i++){
                             try {
                                 sel = com.read_next_int_in_bytes();
                             } catch (IOException e) {
-                                e.printStackTrace();
+                                errorMessage = e.getMessage();
+                                log.write("S: ERRO " + errorMessage.length() + errorMessage + "\n");
+                                com.sendErrorMessage(errorMessage, errorMessage.length());
                             }
                             dTaken[sel-1] = 0;
                             rec.add(dices[sel-1]);
                         }
-                        log.info("C: TAKE " + id + len + selection_toString(rec));
+                        log.write("C: TAKE " + id + len + selection_toString(rec) + "\n");
                         Collections.sort(rec);
                         take_updater(rec);
                         throw_dices();
-                        log.info("S: DICE " + pID + " " + dices_toString());
+                        log.write("S: DICE " + pID + " " + dices_toString() + "\n");
                         try {
                             com.dice(pID, dices);
                         } catch (IOException e) {
-                            e.printStackTrace();
+                            errorMessage = e.getMessage();
+                            log.write("S: ERRO " + errorMessage.length() + errorMessage + "\n");
+                            com.sendErrorMessage(errorMessage, errorMessage.length());
                         }
                         this.state = State.ROLL2;
 
@@ -135,89 +177,138 @@ public class Game {
                         try {
                             id = com.readNextInt();
                         } catch (IOException e) {
-                            e.printStackTrace();
+                            errorMessage = e.getMessage();
+                            log.write("S: ERRO " + errorMessage.length() + errorMessage + "\n");
+                            com.sendErrorMessage(errorMessage, errorMessage.length());
                         }
-                        log.info("S: PASS " + id);
+                        log.write("S: PASS " + id + "\n");
                         take_updater(arrayToArrayList(dices));
                         this.state = State.EXIT;
+                    }else if (command.equals("EXIT")){
+                        log.write("C: EXIT\n");
+                        this.state = State.QUIT;
+                        break;
+                    }else{
+                        errorMessage = "Command not understood";
+                        log.write("S: ERRO " + errorMessage.length() + errorMessage + "\n");
+                        com.sendErrorMessage(errorMessage, errorMessage.length());
                     }
                     break;
                 case ROLL2:
                     try {
                         command = com.read_command();
                     } catch (IOException e) {
-                        e.printStackTrace();
+                        errorMessage = e.getMessage();
+                        log.write("S: ERRO " + errorMessage.length() + errorMessage + "\n");
+                        com.sendErrorMessage(errorMessage, errorMessage.length());
                     }
                     if(command.equals("TAKE")){
                         try {
                             id = com.readNextInt();
                             len = com.read_next_int_in_bytes();
                         } catch (IOException e) {
-                            e.printStackTrace();
+                            errorMessage = e.getMessage();
+                            log.write("S: ERRO " + errorMessage.length() + errorMessage + "\n");
+                            com.sendErrorMessage(errorMessage, errorMessage.length());
                         }
                         ArrayList<Integer> rec = new ArrayList();
                         for(int i =0; i<len; i++){
                             try {
                                 sel = com.read_next_int_in_bytes();
                             } catch (IOException e) {
-                                e.printStackTrace();
+                                errorMessage = e.getMessage();
+                                log.write("S: ERRO " + errorMessage.length() + errorMessage + "\n");
+                                com.sendErrorMessage(errorMessage, errorMessage.length());
                             }
                             dTaken[i] = 0;
                             rec.add(sel);
                         }
-                        log.info("C: TAKE " + id + len + selection_toString(rec));
+                        log.write("C: TAKE " + id + len + selection_toString(rec) + "\n");
                         Collections.sort(rec);
                         take_updater(rec);
-
+                        this.state = State.EXIT;
                     }else if(command.equals("PASS")){
                         try {
                             id = com.readNextInt();
                         } catch (IOException e) {
-                            e.printStackTrace();
+                            errorMessage = e.getMessage();
+                            log.write("S: ERRO " + errorMessage.length() + errorMessage + "\n");
+                            com.sendErrorMessage(errorMessage, errorMessage.length());
                         }
                         take_updater(arrayToArrayList(dices));
-                        log.info("S: PASS " + id);
+                        log.write("S: PASS " + id + "\n");
+                        this.state = State.EXIT;
+                    }else if(command.equals("EXIT")){
+                        log.write("C: EXIT\n");
+                        this.state = State.QUIT;
+                    }else{
+                        errorMessage = "Command not understood";
+                        log.write("S: ERRO " + errorMessage.length() + errorMessage + "\n");
+                        com.sendErrorMessage(errorMessage, errorMessage.length());
                     }
-                    this.state = State.EXIT;
+                    break;
+                case QUIT:
+                    finished = true;
                     break;
                 case EXIT:
                     pPoints = getPoints();
-                    log.info("S: POINTS " + pID + pPoints);
+
+                    log.write("S: POINTS " + pID + pPoints + "\n");
                     try {
                         com.points(pID, pPoints);
                     } catch (IOException e) {
-                        e.printStackTrace();
+                        errorMessage = e.getMessage();
+                        log.write("S: ERRO " + errorMessage.length() + errorMessage + "\n");
+                        com.sendErrorMessage(errorMessage, errorMessage.length());
                     }
-
                     sPoints = serverPlays();
                     int win = -1;
-                    if(pPoints > sPoints)
+                    if (pPoints > sPoints)
                         win = 0;
-                    else if(sPoints < pPoints)
+                    else if (sPoints < pPoints)
                         win = 1;
-                    else if(sPoints == pPoints)
+                    else if (sPoints == pPoints)
                         win = 2;
                     try {
                         com.wins(win);
                     } catch (IOException e) {
-                        e.printStackTrace();
+                        errorMessage = e.getMessage();
+                        log.write("S: ERRO " + errorMessage.length() + errorMessage + "\n");
+                        com.sendErrorMessage(errorMessage, errorMessage.length());
                     }
-                    finished = true;
+                    this.state = State.BETT;
                     break;
             }
         }
     }
 
-    private int serverPlays(){
+    public void run(boolean sp) throws IOException {
+
+        int p1Points, p2Points;
+
+
+        if(sp){
+            one_player(this.com1);
+        }else{
+
+        }
+
+
+        this.log.close();
+    }
+
+    private void manage
+
+    private int serverPlays() throws IOException {
 
         reset_taken_values();
         throw_dices();
         String sel = "";
-        log.info("S: DICE 1010 " + dices_toString());
+        log.write("S: DICE 1010 " + dices_toString());
         for(int i=0; i < 2; i++) {
 
             if(random.nextInt(3)==0){
-                log.info("S: PASS 1010");
+                log.write("S: PASS 1010");
                 break;
             }else{
                 if(!ship && value_in_dices(6)){
@@ -248,12 +339,12 @@ public class Game {
                     dTaken[get_value_index(4)] = 0;
                     sel = "1 " + get_value_index(4);
                 }
-                log.info("S: TAKE 1010 " + sel);
+                log.write("S: TAKE 1010 " + sel);
                 throw_dices();
-                log.info("S: DICE 1010 " + dices_toString());
+                log.write("S: DICE 1010 " + dices_toString());
             }
         }
-        log.info("S: POINTS 1010 " + getPoints());
+        log.write("S: POINTS 1010 " + getPoints());
         
         return getPoints();
     }
@@ -361,6 +452,7 @@ public class Game {
         ROLL1,
         ROLL2,
         EXIT,
-        ERROR
+        ERROR,
+        QUIT
     }
 }
