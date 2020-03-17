@@ -4,7 +4,6 @@ import utils.ComUtils;
 
 import java.io.IOException;
 import java.net.Socket;
-import java.net.UnknownHostException;
 
 /**
  * <h1>Datagram class</h1>

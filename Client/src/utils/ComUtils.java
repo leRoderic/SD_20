@@ -35,7 +35,7 @@ public class ComUtils {
      */
     public int read_int32() throws IOException {
 
-        byte bytes[] = read_bytes(4);
+        byte[] bytes = read_bytes(4);
 
         return bytesToInt32(bytes, Endianness.BIG_ENNDIAN);
     }
@@ -48,7 +48,7 @@ public class ComUtils {
      */
     public void write_int32(int number) throws IOException {
 
-        byte bytes[] = int32ToBytes(number, Endianness.BIG_ENNDIAN);
+        byte[] bytes = int32ToBytes(number, Endianness.BIG_ENNDIAN);
 
         dataOutputStream.write(bytes, 0, 4);
     }
@@ -150,7 +150,7 @@ public class ComUtils {
     public void write_char(char c) throws IOException {
 
         int numBytes, lenStr;
-        byte bStr[] = new byte[STRSIZE];
+        byte[] bStr = new byte[STRSIZE];
 
         lenStr = 1;
 
@@ -176,7 +176,7 @@ public class ComUtils {
     public void write_string(String str) throws IOException {
 
         int numBytes, lenStr;
-        byte bStr[] = new byte[STRSIZE];
+        byte[] bStr = new byte[STRSIZE];
 
         lenStr = str.length();
 
@@ -221,7 +221,7 @@ public class ComUtils {
      */
     public void write_space() throws IOException {
 
-        byte bStr[] = new byte[1];
+        byte[] bStr = new byte[1];
         bStr[0] = ' ';
         dataOutputStream.write(bStr, 0, 1);
     }
@@ -233,7 +233,7 @@ public class ComUtils {
 
         // Since all the function does is read a blank space, it's completely pointless save it or even returned it, at
         // least for now. Might need to be changed once the Server's logs are implemented.
-        byte bStr[] = new byte[1];
+        byte[] bStr = new byte[1];
         bStr = read_bytes(1);
     }
 
@@ -270,7 +270,7 @@ public class ComUtils {
      * @param endianness final endiannness
      * @return the integer converted
      */
-    public int bytesToInt32(byte bytes[], Endianness endianness) {
+    public int bytesToInt32(byte[] bytes, Endianness endianness) {
 
         int number;
 
@@ -295,7 +295,7 @@ public class ComUtils {
     public byte[] read_bytes(int numBytes) throws IOException {
 
         int len = 0;
-        byte bStr[] = new byte[numBytes];
+        byte[] bStr = new byte[numBytes];
         int bytesread = 0;
         do {
             bytesread = dataInputStream.read(bStr, len, numBytes-len);
@@ -315,8 +315,8 @@ public class ComUtils {
      */
     public  String read_string_variable(int size) throws IOException {
 
-        byte bHeader[] = new byte[size];
-        char cHeader[] = new char[size];
+        byte[] bHeader = new byte[size];
+        char[] cHeader = new char[size];
         int numBytes = 0;
 
         // Read the needed bytes.
@@ -329,8 +329,8 @@ public class ComUtils {
         numBytes = Integer.parseInt(new String(cHeader));
 
         // Read String.
-        byte bStr[] = new byte[numBytes];
-        char cStr[] = new char[numBytes];
+        byte[] bStr = new byte[numBytes];
+        char[] cStr = new char[numBytes];
         bStr = read_bytes(numBytes);
         for(int i = 0; i < numBytes; i++) {
             cStr[i] = (char) bStr[i];
@@ -347,7 +347,7 @@ public class ComUtils {
      */
     public void write_string_variable(int size,String str) throws IOException {
 
-        byte bHeader[] = new byte[size];
+        byte[] bHeader = new byte[size];
         String strHeader;
         int numBytes = 0;
 
