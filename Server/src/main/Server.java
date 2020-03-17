@@ -1,7 +1,5 @@
 package main;
 
-import utils.ComUtils;
-
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -34,15 +32,37 @@ public class Server {
 
     }
 
-    private void twoPlayerBehaviour(){
+    private static void twoPlayerBehaviour(ServerSocket sv) throws SocketException {
+
+        while(true){
+
+            Socket s1 = null, s2 = null;
+            try {
+                s1 = sv.accept();
+            } catch (IOException e) {
+                System.out.println(RED + "Error> " + RESET + "I/O error occurred: " + e.getMessage());
+            }
+            s1.setSoTimeout(500*1000);
+            try {
+                s2 = sv.accept();
+            } catch (IOException e) {
+                System.out.println(RED + "Error> " + RESET + "I/O error occurred: " + e.getMessage());
+            }
+            s2.setSoTimeout(500*1000);
+
+            try {
+                new GameThread(s1, s2, false).start();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
 
     }
 
     public static void main(String[] args) throws IOException {
 
-        int serverPort, gameMode, gameCounter = 0;
+        int serverPort, gameMode;
         ServerSocket server;
-        String com;
         boolean singlePlayer;
 
         if (args.length == 4 && args[0].equals("-p") && args[2].equals("-i")){
@@ -67,7 +87,8 @@ public class Server {
 
                 if(singlePlayer)
                     singlePlayerBehaviour(server);
-
+                else
+                    twoPlayerBehaviour(server);
 
             }catch(Exception e){
 
