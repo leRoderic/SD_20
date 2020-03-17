@@ -17,6 +17,7 @@ public class Server {
         int serverPort, gameMode, gameCounter = 0;
         ServerSocket server;
         String com;
+        boolean singlePlayer;
         ComUtils utils;
 
         if (args.length == 4 && args[0].equals("-p") && args[2].equals("-m")){
@@ -28,6 +29,12 @@ public class Server {
                 System.out.println("Invalid gamemode. Avaiable options are 1 or 2.");
                 System.exit(1);
             }
+
+            if(gameMode == 1)
+                singlePlayer = true;
+            else
+                singlePlayer = false;
+
             try {
 
                 server = new ServerSocket(serverPort);
@@ -68,6 +75,14 @@ public class Server {
             System.out.println("Invalid parameters. Server parameters are: -p <port> [-i 1|2]");
             System.exit(1);
         }
+
+    }
+
+    private void singlePlayerBehaviour(){
+
+    }
+
+    private void twoPlayerBehaviour(){
 
     }
 }

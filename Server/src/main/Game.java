@@ -295,7 +295,7 @@ public class Game {
         this.log.close();
     }
 
-    private void manage
+    //private void manage
 
     private int serverPlays() throws IOException {
 

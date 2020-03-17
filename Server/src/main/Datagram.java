@@ -1,7 +1,6 @@
 package main;
 
 import utils.ComUtils;
-
 import java.io.IOException;
 import java.net.Socket;
 
@@ -13,6 +12,7 @@ import java.net.Socket;
  * @version 1.0
  * @since   24-02-2020
  */
+
 public class Datagram {
 
     private Socket socket;
