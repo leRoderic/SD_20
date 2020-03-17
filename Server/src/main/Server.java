@@ -1,6 +1,7 @@
 package main;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
@@ -14,7 +15,7 @@ public class Server {
     private static void singlePlayerBehaviour(ServerSocket sv) throws SocketException {
 
         while(true){
-
+            System.out.println("Info> Waiting for player [0/1]");
             Socket s = null;
             try {
                 s = sv.accept();
@@ -22,7 +23,7 @@ public class Server {
                 System.out.println(RED + "Error> " + RESET + "I/O error occurred: " + e.getMessage());
             }
             s.setSoTimeout(500*1000);
-
+            System.out.println("Info> Player connected, creating new game");
             try {
                 new GameThread(s, null, true).start();
             } catch (IOException e) {
@@ -34,8 +35,10 @@ public class Server {
 
     private static void twoPlayerBehaviour(ServerSocket sv) throws SocketException {
 
+        System.out.println("Info> Server set as player vs player.");
         while(true){
 
+            System.out.println("Info> Waiting for players [0/2]");
             Socket s1 = null, s2 = null;
             try {
                 s1 = sv.accept();
@@ -43,13 +46,14 @@ public class Server {
                 System.out.println(RED + "Error> " + RESET + "I/O error occurred: " + e.getMessage());
             }
             s1.setSoTimeout(500*1000);
+            System.out.println("Info> Waiting for players [1/2]");
             try {
                 s2 = sv.accept();
             } catch (IOException e) {
                 System.out.println(RED + "Error> " + RESET + "I/O error occurred: " + e.getMessage());
             }
             s2.setSoTimeout(500*1000);
-
+            System.out.println("Info> Players connected, creating new game.");
             try {
                 new GameThread(s1, s2, false).start();
             } catch (IOException e) {
@@ -81,9 +85,10 @@ public class Server {
                 singlePlayer = false;
 
             try {
-
-                server = new ServerSocket(serverPort);
-                System.out.println("Info> Server ready.");
+                InetAddress localhost = InetAddress.getLocalHost();
+                server = new ServerSocket(serverPort, 50, InetAddress.getByName(localhost.getHostAddress()));
+                System.out.println("Info> Server ready with IP " + server.getInetAddress().toString().split("/")[1] +
+                        " on port number " + serverPort);
 
                 if(singlePlayer)
                     singlePlayerBehaviour(server);
