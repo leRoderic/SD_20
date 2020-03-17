@@ -13,7 +13,7 @@ public class Game {
     private Datagram com1, com2;
     private BufferedWriter log;
     private State state;
-    private int cash;
+    private int cash1, cash2;
     private boolean singlePlayer;
     private int[] dices;
     private int[] dTaken;
@@ -27,7 +27,8 @@ public class Game {
             this.com2 = new Datagram(s2);
         this.log = new BufferedWriter(new FileWriter("Server" + Thread.currentThread().getName()  + ".log"));
         this.state = State.INIT;
-        this.cash = 10;
+        this.cash1 = 10;
+        this.cash2 = 10;
         this.singlePlayer = singlePlayer;
         this.dices = new int[]{-1, -1, -1, -1, -1};
         this.dTaken = new int[]{-1, -1, -1, -1, -1};
@@ -64,9 +65,9 @@ public class Game {
                         }
                         log.write("C: STRT " + pID + "\n");
                         this.state = State.BETT;
-                        log.write("S: CASH " + this.cash + "\n");
+                        log.write("S: CASH " + this.cash1 + "\n");
                         try {
-                            com.cash(this.cash);
+                            com.cash(this.cash1);
                         } catch (IOException e) {
                             errorMessage = e.getMessage();
                             log.write("S: ERRO " + errorMessage.length() + errorMessage + "\n");
@@ -90,7 +91,7 @@ public class Game {
                         com.sendErrorMessage(errorMessage, errorMessage.length());
                     }
                     if(command.equals("BETT")){
-                        this.cash -= 2;
+                        this.cash1 -= 2;
                         log.write("C: BETT\n");
                         log.write("S: LOOT 2\n");
                         try {
@@ -280,22 +281,17 @@ public class Game {
         }
     }
 
-    public void run(boolean sp) throws IOException {
+    public void run() throws IOException {
 
-        int p1Points, p2Points;
-
-
-        if(sp){
+        if(this.singlePlayer){
             one_player(this.com1);
         }else{
-
+            //playerVsPlayer(this.com1, this.com2);
         }
 
 
         this.log.close();
     }
-
-    //private void manage
 
     private int serverPlays() throws IOException {
 
