@@ -22,7 +22,7 @@ public class Client {
                 System.exit(1);
             }
 
-            //Datagram com = new Datagram(serverAdress, serverPort, gameMode);
+            Game game = new Game(new Datagram(serverAdress, serverPort, gameMode), new Menu(), gameMode);
 
         }else if (args.length == 1 && args[0].equals("-h")){
             System.out.println("Usage: java Client -s <server> -p <port> [-i 0|1]");
