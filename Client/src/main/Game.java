@@ -173,10 +173,10 @@ public class Game {
                         boolean captain = false;
                         boolean crew = false;
                         for (int i = 0; i < dice.length; i++) {
-                            System.out.println(dice[i]);
                             if (dice[i] == 6) {
                                 ship = true;
                                 posShip = i;
+                                break;
                             }
                         }
                         if (ship) {
@@ -184,6 +184,7 @@ public class Game {
                                 if (dice[i] == 5) {
                                     captain = true;
                                     posCaptain = i;
+                                    break;
                                 }
                             }
                         }
@@ -192,6 +193,7 @@ public class Game {
                                 if (dice[i] == 4) {
                                     crew = true;
                                     posCrew = i;
+                                    break;
                                 }
                             }
                         }
@@ -214,7 +216,6 @@ public class Game {
                                 sel[2] = cr;
                                 try {
                                     datagram.take(9999, sel);
-                                    System.out.println("take 3");
                                 } catch (IOException e) {
                                     e.printStackTrace();
                                 }
@@ -227,7 +228,6 @@ public class Game {
                                 sel[1] = ca;
                                 try {
                                     datagram.take(9999, sel);
-                                    System.out.println("take 2");
                                 } catch (IOException e) {
                                     e.printStackTrace();
                                 }
@@ -238,7 +238,6 @@ public class Game {
                                 sel[0] = sh;
                                 try {
                                     datagram.take(9999, sel);
-                                    System.out.println("take 1");
                                 } catch (IOException e) {
                                     e.printStackTrace();
                                 }
@@ -256,7 +255,6 @@ public class Game {
                                 sel[1] = cr;
                                 try {
                                     datagram.take(9999, sel);
-                                    System.out.println("take 2");
                                 } catch (IOException e) {
                                     e.printStackTrace();
                                 }
@@ -266,7 +264,6 @@ public class Game {
                                 sel[0] = ca;
                                 try {
                                     datagram.take(9999, sel);
-                                    System.out.println("take 1");
                                 } catch (IOException e) {
                                     e.printStackTrace();
                                 }
@@ -278,7 +275,6 @@ public class Game {
                             sel[0] = cr;
                             try {
                                 datagram.take(9999, sel);
-                                System.out.println("take 1");
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
@@ -287,7 +283,6 @@ public class Game {
                             sel = new int[0];
                             try {
                                 datagram.take(9999, sel);
-                                System.out.println("take 0");
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }

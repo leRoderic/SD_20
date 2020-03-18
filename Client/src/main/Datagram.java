@@ -135,7 +135,6 @@ public class Datagram {
 
         int[] dice = new int[5];
 
-        //utils.read_string();
         utils.read_space();
         utils.read_int32();
 
