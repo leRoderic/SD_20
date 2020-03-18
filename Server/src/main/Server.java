@@ -5,14 +5,17 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
+import java.util.HashMap;
 
 public class Server {
 
     private static final String RED = "\u001B[31m";
     private static final String GREEN = "\033[0;32m";
     private static final String RESET = "\u001B[0m";
+    static HashMap<Integer, Integer> players = new HashMap<Integer, Integer>();
 
     private static void singlePlayerBehaviour(ServerSocket sv) throws SocketException {
+
 
         while(true){
             System.out.println("Info> Waiting for player [0/1]");
@@ -26,7 +29,7 @@ public class Server {
             System.out.println("Info> Player connected, creating new game");
             try {
                 // Un-comment next line to debug a single game. Also comment lines 30 and 31.
-                new Game(s, null , true).run();
+                new Game(s, null , true, players).run();
                 //Thread t = (new Thread(new GameThread(s, null, true)));
                 //t.start();
             } catch (IOException e) {
@@ -58,7 +61,7 @@ public class Server {
             s2.setSoTimeout(500*1000);
             System.out.println("Info> Players connected, creating new game.");
             try {
-                Thread t = (new Thread(new GameThread(s1, s2, false)));
+                Thread t = (new Thread(new GameThread(s1, s2, false, players)));
                 t.start();
             } catch (IOException e) {
                 e.printStackTrace();

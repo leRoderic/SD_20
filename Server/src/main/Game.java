@@ -7,6 +7,7 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Random;
 
 public class Game {
@@ -14,14 +15,14 @@ public class Game {
     private Datagram com1, com2;
     private BufferedWriter log;
     private State state;
-    private int cash1, cash2;
     private boolean singlePlayer;
     private int[] dices;
     private int[] dTaken;
     private boolean captain, ship, crew, improveLast;
     private Random random = new Random();
+    private HashMap<Integer, Integer> players;
 
-    public Game(Socket s1, Socket s2, boolean singlePlayer) throws IOException {
+    public Game(Socket s1, Socket s2, boolean singlePlayer, HashMap<Integer, Integer> players) throws IOException {
 
         this.com1 = new Datagram(s1);
         this.com1.setWinValue(0);
@@ -31,21 +32,19 @@ public class Game {
         }
         this.log = new BufferedWriter(new FileWriter("Server-" + Thread.currentThread().getName()  + ".log"));
         this.state = State.INIT;
-        this.cash1 = 10;
-        this.cash2 = 10;
-
+        this.players = players;
         this.singlePlayer = singlePlayer;
         this.dices = new int[]{-1, -1, -1, -1, -1};
         this.dTaken = new int[]{-1, -1, -1, -1, -1};
     }
 
-    private int one_player (Datagram com, int pCash, boolean isSP, String clientNumber) throws IOException {
+    private int[] one_player (Datagram com, boolean isSP, String clientNumber) throws IOException {
 
         int pool = 0;
         String command = "";
         String errorMessage = "";
         int pID = -1;
-        int len = 0, sel = 0, id = 0;
+        int len = 0, sel = 0, id = 0, cCash = 0;
         int pPoints = 0, sPoints = 0;
         boolean finished = false;
 
@@ -74,15 +73,16 @@ public class Game {
                         }
                         log.write("C" + clientNumber + ": STRT " + pID + "\n");
                         this.state = State.BETT;
-                        log.write("S: CASH " + pCash + "\n");
+                        log.write("S: CASH " + cCash + "\n");
                         try {
-                            com.cash(pCash);
+                            com.cash(cCash);
                         } catch (Exception e) {
                             errorMessage = e.getMessage();
                             log.write("S: ERRO " + errorMessage.length() + " " + errorMessage + "\n");
                             log.flush();
                             com.sendErrorMessage(errorMessage, errorMessage.length());
                         }
+
                     }else if(command.equals("EXIT")){
                         log.write("C" + clientNumber + ": EXIT\n");
                         this.state = State.QUIT;
@@ -94,6 +94,15 @@ public class Game {
                     }
                     break;
                 case BETT:
+                    synchronized (players){
+
+                        if(players.containsKey(pID)){
+                            cCash = players.get(pID);
+                        }else{
+                            cCash = 10;
+                            players.put(pID, 10);
+                        }
+                    }
                     try {
                         command = "";
                         command = com.read_command();
@@ -110,7 +119,7 @@ public class Game {
                         }
                     }
                     if(command.equals("BETT")){
-                        pCash -= 2;
+                        cCash -= 2;
                         pool += 4;
                         log.write("C" + clientNumber + ": BETT\n");
                         log.write("S: LOOT 2\n");
@@ -309,18 +318,18 @@ public class Game {
                         com.sendErrorMessage(errorMessage, errorMessage.length());
                     }
                     if(!isSP) {
-                        return pPoints;
+                        return new int[]{pID, pPoints};
                     }
                     sPoints = serverPlays();
                     int win = -1;
                     if (pPoints > sPoints) {
                         win = 0;
-                        pCash += pool;
+                        cCash += pool;
                     }else if (sPoints > pPoints) {
                         win = 1;
                     }else if (sPoints == pPoints) {
                         win = 2;
-                        pCash += 2;
+                        cCash += 2;
                     }
                     pool = 0;
                     try {
@@ -333,44 +342,48 @@ public class Game {
                         com.sendErrorMessage(errorMessage, errorMessage.length());
                     }
                     this.state = State.BETT;
+                    synchronized (players){
+
+                        players.put(pID, cCash);
+                    }
                     break;
             }
         }
-        return 0;
+        return null;
     }
 
     public void run() throws IOException {
 
         Datagram fCom, sCom, tCom;
-        int fCash, sCash, tCash;
+        int[] ret;
+        int fID = 0, sID = 0;
         int fPoints = 0, sPoints = 0;
-        int pool = 0;
+        int pool = 0, cCash1 = 0, cCash2 = 0;
         String errorMessage = "";
 
         if(this.singlePlayer){
-            one_player(this.com1, this.cash1, true, "");
+            one_player(this.com1, true, "");
         }else{
 
             if(random.nextInt(1)==0){
                 fCom = this.com1;
                 sCom = this.com2;
-                fCash = this.cash1;
-                sCash = this.cash2;
             }else{
                 fCom = this.com2;
                 sCom = this.com1;
-                fCash = this.cash2;
-                sCash = this.cash1;
             }
 
             while(true){
                 pool += 4;
-                fPoints = one_player(fCom, fCash, false, "" + fCom.getWinValue() + 1);
-                sPoints = one_player(sCom, sCash, false, "" + sCom.getWinValue() + 1);
+
+                ret = one_player(fCom,false, "" + fCom.getWinValue() + 1);
+                fID = ret[0];
+                fPoints = ret[1];
+                ret = one_player(sCom,false, "" + sCom.getWinValue() + 1);
+                sID = ret[0];
+                sPoints = ret[1];
 
                 if (fPoints > sPoints) {
-                    fCash += pool;
-                    pool = 0;
                     try {
                         log.write("S: WINS " + fCom.getWinValue() + "\n");
                         fCom.wins(fCom.getWinValue());
@@ -382,16 +395,16 @@ public class Game {
                         fCom.sendErrorMessage(errorMessage, errorMessage.length());
                         sCom.sendErrorMessage(errorMessage, errorMessage.length());
                     }
+                    synchronized (players){
+                        cCash1 = players.get(fID);
+                        players.put(fID, cCash1 + pool);
+                    }
+                    pool = 0;
                     // Swap turns --> loser first
                     tCom = fCom;
-                    tCash = fCash;
                     fCom = sCom;
-                    fCash = sCash;
                     sCom = tCom;
-                    sCash = tCash;
                 }else if (sPoints > fPoints) {
-                    sCash += pool;
-                    pool = 0;
                     try {
                         log.write("S: WINS " + sCom.getWinValue() + "\n");
                         fCom.wins(sCom.getWinValue());
@@ -403,6 +416,11 @@ public class Game {
                         fCom.sendErrorMessage(errorMessage, errorMessage.length());
                         sCom.sendErrorMessage(errorMessage, errorMessage.length());
                     }
+                    synchronized (players){
+                        cCash2 = players.get(sID);
+                        players.put(sID, cCash2 + pool);
+                    }
+                    pool = 0;
                 }else if (sPoints == fPoints) {
                     try {
                         log.write("S: WINS " + 2 + "\n");
@@ -415,6 +433,13 @@ public class Game {
                         fCom.sendErrorMessage(errorMessage, errorMessage.length());
                         sCom.sendErrorMessage(errorMessage, errorMessage.length());
                     }
+                    synchronized (players){
+                        cCash1 = players.get(fID);
+                        cCash2 = players.get(sID);
+                        players.put(fID, cCash1 + 2);
+                        players.put(sID, cCash2 + 2);
+                    }
+                    pool = 0;
                 }
                 // Manage in case someone disconnects
             }
