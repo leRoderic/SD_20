@@ -36,7 +36,7 @@ public class Game {
         this.dTaken = new int[]{-1, -1, -1, -1, -1};
     }
 
-    private int one_player (Datagram com, int pCash, boolean isSP) throws IOException {
+    private int one_player (Datagram com, int pCash, boolean isSP, String clientNumber) throws IOException {
 
         int pool = 0;
         String command = "";
@@ -68,7 +68,7 @@ public class Game {
                             log.write("S: ERRO " + errorMessage.length() + errorMessage + "\n");
                             com.sendErrorMessage(errorMessage, errorMessage.length());
                         }
-                        log.write("C: STRT " + pID + "\n");
+                        log.write("C" + clientNumber + ": STRT " + pID + "\n");
                         this.state = State.BETT;
                         log.write("S: CASH " + pCash + "\n");
                         try {
@@ -79,7 +79,7 @@ public class Game {
                             com.sendErrorMessage(errorMessage, errorMessage.length());
                         }
                     }else if(command.equals("EXIT")){
-                        log.write("C: EXIT\n");
+                        log.write("C" + clientNumber + ": EXIT\n");
                         this.state = State.QUIT;
                     }else{
                         errorMessage = "Command not understood";
@@ -98,7 +98,7 @@ public class Game {
                     if(command.equals("BETT")){
                         pCash -= 2;
                         pool += 4;
-                        log.write("C: BETT\n");
+                        log.write("C" + clientNumber + ": BETT\n");
                         log.write("S: LOOT 2\n");
                         try {
                             com.loot(2);
@@ -127,7 +127,7 @@ public class Game {
                         }
                         this.state = State.ROLL1;
                     }else if (command.equals("EXIT")){
-                        log.write("C: EXIT\n");
+                        log.write("C" + clientNumber + ": EXIT\n");
                         this.state = State.QUIT;
                     }else {
                         errorMessage = "Command not understood";
@@ -164,7 +164,7 @@ public class Game {
                             dTaken[sel-1] = 0;
                             rec.add(dices[sel-1]);
                         }
-                        log.write("C: TAKE " + id + " " + len + selection_toString(rec) + "\n");
+                        log.write("C" + clientNumber + ": TAKE " + id + " " + len + selection_toString(rec) + "\n");
                         Collections.sort(rec);
                         take_updater(rec);
                         throw_dices();
@@ -190,7 +190,7 @@ public class Game {
                         take_updater(arrayToArrayList(dices));
                         this.state = State.EXIT;
                     }else if (command.equals("EXIT")){
-                        log.write("C: EXIT\n");
+                        log.write("C" + clientNumber + ": EXIT\n");
                         this.state = State.QUIT;
                         break;
                     }else{
@@ -228,7 +228,7 @@ public class Game {
                             dTaken[sel-1] = 0;
                             rec.add(dices[sel-1]);
                         }
-                        log.write("C: TAKE " + id + " " + len + selection_toString(rec) + "\n");
+                        log.write("C" + clientNumber + ": TAKE " + id + " " + len + selection_toString(rec) + "\n");
                         Collections.sort(rec);
                         take_updater(rec);
                         throw_dices();
@@ -255,7 +255,7 @@ public class Game {
                         log.write("S: PASS " + id + "\n");
                         this.state = State.EXIT;
                     }else if(command.equals("EXIT")){
-                        log.write("C: EXIT\n");
+                        log.write("C" + clientNumber + ": EXIT\n");
                         this.state = State.QUIT;
                     }else{
                         errorMessage = "Command not understood";
@@ -294,6 +294,7 @@ public class Game {
                     }
                     pool = 0;
                     try {
+                        log.write("S: WINS " + win);
                         com.wins(win);
                     } catch (IOException e) {
                         errorMessage = e.getMessage();
@@ -316,7 +317,7 @@ public class Game {
         String errorMessage = "";
 
         if(this.singlePlayer){
-            one_player(this.com1, this.cash1, true);
+            one_player(this.com1, this.cash1, true, "");
         }else{
 
             if(random.nextInt(1)==0){
@@ -333,13 +334,14 @@ public class Game {
 
             while(true){
                 pool += 4;
-                fPoints = one_player(fCom, fCash, false);
-                sPoints = one_player(sCom, sCash, false);
+                fPoints = one_player(fCom, fCash, false, "" + fCom.getWinValue() + 1);
+                sPoints = one_player(sCom, sCash, false, "" + sCom.getWinValue() + 1);
 
                 if (fPoints > sPoints) {
                     fCash += pool;
                     pool = 0;
                     try {
+                        log.write("S: WINS " + fCom.getWinValue());
                         fCom.wins(fCom.getWinValue());
                         sCom.wins(fCom.getWinValue());
                     } catch (IOException e) {
@@ -359,6 +361,7 @@ public class Game {
                     sCash += pool;
                     pool = 0;
                     try {
+                        log.write("S: WINS " + sCom.getWinValue());
                         fCom.wins(sCom.getWinValue());
                         sCom.wins(sCom.getWinValue());
                     } catch (IOException e) {
@@ -369,6 +372,7 @@ public class Game {
                     }
                 }else if (sPoints == fPoints) {
                     try {
+                        log.write("S: WINS " + 2);
                         fCom.wins(2);
                         sCom.wins(2);
                     } catch (IOException e) {
