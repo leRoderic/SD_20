@@ -23,6 +23,14 @@ public class Datagram {
     private static final String GREEN = "\033[0;32m";
     private static final String RESET = "\u001B[0m";
 
+    public Socket getSocket() {
+        return socket;
+    }
+
+    public void setSocket(Socket socket) {
+        this.socket = socket;
+    }
+
     public Datagram(Socket s) throws IOException {
 
         this.gameMode = gameMode;

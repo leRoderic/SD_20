@@ -4,6 +4,7 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
@@ -23,14 +24,16 @@ public class Game {
     public Game(Socket s1, Socket s2, boolean singlePlayer) throws IOException {
 
         this.com1 = new Datagram(s1);
-        if(s2 != null)
+        this.com1.setWinValue(0);
+        if(s2 != null) {
             this.com2 = new Datagram(s2);
+            this.com2.setWinValue(1);
+        }
         this.log = new BufferedWriter(new FileWriter("Server-" + Thread.currentThread().getName()  + ".log"));
         this.state = State.INIT;
         this.cash1 = 10;
         this.cash2 = 10;
-        this.com1.setWinValue(0);
-        this.com2.setWinValue(1);
+
         this.singlePlayer = singlePlayer;
         this.dices = new int[]{-1, -1, -1, -1, -1};
         this.dTaken = new int[]{-1, -1, -1, -1, -1};
@@ -53,19 +56,20 @@ public class Game {
                 case INIT:
                     try {
                         command = com.read_command();
-                    } catch (IOException e) {
+                    } catch (Exception e) {
                         errorMessage = e.getMessage();
 
-                        log.write("S: ERRO " + errorMessage.length() + errorMessage + "\n");
+                        log.write("S: ERRO " + errorMessage.length() + " " + errorMessage + "\n");
                         log.flush();
                         com.sendErrorMessage(errorMessage, errorMessage.length());
                     }
                     if(command.equals("STRT")){
                         try {
                             pID = com.readNextInt();
-                        } catch (IOException e) {
+                        } catch (Exception e) {
                             errorMessage = e.getMessage();
-                            log.write("S: ERRO " + errorMessage.length() + errorMessage + "\n");
+                            log.write("S: ERRO " + errorMessage.length() + " " + errorMessage + "\n");
+                            log.flush();
                             com.sendErrorMessage(errorMessage, errorMessage.length());
                         }
                         log.write("C" + clientNumber + ": STRT " + pID + "\n");
@@ -73,9 +77,10 @@ public class Game {
                         log.write("S: CASH " + pCash + "\n");
                         try {
                             com.cash(pCash);
-                        } catch (IOException e) {
+                        } catch (Exception e) {
                             errorMessage = e.getMessage();
-                            log.write("S: ERRO " + errorMessage.length() + errorMessage + "\n");
+                            log.write("S: ERRO " + errorMessage.length() + " " + errorMessage + "\n");
+                            log.flush();
                             com.sendErrorMessage(errorMessage, errorMessage.length());
                         }
                     }else if(command.equals("EXIT")){
@@ -83,17 +88,25 @@ public class Game {
                         this.state = State.QUIT;
                     }else{
                         errorMessage = "Command not understood";
-                        log.write("S: ERRO " + errorMessage.length() + errorMessage + "\n");
+                        log.write("S: ERRO " + errorMessage.length() + " " + errorMessage + "\n");
+                        log.flush();
                         com.sendErrorMessage(errorMessage, errorMessage.length());
                     }
                     break;
                 case BETT:
                     try {
                         command = com.read_command();
-                    } catch (IOException e) {
-                        errorMessage = e.getMessage();
-                        log.write("S: ERRO " + errorMessage.length() + errorMessage + "\n");
-                        com.sendErrorMessage(errorMessage, errorMessage.length());
+                    } catch (Exception e) {
+
+                        if(e instanceof SocketException){
+                            log.close();
+                            finished = true;
+                        }else {
+                            errorMessage = e.getMessage();
+                            log.write("S: ERRO " + errorMessage.length() + " " + errorMessage + "\n");
+                            log.flush();
+                            com.sendErrorMessage(errorMessage, errorMessage.length());
+                        }
                     }
                     if(command.equals("BETT")){
                         pCash -= 2;
@@ -102,17 +115,19 @@ public class Game {
                         log.write("S: LOOT 2\n");
                         try {
                             com.loot(2);
-                        } catch (IOException e) {
+                        } catch (Exception e) {
                             errorMessage = e.getMessage();
-                            log.write("S: ERRO " + errorMessage.length() + errorMessage + "\n");
+                            log.write("S: ERRO " + errorMessage.length() + " " + errorMessage + "\n");
+                            log.flush();
                             com.sendErrorMessage(errorMessage, errorMessage.length());
                         }
                         log.write("S: PLAY 0\n");
                         try {
                             com.play(0);
-                        } catch (IOException e) {
+                        } catch (Exception e) {
                             errorMessage = e.getMessage();
-                            log.write("S: ERRO " + errorMessage.length() + errorMessage + "\n");
+                            log.write("S: ERRO " + errorMessage.length() + " " + errorMessage + "\n");
+                            log.flush();
                             com.sendErrorMessage(errorMessage, errorMessage.length());
                         }
                         reset_taken_values();
@@ -120,9 +135,10 @@ public class Game {
                         log.write("S: DICE " + pID + " " + dices_toString() + "\n");
                         try {
                             com.dice(pID, dices);
-                        } catch (IOException e) {
+                        } catch (Exception e) {
                             errorMessage = e.getMessage();
-                            log.write("S: ERRO " + errorMessage.length() + errorMessage + "\n");
+                            log.write("S: ERRO " + errorMessage.length() + " " + errorMessage + "\n");
+                            log.flush();
                             com.sendErrorMessage(errorMessage, errorMessage.length());
                         }
                         this.state = State.ROLL1;
@@ -131,34 +147,38 @@ public class Game {
                         this.state = State.QUIT;
                     }else {
                         errorMessage = "Command not understood";
-                        log.write("S: ERRO " + errorMessage.length() + errorMessage + "\n");
+                        log.write("S: ERRO " + errorMessage.length() + " " + errorMessage + "\n");
+                        log.flush();
                         com.sendErrorMessage(errorMessage, errorMessage.length());
                     }
                     break;
                 case ROLL1:
                     try {
                         command = com.read_command();
-                    } catch (IOException e) {
+                    } catch (Exception e) {
                         errorMessage = e.getMessage();
-                        log.write("S: ERRO " + errorMessage.length() + errorMessage + "\n");
+                        log.write("S: ERRO " + errorMessage.length() + " " + errorMessage + "\n");
+                        log.flush();
                         com.sendErrorMessage(errorMessage, errorMessage.length());
                     }
                     if(command.equals("TAKE")){
                         try {
                             id = com.readNextInt();
                             len = com.read_next_int_in_bytes();
-                        } catch (IOException e) {
+                        } catch (Exception e) {
                             errorMessage = e.getMessage();
-                            log.write("S: ERRO " + errorMessage.length() + errorMessage + "\n");
+                            log.write("S: ERRO " + errorMessage.length() + " " + errorMessage + "\n");
+                            log.flush();
                             com.sendErrorMessage(errorMessage, errorMessage.length());
                         }
                         ArrayList<Integer> rec = new ArrayList();
                         for(int i =0; i<len; i++){
                             try {
                                 sel = com.read_next_int_in_bytes();
-                            } catch (IOException e) {
+                            } catch (Exception e) {
                                 errorMessage = e.getMessage();
-                                log.write("S: ERRO " + errorMessage.length() + errorMessage + "\n");
+                                log.write("S: ERRO " + errorMessage.length() + " " + errorMessage + "\n");
+                                log.flush();
                                 com.sendErrorMessage(errorMessage, errorMessage.length());
                             }
                             dTaken[sel-1] = 0;
@@ -171,9 +191,10 @@ public class Game {
                         log.write("S: DICE " + pID + " " + dices_toString() + "\n");
                         try {
                             com.dice(pID, dices);
-                        } catch (IOException e) {
+                        } catch (Exception e) {
                             errorMessage = e.getMessage();
-                            log.write("S: ERRO " + errorMessage.length() + errorMessage + "\n");
+                            log.write("S: ERRO " + errorMessage.length() + " " + errorMessage + "\n");
+                            log.flush();
                             com.sendErrorMessage(errorMessage, errorMessage.length());
                         }
                         this.state = State.ROLL2;
@@ -181,9 +202,10 @@ public class Game {
                     }else if(command.equals("PASS")){
                         try {
                             id = com.readNextInt();
-                        } catch (IOException e) {
+                        } catch (Exception e) {
                             errorMessage = e.getMessage();
-                            log.write("S: ERRO " + errorMessage.length() + errorMessage + "\n");
+                            log.write("S: ERRO " + errorMessage.length() + " " + errorMessage + "\n");
+                            log.flush();
                             com.sendErrorMessage(errorMessage, errorMessage.length());
                         }
                         log.write("S: PASS " + id + "\n");
@@ -195,34 +217,37 @@ public class Game {
                         break;
                     }else{
                         errorMessage = "Command not understood";
-                        log.write("S: ERRO " + errorMessage.length() + errorMessage + "\n");
+                        log.write("S: ERRO " + errorMessage.length() + " " + errorMessage + "\n");
                         com.sendErrorMessage(errorMessage, errorMessage.length());
                     }
                     break;
                 case ROLL2:
                     try {
                         command = com.read_command();
-                    } catch (IOException e) {
+                    } catch (Exception e) {
                         errorMessage = e.getMessage();
-                        log.write("S: ERRO " + errorMessage.length() + errorMessage + "\n");
+                        log.write("S: ERRO " + errorMessage.length() + " " + errorMessage + "\n");
+                        log.flush();
                         com.sendErrorMessage(errorMessage, errorMessage.length());
                     }
                     if(command.equals("TAKE")){
                         try {
                             id = com.readNextInt();
                             len = com.read_next_int_in_bytes();
-                        } catch (IOException e) {
+                        } catch (Exception e) {
                             errorMessage = e.getMessage();
-                            log.write("S: ERRO " + errorMessage.length() + errorMessage + "\n");
+                            log.write("S: ERRO " + errorMessage.length() + " " + errorMessage + "\n");
+                            log.flush();
                             com.sendErrorMessage(errorMessage, errorMessage.length());
                         }
                         ArrayList<Integer> rec = new ArrayList();
                         for(int i =0; i<len; i++){
                             try {
                                 sel = com.read_next_int_in_bytes();
-                            } catch (IOException e) {
+                            } catch (Exception e) {
                                 errorMessage = e.getMessage();
-                                log.write("S: ERRO " + errorMessage.length() + errorMessage + "\n");
+                                log.write("S: ERRO " + errorMessage.length() + " " + errorMessage + "\n");
+                                log.flush();
                                 com.sendErrorMessage(errorMessage, errorMessage.length());
                             }
                             dTaken[sel-1] = 0;
@@ -235,9 +260,10 @@ public class Game {
                         log.write("S: DICE " + pID + " " + dices_toString() + "\n");
                         try {
                             com.dice(pID, dices);
-                        } catch (IOException e) {
+                        } catch (Exception e) {
                             errorMessage = e.getMessage();
-                            log.write("S: ERRO " + errorMessage.length() + errorMessage + "\n");
+                            log.write("S: ERRO " + errorMessage.length() + " " + errorMessage + "\n");
+                            log.flush();
                             com.sendErrorMessage(errorMessage, errorMessage.length());
                         }
                         this.improveLast = true;
@@ -246,9 +272,10 @@ public class Game {
                     }else if(command.equals("PASS")){
                         try {
                             id = com.readNextInt();
-                        } catch (IOException e) {
+                        } catch (Exception e) {
                             errorMessage = e.getMessage();
-                            log.write("S: ERRO " + errorMessage.length() + errorMessage + "\n");
+                            log.write("S: ERRO " + errorMessage.length() + " " + errorMessage + "\n");
+                            log.flush();
                             com.sendErrorMessage(errorMessage, errorMessage.length());
                         }
                         take_updater(arrayToArrayList(dices));
@@ -259,7 +286,8 @@ public class Game {
                         this.state = State.QUIT;
                     }else{
                         errorMessage = "Command not understood";
-                        log.write("S: ERRO " + errorMessage.length() + errorMessage + "\n");
+                        log.write("S: ERRO " + errorMessage.length() + " " + errorMessage + "\n");
+                        log.flush();
                         com.sendErrorMessage(errorMessage, errorMessage.length());
                     }
                     break;
@@ -273,12 +301,13 @@ public class Game {
                     log.write("S: PNTS " + pID + " " + pPoints + "\n");
                     try {
                         com.points(pID, pPoints);
-                    } catch (IOException e) {
+                    } catch (Exception e) {
                         errorMessage = e.getMessage();
-                        log.write("S: ERRO " + errorMessage.length() + errorMessage + "\n");
+                        log.write("S: ERRO " + errorMessage.length() + " " + errorMessage + "\n");
+                        log.flush();
                         com.sendErrorMessage(errorMessage, errorMessage.length());
                     }
-                    if(isSP) {
+                    if(!isSP) {
                         return pPoints;
                     }
                     sPoints = serverPlays();
@@ -294,11 +323,12 @@ public class Game {
                     }
                     pool = 0;
                     try {
-                        log.write("S: WINS " + win);
+                        log.write("S: WINS " + win + "\n");
                         com.wins(win);
-                    } catch (IOException e) {
+                    } catch (Exception e) {
                         errorMessage = e.getMessage();
-                        log.write("S: ERRO " + errorMessage.length() + errorMessage + "\n");
+                        log.write("S: ERRO " + errorMessage.length() + " " + errorMessage + "\n");
+                        log.flush();
                         com.sendErrorMessage(errorMessage, errorMessage.length());
                     }
                     this.state = State.BETT;
@@ -341,12 +371,13 @@ public class Game {
                     fCash += pool;
                     pool = 0;
                     try {
-                        log.write("S: WINS " + fCom.getWinValue());
+                        log.write("S: WINS " + fCom.getWinValue() + "\n");
                         fCom.wins(fCom.getWinValue());
                         sCom.wins(fCom.getWinValue());
-                    } catch (IOException e) {
+                    } catch (Exception e) {
                         errorMessage = e.getMessage();
-                        log.write("S: ERRO " + errorMessage.length() + errorMessage + "\n");
+                        log.write("S: ERRO " + errorMessage.length() + " " + errorMessage + "\n");
+                        log.flush();
                         fCom.sendErrorMessage(errorMessage, errorMessage.length());
                         sCom.sendErrorMessage(errorMessage, errorMessage.length());
                     }
@@ -361,23 +392,25 @@ public class Game {
                     sCash += pool;
                     pool = 0;
                     try {
-                        log.write("S: WINS " + sCom.getWinValue());
+                        log.write("S: WINS " + sCom.getWinValue() + "\n");
                         fCom.wins(sCom.getWinValue());
                         sCom.wins(sCom.getWinValue());
-                    } catch (IOException e) {
+                    } catch (Exception e) {
                         errorMessage = e.getMessage();
                         log.write("S: ERRO " + errorMessage.length() + errorMessage + "\n");
+                        log.flush();
                         fCom.sendErrorMessage(errorMessage, errorMessage.length());
                         sCom.sendErrorMessage(errorMessage, errorMessage.length());
                     }
                 }else if (sPoints == fPoints) {
                     try {
-                        log.write("S: WINS " + 2);
+                        log.write("S: WINS " + 2 + "\n");
                         fCom.wins(2);
                         sCom.wins(2);
-                    } catch (IOException e) {
+                    } catch (Exception e) {
                         errorMessage = e.getMessage();
                         log.write("S: ERRO " + errorMessage.length() + errorMessage + "\n");
+                        log.flush();
                         fCom.sendErrorMessage(errorMessage, errorMessage.length());
                         sCom.sendErrorMessage(errorMessage, errorMessage.length());
                     }
@@ -501,7 +534,7 @@ public class Game {
                 pnts += dices[i];
             }
         }
-        return pnts-15;
+        return Math.max(pnts-15, 0);
     }
 
     private void reset_taken_values(){
