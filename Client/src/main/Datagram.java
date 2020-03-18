@@ -81,7 +81,7 @@ public class Datagram {
      * @param id client's ID
      * @param sel client's dice selection
      */
-    public void take(int id, byte[] sel) throws IOException {
+    public void take(int id, int[] sel) throws IOException {
 
         String c = Command.TAKE.name();
 
@@ -119,11 +119,22 @@ public class Datagram {
 
         return utils.read_string();
     }
+    public void read_space() throws  IOException{
+        utils.read_space();
+    }
+    public void read_int() throws  IOException{
+        utils.read_int32();
+    }
+    public void read_char() throws  IOException{
+        utils.read_char();
+    }
+    public byte[] read_byte(int n) throws  IOException{
+        return utils.read_bytes(n);
+    }
     public int[] read_dice() throws IOException {
 
-        int[] dice = new int[0];
+        int[] dice = new int[5];
 
-        utils.read_string();
         utils.read_space();
         utils.read_int32();
 
@@ -157,6 +168,10 @@ public class Datagram {
 
     public byte[] int32ToBytes(int number, ComUtils.Endianness endianness){
         return utils.int32ToBytes(number, endianness);
+    }
+
+    public int bytesToInt32(byte[] number, ComUtils.Endianness endianness){
+        return utils.bytesToInt32(number, endianness);
     }
 
 

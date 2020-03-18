@@ -55,6 +55,11 @@ public class Menu {
         return com;
     }
 
+    public int read_int(){
+        int points = 0;
+        points = sc.nextInt();
+        return points;
+    }
     public String read_next_command(){
         String comand = "";
 

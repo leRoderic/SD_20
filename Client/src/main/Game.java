@@ -1,6 +1,9 @@
 package main;
 
+import utils.ComUtils;
+
 import java.io.*;
+import java.util.Random;
 
 
 public class Game {
@@ -9,6 +12,9 @@ public class Game {
     private Datagram datagram;
     private boolean partida = false;
     private int mode; //0->client 1->aleatori
+    private int idCliente;
+    private Random random = new Random();
+    private boolean takeShip = false, takeCaptain = false, takeCrew = false;
 
     public Game(Datagram datagram, Menu menu, int mode){
         this.datagram = datagram;
@@ -32,8 +38,28 @@ public class Game {
     private void partida(int mode) {
         String comanda = null;
 
+        if(mode == 0){
+            idCliente = menu.getClientID();
+            String c = menu.read_next_command();
+            if(c.equals("STRT")){
+                try {
+                    datagram.strt(idCliente);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        if(mode == 1) {
+            try {
+                datagram.strt(9999);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
         while (isPartida()) {
             if (mode == 0) {
+
                 try {
                     comanda = datagram.read_command();
                 } catch (IOException e) {
@@ -42,22 +68,53 @@ public class Game {
                 String com = menu.read_next_command();
                 if (comanda.equals("CASH")) {
                     if (com.equals("BET")) {
+                        try {
+                            datagram.bett();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                     } else if (com.equals("EXIT")) {
-                        this.setPartida(false);
+                        try {
+                            datagram.exit();
+                            this.setPartida(false);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+
                     } else {
                         System.exit(1);
                     }
                 } else if (comanda.equals("LOOT") || comanda.equals("PLAY") || comanda.equals("PNTS")) {
                     if (com.equals("EXIT")) {
-                        this.setPartida(false);
+                        try {
+                            datagram.exit();
+                            this.setPartida(false);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                     } else {
                         System.exit(1);
                     }
                 } else if (comanda.equals("DICE")) {
                     if (com.equals("PASS")) {
+                        try {
+                            datagram.pass(idCliente);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                     } else if (com.equals("EXIT")) {
-                        this.setPartida(false);
+                        try {
+                            datagram.exit();
+                            this.setPartida(false);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                     } else if (com.equals("TAKE")) {
+                        /*try {
+                            datagram.take(idCliente,);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }*/
                     } else {
                         System.exit(1);
                     }
@@ -65,12 +122,6 @@ public class Game {
             }
             //mode aleatori
             if (mode == 1) {
-                int client_id = menu.getClientID();
-                try {
-                    datagram.strt(client_id);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
                 try {
                     comanda = datagram.read_command();
                 } catch (IOException e) {
@@ -78,96 +129,202 @@ public class Game {
                 }
                 if (comanda.equals("CASH")) {
                     try {
+                        datagram.read_space();
+                        datagram.read_int();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    System.out.println(comanda);
+                    try {
                         datagram.bett();
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
                 }
-                if (comanda.equals("DICE")) {
-                    int numberRand = (int) Math.random() * 5;
-                    if(numberRand != 0) {
+                else if (comanda.equals("LOOT")) {
+                    try {
+                        datagram.read_space();
+                        datagram.read_int();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    System.out.println(comanda);
+                }
+                else if (comanda.equals("PLAY")) {
+                    try {
+                        datagram.read_space();
+                        datagram.read_char();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    System.out.println(comanda);
+                }
+                else if (comanda.equals("DICE")) {
+                    System.out.println(comanda);
+                    int[] dice = new int[5];
+                    try {
+                        dice = datagram.read_dice();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    if(random.nextInt(5)!=0) {
                         int posCaptain = -1, posShip = -1, posCrew = -1;
                         boolean ship = false;
                         boolean captain = false;
                         boolean crew = false;
-                        int[] dice = new int[0];
-                        try {
-                            dice = datagram.read_dice();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
                         for (int i = 0; i < dice.length; i++) {
                             if (dice[i] == 6) {
-                                posShip = i;
                                 ship = true;
-                            }
-                            if (ship && dice[i] == 5) {
-                                posCaptain = i;
-                                captain = true;
-                            }
-                            if (ship && dice[i] == 4) {
-                                posCrew = i;
-                                crew = true;
+                                posShip = i;
+                                break;
                             }
                         }
-
-                        byte[] sel = new byte[0];
-                        if (ship && captain && crew) {
-                            byte sh = (byte) ((byte) posShip + 1);//datagram.int32ToBytes(posShip + 1, ComUtils.Endianness.BIG_ENNDIAN);
-                            byte ca = (byte) ((byte) posCaptain + 1);//datagram.int32ToBytes(posCaptain + 1, ComUtils.Endianness.BIG_ENNDIAN);
-                            byte cr = (byte) ((byte) posCrew + 1);//datagram.int32ToBytes(posCrew + 1, ComUtils.Endianness.BIG_ENNDIAN);
-                            sel[0] = sh;
-                            sel[1] = ca;
-                            sel[2] = cr;
+                        if (ship) {
+                            for (int i = 0; i < dice.length; i++) {
+                                if (dice[i] == 5) {
+                                    captain = true;
+                                    posCaptain = i;
+                                    break;
+                                }
+                            }
+                        }
+                        if (captain) {
+                            for (int i = 0; i < dice.length; i++) {
+                                if (dice[i] == 4) {
+                                    crew = true;
+                                    posCrew = i;
+                                    break;
+                                }
+                            }
+                        }
+                        int[] sel;
+                        if(!takeShip && ship){
+                            takeShip = true;
+                            if(!takeCaptain && captain){
+                                takeCaptain = true;
+                                if(!takeCrew && crew){
+                                    takeCrew = true;
+                                }
+                            }
+                            if(takeShip && takeCaptain && takeCrew) {
+                                sel = new int[3];
+                                int sh = posShip + 1;
+                                int ca = posCaptain + 1;
+                                int cr = posCrew + 1;
+                                sel[0] = sh;
+                                sel[1] = ca;
+                                sel[2] = cr;
+                                try {
+                                    datagram.take(9999, sel);
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                            else if(takeShip && takeCaptain){
+                                sel = new int[2];
+                                int sh = posShip + 1;
+                                int ca = posCaptain + 1;
+                                sel[0] = sh;
+                                sel[1] = ca;
+                                try {
+                                    datagram.take(9999, sel);
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                            else if(takeShip){
+                                sel = new int[1];
+                                int sh = posShip + 1;
+                                sel[0] = sh;
+                                try {
+                                    datagram.take(9999, sel);
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }else if(takeShip && captain && !takeCaptain){
+                            takeCaptain = true;
+                            if(!takeCrew && crew){
+                                takeCrew = true;
+                            }
+                            if(takeCaptain && takeCrew) {
+                                sel = new int[2];
+                                int ca = posCaptain + 1;
+                                int cr = posCrew + 1;
+                                sel[0] = ca;
+                                sel[1] = cr;
+                                try {
+                                    datagram.take(9999, sel);
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            }else if(takeCaptain){
+                                sel = new int[1];
+                                int ca = posCaptain + 1;
+                                sel[0] = ca;
+                                try {
+                                    datagram.take(9999, sel);
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }else if(takeShip && takeCaptain && crew && !takeCrew){
+                            takeCrew = true;
+                            sel = new int[1];
+                            int cr = posCrew + 1;
+                            sel[0] = cr;
                             try {
-                                datagram.take(menu.getClientID(), sel);
+                                datagram.take(9999, sel);
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
-                        } else if (ship && captain) {
-                            byte sh = (byte) ((byte) posShip + 1);
-                            byte ca = (byte) ((byte) posCaptain + 1);
-                            sel[0] = sh;
-                            sel[1] = ca;
-                            try {
-                                datagram.take(menu.getClientID(), sel);
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-                        } else if (ship) {
-                            byte sh = (byte) ((byte) posShip + 1);
-                            sel[0] = sh;
-                            try {
-                                datagram.take(menu.getClientID(), sel);
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-                        } else {
+                        }else{
                             //TAKE 0x00
+                            sel = new int[0];
                             try {
-                                datagram.take(menu.getClientID(), sel);
+                                datagram.take(9999, sel);
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
                         }
                     }else{
                         try {
-                            datagram.pass(menu.getClientID());
+                            datagram.pass(9999);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
                     }
 
                 }
-                if (comanda.equals("WINS")) {
-                    if (comanda.equals("CASH")) {
+                else if (comanda.equals("PNTS")) {
+                    int bytePoint = -1;
+                    try {
+                        datagram.read_space();
+                        datagram.read_int();
+                        datagram.read_space();
+                        byte[] b = new byte[4];
+                        b[3] = datagram.read_byte(1)[0];
+                        bytePoint = datagram.bytesToInt32(b, ComUtils.Endianness.BIG_ENNDIAN);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    System.out.println(comanda + " " + bytePoint);
+                }
+                else if (comanda.equals("WINS")) {
                         try {
+                            datagram.read_space();
+                            datagram.read_char();
+                            System.out.println(comanda);
+                            try {
+                                Thread.sleep(4000);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
                             datagram.exit();
                             this.setPartida(false);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
-                    }
                 }
             }
         }
