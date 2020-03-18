@@ -105,7 +105,7 @@ public class ComUtils {
         write_string(c);
     }
 
-    public void write_take(String c, int id, byte[] sel) throws IOException {
+    public void write_take(String c, int id, int[] sel) throws IOException {
 
         int lSel = sel.length;
 
@@ -119,7 +119,8 @@ public class ComUtils {
         for(int i = 0; i < lSel; i++){
 
             write_space();
-            write_byte(sel[i]);
+            byte numero = this.int32ToBytes(sel[i],Endianness.BIG_ENNDIAN)[3];
+            write_byte(numero);
         }
     }
 

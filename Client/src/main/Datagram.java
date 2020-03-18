@@ -81,7 +81,7 @@ public class Datagram {
      * @param id client's ID
      * @param sel client's dice selection
      */
-    public void take(int id, byte[] sel) throws IOException {
+    public void take(int id, int[] sel) throws IOException {
 
         String c = Command.TAKE.name();
 

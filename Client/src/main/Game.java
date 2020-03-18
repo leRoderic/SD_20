@@ -195,14 +195,20 @@ public class Game {
                                 }
                             }
                         }
-
-                        byte[] sel;
-                        if (ship && captain && crew) {
-                            //if(!takeShip && !takeCaptain && !takeCrew) {
-                                sel = new byte[3];
-                                byte sh = datagram.int32ToBytes(posShip + 1, ComUtils.Endianness.BIG_ENNDIAN)[3];
-                                byte ca = datagram.int32ToBytes(posCaptain + 1, ComUtils.Endianness.BIG_ENNDIAN)[3];
-                                byte cr = datagram.int32ToBytes(posCrew + 1, ComUtils.Endianness.BIG_ENNDIAN)[3];
+                        int[] sel;
+                        if(!takeShip && ship){
+                            takeShip = true;
+                            if(!takeCaptain && captain){
+                                takeCaptain = true;
+                                if(!takeCrew && crew){
+                                    takeCrew = true;
+                                }
+                            }
+                            if(takeShip && takeCaptain && takeCrew) {
+                                sel = new int[3];
+                                int sh = posShip + 1;
+                                int ca = posCaptain + 1;
+                                int cr = posCrew + 1;
                                 sel[0] = sh;
                                 sel[1] = ca;
                                 sel[2] = cr;
@@ -212,15 +218,11 @@ public class Game {
                                 } catch (IOException e) {
                                     e.printStackTrace();
                                 }
-                                takeShip = true;
-                                takeCaptain = true;
-                                takeCrew = true;
-                            //}
-                        } else if (ship && captain) {
-                            //if(!takeShip && !takeCaptain) {
-                                sel = new byte[2];
-                                byte sh = datagram.int32ToBytes(posShip + 1, ComUtils.Endianness.BIG_ENNDIAN)[3];
-                                byte ca = datagram.int32ToBytes(posCaptain + 1, ComUtils.Endianness.BIG_ENNDIAN)[3];
+                            }
+                            else if(takeShip && takeCaptain){
+                                sel = new int[2];
+                                int sh = posShip + 1;
+                                int ca = posCaptain + 1;
                                 sel[0] = sh;
                                 sel[1] = ca;
                                 try {
@@ -229,22 +231,60 @@ public class Game {
                                 } catch (IOException e) {
                                     e.printStackTrace();
                                 }
-                                takeShip = true;
-                                takeCaptain = true;
-                            //}
-                        } else if (ship) {
-                            sel = new byte[1];
-                            byte sh = datagram.int32ToBytes(posShip + 1, ComUtils.Endianness.BIG_ENNDIAN)[3];
-                            sel[0] = sh;
+                            }
+                            else if(takeShip){
+                                sel = new int[1];
+                                int sh = posShip + 1;
+                                sel[0] = sh;
+                                try {
+                                    datagram.take(9999, sel);
+                                    System.out.println("take 1");
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }else if(takeShip && captain && !takeCaptain){
+                            takeCaptain = true;
+                            if(!takeCrew && crew){
+                                takeCrew = true;
+                            }
+                            if(takeCaptain && takeCrew) {
+                                sel = new int[2];
+                                int ca = posCaptain + 1;
+                                int cr = posCrew + 1;
+                                sel[0] = ca;
+                                sel[1] = cr;
+                                try {
+                                    datagram.take(9999, sel);
+                                    System.out.println("take 2");
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            }else if(takeCaptain){
+                                sel = new int[1];
+                                int ca = posCaptain + 1;
+                                sel[0] = ca;
+                                try {
+                                    datagram.take(9999, sel);
+                                    System.out.println("take 1");
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }else if(takeShip && takeCaptain && crew && !takeCrew){
+                            takeCrew = true;
+                            sel = new int[1];
+                            int cr = posCrew + 1;
+                            sel[0] = cr;
                             try {
                                 datagram.take(9999, sel);
                                 System.out.println("take 1");
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
-                        } else {
+                        }else{
                             //TAKE 0x00
-                            sel = new byte[0];
+                            sel = new int[0];
                             try {
                                 datagram.take(9999, sel);
                                 System.out.println("take 0");
@@ -281,7 +321,7 @@ public class Game {
                             datagram.read_char();
                             System.out.println(comanda);
                             try {
-                                Thread.sleep(1200);
+                                Thread.sleep(4000);
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
                             }
