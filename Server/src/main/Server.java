@@ -29,9 +29,9 @@ public class Server {
             System.out.println("Info> Player connected, creating new game");
             try {
                 // Un-comment next line to debug a single game. Also comment lines 30 and 31.
-                new Game(s, null , true, players).run();
-                //Thread t = (new Thread(new GameThread(s, null, true)));
-                //t.start();
+                //new Game(s, null , true, players).run();
+                Thread t = (new Thread(new GameThread(s, null, true, players)));
+                t.start();
             } catch (IOException e) {
                 e.printStackTrace();
             }

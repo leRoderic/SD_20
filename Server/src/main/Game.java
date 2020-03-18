@@ -5,10 +5,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.SocketException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Random;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 public class Game {
 
@@ -30,7 +28,13 @@ public class Game {
             this.com2 = new Datagram(s2);
             this.com2.setWinValue(1);
         }
-        this.log = new BufferedWriter(new FileWriter("Server-" + Thread.currentThread().getName()  + ".log"));
+
+        // REMOVE ---------- ONLY FOR DEBUGGING PURPOSES ----------
+        Date asd = new Date();
+        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+
+        this.log = new BufferedWriter(new FileWriter("Server-" + Thread.currentThread().getName()
+                + "-" + formatter.format(asd).toString().replace(" ", "_").replace(":", "-") +".log"));
         this.state = State.INIT;
         this.players = players;
         this.singlePlayer = singlePlayer;
@@ -73,6 +77,15 @@ public class Game {
                         }
                         log.write("C" + clientNumber + ": STRT " + pID + "\n");
                         this.state = State.BETT;
+                        synchronized (players){
+
+                            if(players.containsKey(pID)){
+                                cCash = players.get(pID);
+                            }else{
+                                cCash = 10;
+                                players.put(pID, 10);
+                            }
+                        }
                         log.write("S: CASH " + cCash + "\n");
                         try {
                             com.cash(cCash);
