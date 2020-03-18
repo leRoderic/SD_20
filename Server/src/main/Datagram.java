@@ -17,41 +17,64 @@ public class Datagram {
 
     private Socket socket;
     private ComUtils utils;
-    private int gameMode;
     private int winValue;
     private static final String RED = "\u001B[31m";
     private static final String GREEN = "\033[0;32m";
     private static final String RESET = "\u001B[0m";
 
-    public Socket getSocket() {
-        return socket;
-    }
-
-    public void setSocket(Socket socket) {
-        this.socket = socket;
-    }
-
+    /**
+     * Constructor for Datagram class.
+     *
+     * @param s the socket
+     * @throws IOException
+     */
     public Datagram(Socket s) throws IOException {
 
-        this.gameMode = gameMode;
         this.socket = s;
         this.utils = new ComUtils(this.socket);
     }
 
+    /**
+     * Getter of the client's win value.
+     * The win value identifies the client when playing against another player. This value, with range 0-1, is set by
+     * the server and is used when the server sends the WINS command to each client.
+     *
+     * @return the win value
+     */
     public int getWinValue() {
         return winValue;
     }
 
+    /**
+     * Setter for the win value.
+     *
+     * @param winValue
+     */
     public void setWinValue(int winValue) {
         this.winValue = winValue;
     }
 
+    /**
+     * Reads the next int of the input stream (space+int).
+     *
+     * @return read int
+     * @throws IOException h
+     */
     public int readNextInt() throws IOException {
 
         return utils.read_nextInt();
     }
 
+    /**
+     * Sends error message to the client.
+     *
+     * @param text  error message
+     * @param len   length of the message
+     * @throws IOException h
+     */
     public void sendErrorMessage(String text, int len) throws IOException {
+
+        // Format: ERRO <LEN> <ERROR_TEXT>
 
         String c = Command.ERRO.name();
 
@@ -62,10 +85,18 @@ public class Datagram {
         utils.write_string_variable(len, text);
     }
 
+    /**
+     * Sends dice command to the client.
+     *
+     * @param id    client's id
+     * @param vals  dice values
+     * @throws IOException h
+     */
     public void dice(int id, int[] vals) throws IOException{
 
         String c = Command.DICE.name();
 
+        // Required conversion to char since that's how the protocol is designed.
         char digits[] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };
 
         utils.write_command(c);
@@ -78,6 +109,12 @@ public class Datagram {
         }
     }
 
+    /**
+     * Sends cash command to the client.
+     *
+     * @param coins client's 'money'
+     * @throws IOException h
+     */
     public void cash(int coins) throws IOException {
 
         String c = Command.CASH.name();
@@ -85,14 +122,19 @@ public class Datagram {
         utils.write_command_pint(c, coins);
     }
 
+    /**
+     * Reads a command.
+     *
+     * @return  read command
+     * @throws IOException h
+     */
     public String read_command() throws IOException{
 
         return utils.read_string();
     }
 
     /**
-     * Client's BETT command.
-     * Format: BETT
+     * Sends loot command.
      *
      * @throws IOException
      */
@@ -104,43 +146,22 @@ public class Datagram {
     }
 
     /**
-     * Client's TAKE command.
-     * Format: TAKE<SP><ID><LEN>*5(<SP><POS>)
+     * Reads a byte and returns the corresponding integer.
      *
-     * @param id client's ID
-     * @param sel client's dice selection
+     * @return  read int
+     * @throws IOException h
      */
-    public void take(int id, int len, byte[] sel) throws IOException {
-
-        String c = Command.TAKE.name();
-
-        utils.write_take(c, id, len, sel);
-    }
-
-    /**
-     * Client's PASS command.
-     * Format: PASS<SP><ID>
-     *
-     * @param id client's id
-     * @throws IOException excep
-     */
-    public void pass(int id) throws IOException {
-
-        String c = Command.PASS.name();
-
-        utils.write_command_pint(c, id);
-    }
-
     public int read_next_int_in_bytes() throws IOException {
 
         return utils.read_next_int_in_bytes();
     }
 
     /**
-     * Client's EXIT command.
-     * Format: EXIT
+     * Sends points command.
      *
-     * @throws IOException
+     * @param id    client's id
+     * @param points    points
+     * @throws IOException h
      */
     public void points(int id, int points) throws IOException {
 
@@ -153,6 +174,12 @@ public class Datagram {
         utils.write_byte(utils.int32ToBytes(points, ComUtils.Endianness.BIG_ENNDIAN)[3]); //THIS MAY CHANGE TODO
     }
 
+    /**
+     * Sends play command.
+     *
+     * @param t turn
+     * @throws IOException h
+     */
     public void play(int t) throws IOException{
 
         String c = Command.PLAY.name();
@@ -162,6 +189,12 @@ public class Datagram {
         utils.write_char((char)(t + '0'));
     }
 
+    /**
+     * Sends wins command.
+     *
+     * @param t who won int
+     * @throws IOException h
+     */
     public void wins(int t) throws IOException{
 
         String c = Command.WINS.name();
@@ -171,13 +204,14 @@ public class Datagram {
         utils.write_char((char) (t + '0'));
     }
 
+    /**
+     * An enum containing all commands to violate the Open/Closed principle. Also for old times' sake.
+     */
     private enum Command {
         CASH,
         LOOT,
         PLAY,
         DICE,
-        TAKE,
-        PASS,
         PNTS,
         WINS,
         ERRO

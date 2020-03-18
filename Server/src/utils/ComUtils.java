@@ -21,7 +21,12 @@ public class ComUtils {
     private DataInputStream dataInputStream;
     private DataOutputStream dataOutputStream;
 
-
+    /**
+     * Constructor for ComUtils class.
+     *
+     * @param s the socket
+     * @throws IOException h
+     */
     public ComUtils(Socket s) throws IOException {
 
         dataInputStream = new DataInputStream(s.getInputStream());
@@ -54,6 +59,12 @@ public class ComUtils {
         dataOutputStream.write(bytes, 0, 4);
     }
 
+    /**
+     * Writes a single byte.
+     *
+     * @param b byte to be written
+     * @throws IOException
+     */
     public void write_byte(byte b) throws IOException {
 
         dataOutputStream.write(b);
@@ -105,59 +116,6 @@ public class ComUtils {
 
         write_string(c);
     }
-
-    public void write_take(String c, int id, int len, byte[] sel) throws IOException {
-
-        int lSel = sel.length;
-
-        write_string(c);
-        write_space();
-        write_int32(id);
-        write_space();
-        write_int32(len);
-
-        for(int i = 0; i < len; i++){
-
-            write_space();
-            write_byte(sel[i]);
-        }
-    }
-
-    /*public int[] read_take() throws IOException {
-
-        int[] numbers;
-        read_string();//comanda
-        read_space();
-        read_int32();//ID
-        read_space();
-        int lenBytes = read_int32();//Len
-
-        byte[] take = read_bytes(lenBytes);
-
-        for(int i = 0; i < lenBytes; i++){
-            //TODO numbers[i] = this.bytesToInt32(take[i], Endianness.BIG_ENNDIAN);
-        }
-
-        return numbers;
-    }
-
-    public int[] read_dice() throws IOException {
-
-        int[] dice;
-
-        read_string();
-        read_space();
-        read_int32();
-
-        for(int i = 0; i < 5; i++){
-
-            read_space();
-            dice[i] = Integer.parseInt(String.valueOf(read_char()));
-
-        }
-        return dice;
-    }*/
-
 
     /**
      * Write a char.

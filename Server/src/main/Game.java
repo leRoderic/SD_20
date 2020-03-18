@@ -95,6 +95,7 @@ public class Game {
                     break;
                 case BETT:
                     try {
+                        command = "";
                         command = com.read_command();
                     } catch (Exception e) {
 
@@ -132,7 +133,7 @@ public class Game {
                         }
                         reset_taken_values();
                         throw_dices();
-                        log.write("S: DICE " + pID + " " + dices_toString() + "\n");
+                        log.write("S: DICE " + pID + dices_toString() + "\n");
                         try {
                             com.dice(pID, dices);
                         } catch (Exception e) {
@@ -182,13 +183,13 @@ public class Game {
                                 com.sendErrorMessage(errorMessage, errorMessage.length());
                             }
                             dTaken[sel-1] = 0;
-                            rec.add(dices[sel-1]);
+                            rec.add(sel);
                         }
                         log.write("C" + clientNumber + ": TAKE " + id + " " + len + selection_toString(rec) + "\n");
                         Collections.sort(rec);
                         take_updater(rec);
                         throw_dices();
-                        log.write("S: DICE " + pID + " " + dices_toString() + "\n");
+                        log.write("S: DICE " + pID + dices_toString() + "\n");
                         try {
                             com.dice(pID, dices);
                         } catch (Exception e) {
@@ -251,13 +252,13 @@ public class Game {
                                 com.sendErrorMessage(errorMessage, errorMessage.length());
                             }
                             dTaken[sel-1] = 0;
-                            rec.add(dices[sel-1]);
+                            rec.add(sel);
                         }
                         log.write("C" + clientNumber + ": TAKE " + id + " " + len + selection_toString(rec) + "\n");
                         Collections.sort(rec);
                         take_updater(rec);
                         throw_dices();
-                        log.write("S: DICE " + pID + " " + dices_toString() + "\n");
+                        log.write("S: DICE " + pID + dices_toString() + "\n");
                         try {
                             com.dice(pID, dices);
                         } catch (Exception e) {
@@ -315,7 +316,7 @@ public class Game {
                     if (pPoints > sPoints) {
                         win = 0;
                         pCash += pool;
-                    }else if (sPoints < pPoints) {
+                    }else if (sPoints > pPoints) {
                         win = 1;
                     }else if (sPoints == pPoints) {
                         win = 2;
@@ -451,7 +452,7 @@ public class Game {
         reset_taken_values();
         throw_dices();
         String sel = "";
-        log.write("S: DICE 1010 " + dices_toString() + "\n");
+        log.write("S: DICE 1010" + dices_toString() + "\n");
         for(int i=0; i < 2; i++) {
 
             if(random.nextInt(3)==0){
@@ -488,7 +489,7 @@ public class Game {
                 }
                 log.write("S: TAKE 1010 " + sel + "\n");
                 throw_dices();
-                log.write("S: DICE 1010 " + dices_toString() + "\n");
+                log.write("S: DICE 1010" + dices_toString() + "\n");
             }
         }
         log.write("S: PNTS 1010 " + getPoints() + "\n");

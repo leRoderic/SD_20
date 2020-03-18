@@ -25,6 +25,7 @@ public class Server {
             s.setSoTimeout(500*1000);
             System.out.println("Info> Player connected, creating new game");
             try {
+                // Un-comment next line to debug a single game. Also comment lines 30 and 31.
                 new Game(s, null , true).run();
                 //Thread t = (new Thread(new GameThread(s, null, true)));
                 //t.start();
@@ -63,7 +64,6 @@ public class Server {
                 e.printStackTrace();
             }
         }
-
     }
 
     public static void main(String[] args) throws IOException {
@@ -72,11 +72,13 @@ public class Server {
         ServerSocket server;
         boolean singlePlayer;
 
+        // Check if parameters are correct.
         if (args.length == 4 && args[0].equals("-p") && args[2].equals("-i")){
 
             serverPort = Integer.parseInt(args[1]);
             gameMode = Integer.parseInt(args[3]);
 
+            // Check game mode is valid.
             if (gameMode > 1 && gameMode > 2){
                 System.out.println("Invalid gamemode. Avaiable options are 1 or 2.");
                 System.exit(1);
@@ -88,9 +90,8 @@ public class Server {
                 singlePlayer = false;
 
             try {
-                InetAddress localhost = InetAddress.getLocalHost();
-                server = new ServerSocket(serverPort, 50, InetAddress.getByName("25.98.169.216"));
-                //server = new ServerSocket(serverPort, 50, InetAddress.getByName(localhost.getHostAddress()));
+                InetAddress address = InetAddress.getByName("25.98.169.216"); //InetAddress.getLocalHost();
+                server = new ServerSocket(serverPort, 50, address);
                 System.out.println("Info> Server ready with IP " + server.getInetAddress().toString().split("/")[1] +
                         " on port number " + serverPort);
 
