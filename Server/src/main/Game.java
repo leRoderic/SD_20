@@ -29,13 +29,16 @@ public class Game {
         this.state = State.INIT;
         this.cash1 = 10;
         this.cash2 = 10;
+        this.com1.setWinValue(0);
+        this.com2.setWinValue(1);
         this.singlePlayer = singlePlayer;
         this.dices = new int[]{-1, -1, -1, -1, -1};
         this.dTaken = new int[]{-1, -1, -1, -1, -1};
     }
 
-    private void one_player (Datagram com) throws IOException {
+    private int one_player (Datagram com, int pCash, boolean isSP) throws IOException {
 
+        int pool = 0;
         String command = "";
         String errorMessage = "";
         int pID = -1;
@@ -67,9 +70,9 @@ public class Game {
                         }
                         log.write("C: STRT " + pID + "\n");
                         this.state = State.BETT;
-                        log.write("S: CASH " + this.cash1 + "\n");
+                        log.write("S: CASH " + pCash + "\n");
                         try {
-                            com.cash(this.cash1);
+                            com.cash(pCash);
                         } catch (IOException e) {
                             errorMessage = e.getMessage();
                             log.write("S: ERRO " + errorMessage.length() + errorMessage + "\n");
@@ -93,7 +96,8 @@ public class Game {
                         com.sendErrorMessage(errorMessage, errorMessage.length());
                     }
                     if(command.equals("BETT")){
-                        this.cash1 -= 2;
+                        pCash -= 2;
+                        pool += 4;
                         log.write("C: BETT\n");
                         log.write("S: LOOT 2\n");
                         try {
@@ -274,14 +278,21 @@ public class Game {
                         log.write("S: ERRO " + errorMessage.length() + errorMessage + "\n");
                         com.sendErrorMessage(errorMessage, errorMessage.length());
                     }
+                    if(isSP) {
+                        return pPoints;
+                    }
                     sPoints = serverPlays();
                     int win = -1;
-                    if (pPoints > sPoints)
+                    if (pPoints > sPoints) {
                         win = 0;
-                    else if (sPoints < pPoints)
+                        pCash += pool;
+                    }else if (sPoints < pPoints) {
                         win = 1;
-                    else if (sPoints == pPoints)
+                    }else if (sPoints == pPoints) {
                         win = 2;
+                        pCash += 2;
+                    }
+                    pool = 0;
                     try {
                         com.wins(win);
                     } catch (IOException e) {
@@ -293,17 +304,83 @@ public class Game {
                     break;
             }
         }
+        return 0;
     }
 
     public void run() throws IOException {
 
+        Datagram fCom, sCom, tCom;
+        int fCash, sCash, tCash;
+        int fPoints = 0, sPoints = 0;
+        int pool = 0;
+        String errorMessage = "";
+
         if(this.singlePlayer){
-            one_player(this.com1);
+            one_player(this.com1, this.cash1, true);
         }else{
-            //playerVsPlayer(this.com1, this.com2);
+
+            if(random.nextInt(1)==0){
+                fCom = this.com1;
+                sCom = this.com2;
+                fCash = this.cash1;
+                sCash = this.cash2;
+            }else{
+                fCom = this.com2;
+                sCom = this.com1;
+                fCash = this.cash2;
+                sCash = this.cash1;
+            }
+
+            while(true){
+                pool += 4;
+                fPoints = one_player(fCom, fCash, false);
+                sPoints = one_player(sCom, sCash, false);
+
+                if (fPoints > sPoints) {
+                    fCash += pool;
+                    pool = 0;
+                    try {
+                        fCom.wins(fCom.getWinValue());
+                        sCom.wins(fCom.getWinValue());
+                    } catch (IOException e) {
+                        errorMessage = e.getMessage();
+                        log.write("S: ERRO " + errorMessage.length() + errorMessage + "\n");
+                        fCom.sendErrorMessage(errorMessage, errorMessage.length());
+                        sCom.sendErrorMessage(errorMessage, errorMessage.length());
+                    }
+                    // Swap turns --> loser first
+                    tCom = fCom;
+                    tCash = fCash;
+                    fCom = sCom;
+                    fCash = sCash;
+                    sCom = tCom;
+                    sCash = tCash;
+                }else if (sPoints > fPoints) {
+                    sCash += pool;
+                    pool = 0;
+                    try {
+                        fCom.wins(sCom.getWinValue());
+                        sCom.wins(sCom.getWinValue());
+                    } catch (IOException e) {
+                        errorMessage = e.getMessage();
+                        log.write("S: ERRO " + errorMessage.length() + errorMessage + "\n");
+                        fCom.sendErrorMessage(errorMessage, errorMessage.length());
+                        sCom.sendErrorMessage(errorMessage, errorMessage.length());
+                    }
+                }else if (sPoints == fPoints) {
+                    try {
+                        fCom.wins(2);
+                        sCom.wins(2);
+                    } catch (IOException e) {
+                        errorMessage = e.getMessage();
+                        log.write("S: ERRO " + errorMessage.length() + errorMessage + "\n");
+                        fCom.sendErrorMessage(errorMessage, errorMessage.length());
+                        sCom.sendErrorMessage(errorMessage, errorMessage.length());
+                    }
+                }
+                // Manage in case someone disconnects
+            }
         }
-
-
         this.log.close();
     }
 

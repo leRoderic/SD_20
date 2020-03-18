@@ -18,6 +18,7 @@ public class Datagram {
     private Socket socket;
     private ComUtils utils;
     private int gameMode;
+    private int winValue;
     private static final String RED = "\u001B[31m";
     private static final String GREEN = "\033[0;32m";
     private static final String RESET = "\u001B[0m";
@@ -29,6 +30,13 @@ public class Datagram {
         this.utils = new ComUtils(this.socket);
     }
 
+    public int getWinValue() {
+        return winValue;
+    }
+
+    public void setWinValue(int winValue) {
+        this.winValue = winValue;
+    }
 
     public int readNextInt() throws IOException {
 
