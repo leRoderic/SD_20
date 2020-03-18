@@ -268,7 +268,7 @@ public class ComUtils {
      * @param endianness final endianness
      * @return the integer converted to bytes
      */
-    private byte[] int32ToBytes(int number, Endianness endianness) {
+    public byte[] int32ToBytes(int number, Endianness endianness) {
 
         byte[] bytes = new byte[4];
 
@@ -333,7 +333,9 @@ public class ComUtils {
     public int read_next_int_in_bytes() throws IOException {
 
         read_space();
-        return bytesToInt32(read_bytes(4), Endianness.BIG_ENNDIAN);
+        byte[] asd = new byte[4];
+        asd[3] = read_bytes(1)[0];
+        return bytesToInt32(asd, Endianness.BIG_ENNDIAN);
     }
 
     /**

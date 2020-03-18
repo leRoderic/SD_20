@@ -25,7 +25,9 @@ public class Server {
             s.setSoTimeout(500*1000);
             System.out.println("Info> Player connected, creating new game");
             try {
-                new GameThread(s, null, true).start();
+                new Game(s, null , true).run();
+                //Thread t = (new Thread(new GameThread(s, null, true)));
+                //t.start();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -55,7 +57,8 @@ public class Server {
             s2.setSoTimeout(500*1000);
             System.out.println("Info> Players connected, creating new game.");
             try {
-                new GameThread(s1, s2, false).start();
+                Thread t = (new Thread(new GameThread(s1, s2, false)));
+                t.start();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -74,7 +77,7 @@ public class Server {
             serverPort = Integer.parseInt(args[1]);
             gameMode = Integer.parseInt(args[3]);
 
-            if (gameMode > 1 || gameMode > 2){
+            if (gameMode > 1 && gameMode > 2){
                 System.out.println("Invalid gamemode. Avaiable options are 1 or 2.");
                 System.exit(1);
             }
@@ -86,7 +89,8 @@ public class Server {
 
             try {
                 InetAddress localhost = InetAddress.getLocalHost();
-                server = new ServerSocket(serverPort, 50, InetAddress.getByName(localhost.getHostAddress()));
+                server = new ServerSocket(serverPort, 50, InetAddress.getByName("25.98.169.216"));
+                //server = new ServerSocket(serverPort, 50, InetAddress.getByName(localhost.getHostAddress()));
                 System.out.println("Info> Server ready with IP " + server.getInetAddress().toString().split("/")[1] +
                         " on port number " + serverPort);
 
@@ -98,7 +102,7 @@ public class Server {
             }catch(Exception e){
 
                 if(e instanceof IOException){
-                    System.out.println(RED + "Error> " + RESET + "I/O error occurred.");
+                    System.out.println(RED + "Error> " + RESET + "I/O error occurred: " + e.getMessage());
                 }else if(e instanceof SecurityException){
                     System.out.println(RED + "Error> " + RESET + "Connection not allowed for security reasons.");
                 }else if(e instanceof IllegalArgumentException){

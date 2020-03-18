@@ -56,7 +56,7 @@ public class Datagram {
         utils.write_space();
         utils.write_int32(id);
 
-        for(int i=0; i <6; i++){
+        for(int i=0; i <5; i++){
             utils.write_space();
             utils.write_char(digits[vals[i]]);
         }
@@ -134,7 +134,7 @@ public class Datagram {
         utils.write_space();
         utils.write_int32(id);
         utils.write_space();
-        utils.write_int32(points);
+        utils.write_byte(utils.int32ToBytes(points, ComUtils.Endianness.BIG_ENNDIAN)[3]); //THIS MAY CHANGE TODO
     }
 
     public void play(int t) throws IOException{
@@ -143,7 +143,7 @@ public class Datagram {
 
         utils.write_command(c);
         utils.write_space();
-        utils.write_int32(t);
+        utils.write_char((char)(t + '0'));
     }
 
     public void wins(int t) throws IOException{
@@ -152,7 +152,7 @@ public class Datagram {
 
         utils.write_command(c);
         utils.write_space();
-        utils.write_int32(t);
+        utils.write_char((char) (t + '0'));
     }
 
     private enum Command {

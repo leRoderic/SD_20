@@ -17,7 +17,7 @@ public class Game {
     private boolean singlePlayer;
     private int[] dices;
     private int[] dTaken;
-    private boolean captain, ship, crew;
+    private boolean captain, ship, crew, improveLast;
     private Random random = new Random();
 
     public Game(Socket s1, Socket s2, boolean singlePlayer) throws IOException {
@@ -25,7 +25,7 @@ public class Game {
         this.com1 = new Datagram(s1);
         if(s2 != null)
             this.com2 = new Datagram(s2);
-        this.log = new BufferedWriter(new FileWriter("Server" + Thread.currentThread().getName()  + ".log"));
+        this.log = new BufferedWriter(new FileWriter("Server-" + Thread.currentThread().getName()  + ".log"));
         this.state = State.INIT;
         this.cash1 = 10;
         this.cash2 = 10;
@@ -52,7 +52,9 @@ public class Game {
                         command = com.read_command();
                     } catch (IOException e) {
                         errorMessage = e.getMessage();
+
                         log.write("S: ERRO " + errorMessage.length() + errorMessage + "\n");
+                        log.flush();
                         com.sendErrorMessage(errorMessage, errorMessage.length());
                     }
                     if(command.equals("STRT")){
@@ -158,7 +160,7 @@ public class Game {
                             dTaken[sel-1] = 0;
                             rec.add(dices[sel-1]);
                         }
-                        log.write("C: TAKE " + id + len + selection_toString(rec) + "\n");
+                        log.write("C: TAKE " + id + " " + len + selection_toString(rec) + "\n");
                         Collections.sort(rec);
                         take_updater(rec);
                         throw_dices();
@@ -219,13 +221,24 @@ public class Game {
                                 log.write("S: ERRO " + errorMessage.length() + errorMessage + "\n");
                                 com.sendErrorMessage(errorMessage, errorMessage.length());
                             }
-                            dTaken[i] = 0;
-                            rec.add(sel);
+                            dTaken[sel-1] = 0;
+                            rec.add(dices[sel-1]);
                         }
-                        log.write("C: TAKE " + id + len + selection_toString(rec) + "\n");
+                        log.write("C: TAKE " + id + " " + len + selection_toString(rec) + "\n");
                         Collections.sort(rec);
                         take_updater(rec);
+                        throw_dices();
+                        log.write("S: DICE " + pID + " " + dices_toString() + "\n");
+                        try {
+                            com.dice(pID, dices);
+                        } catch (IOException e) {
+                            errorMessage = e.getMessage();
+                            log.write("S: ERRO " + errorMessage.length() + errorMessage + "\n");
+                            com.sendErrorMessage(errorMessage, errorMessage.length());
+                        }
+                        this.improveLast = true;
                         this.state = State.EXIT;
+
                     }else if(command.equals("PASS")){
                         try {
                             id = com.readNextInt();
@@ -250,9 +263,10 @@ public class Game {
                     finished = true;
                     break;
                 case EXIT:
+                    if(this.improveLast)
+                        improveSelection();
                     pPoints = getPoints();
-
-                    log.write("S: POINTS " + pID + pPoints + "\n");
+                    log.write("S: PNTS " + pID + " " + pPoints + "\n");
                     try {
                         com.points(pID, pPoints);
                     } catch (IOException e) {
@@ -293,16 +307,41 @@ public class Game {
         this.log.close();
     }
 
+    private void improveSelection(){
+        if(!ship && value_in_dices(6)){
+            this.ship = true;
+            dTaken[get_value_index(6)] = 0;
+            if(value_in_dices(5)) {
+                this.captain = true;
+                dTaken[get_value_index(5)] = 0;
+                if (value_in_dices(4)) {
+                    this.crew = true;
+                    dTaken[get_value_index(4)] = 0;
+                }
+            }
+        }else if(ship && !captain && value_in_dices(5)){
+            this.captain = true;
+            dTaken[get_value_index(5)] = 0;
+            if(value_in_dices(4)){
+                this.crew = true;
+                dTaken[get_value_index(4)] = 0;
+            }
+        }else if(ship && captain && !crew && value_in_dices(4)){
+            this.crew = true;
+            dTaken[get_value_index(4)] = 0;
+        }
+    }
+
     private int serverPlays() throws IOException {
 
         reset_taken_values();
         throw_dices();
         String sel = "";
-        log.write("S: DICE 1010 " + dices_toString());
+        log.write("S: DICE 1010 " + dices_toString() + "\n");
         for(int i=0; i < 2; i++) {
 
             if(random.nextInt(3)==0){
-                log.write("S: PASS 1010");
+                log.write("S: PASS 1010 \n");
                 break;
             }else{
                 if(!ship && value_in_dices(6)){
@@ -319,7 +358,7 @@ public class Game {
                             sel = "2 " + get_value_index(6) + " " + get_value_index(5);
                     }else
                         sel = "1 " + get_value_index(6);
-                }else if(ship && value_in_dices(5)){
+                }else if(ship && !captain && value_in_dices(5)){
                     this.captain = true;
                     dTaken[get_value_index(5)] = 0;
                     if(value_in_dices(4)){
@@ -328,17 +367,17 @@ public class Game {
                         sel = "2 " + get_value_index(5) + " " + get_value_index(4);
                     }else
                         sel = "1 " + get_value_index(5);
-                }else if(ship && captain && value_in_dices(4)){
+                }else if(ship && captain && !crew && value_in_dices(4)){
                     this.crew = true;
                     dTaken[get_value_index(4)] = 0;
                     sel = "1 " + get_value_index(4);
                 }
-                log.write("S: TAKE 1010 " + sel);
+                log.write("S: TAKE 1010 " + sel + "\n");
                 throw_dices();
-                log.write("S: DICE 1010 " + dices_toString());
+                log.write("S: DICE 1010 " + dices_toString() + "\n");
             }
         }
-        log.write("S: POINTS 1010 " + getPoints());
+        log.write("S: PNTS 1010 " + getPoints() + "\n");
         
         return getPoints();
     }
@@ -354,7 +393,7 @@ public class Game {
 
     private boolean value_in_dices(int c){
 
-        for(int i=0; i<6; i++){
+        for(int i=0; i<5; i++){
             if(dices[i] == c)
                 return true;
         }
@@ -363,7 +402,7 @@ public class Game {
 
     private int get_value_index(int c){
 
-        for(int i=0; i<6; i++){
+        for(int i=0; i<5; i++){
             if(dices[i] == c)
                 return i;
         }
@@ -377,16 +416,16 @@ public class Game {
             return 0;
         }
         else if(ship && captain && crew){
-            for(int i=0; i<6;i++){
-                if(dTaken[1] == -1)
-                    pnts += dices[i];
+            for(int i=0; i<5;i++){
+                pnts += dices[i];
             }
         }
-        return pnts;
+        return pnts-15;
     }
 
     private void reset_taken_values(){
 
+        this.improveLast = false;
         this.ship = this.captain = this.crew = false;
         this.dTaken = new int[]{-1, -1, -1, -1, -1};
     }
@@ -396,7 +435,7 @@ public class Game {
         String ret = "";
         for(int i=0; i< a.size(); i++){
 
-            ret = ret + " " + a;
+            ret = ret + " " + a.get(i);
         }
         return ret;
     }
@@ -434,7 +473,7 @@ public class Game {
     private String dices_toString(){
 
         String ret = "";
-        for(int i=0; i<6; i++){
+        for(int i=0; i<5; i++){
             ret = ret + " " + dices[i];
         }
         return ret;

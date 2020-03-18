@@ -3,7 +3,7 @@ package main;
 import java.io.IOException;
 import java.net.Socket;
 
-public class GameThread extends Thread {
+public class GameThread implements Runnable{
 
     private Game game;
 
@@ -12,9 +12,7 @@ public class GameThread extends Thread {
         game = new Game(s1, s2, sp);
     }
 
-    @Override
-    public synchronized void start() {
-        super.start();
+    public void run(){
         try {
             game.run();
         } catch (IOException e) {
