@@ -28,13 +28,14 @@ public class Game {
             this.com2 = new Datagram(s2);
             this.com2.setWinValue(1);
         }
-
-        // REMOVE ---------- ONLY FOR DEBUGGING PURPOSES ----------
+        // Original .log file name format was "Server-"Thread.currentThread().getName(). This caused the log file to have
+        // always the same name (Server-main.log). Therefore to avoid overwriting older logs and to better match each log to
+        // its thread, its been change to the current format.
         Date asd = new Date();
-        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy_HH.mm.ss");
 
-        this.log = new BufferedWriter(new FileWriter("Server-" + Thread.currentThread().getName()
-                + "-" + formatter.format(asd).toString().replace(" ", "_").replace(":", "-") +".log"));
+        this.log = new BufferedWriter(new FileWriter("Server_thread" + Thread.currentThread().getId() + "_"
+                + formatter.format(asd).toString() + ".log"));
         this.state = State.INIT;
         this.players = players;
         this.singlePlayer = singlePlayer;
@@ -195,6 +196,7 @@ public class Game {
                             com.sendErrorMessage(errorMessage, errorMessage.length());
                         }
                         ArrayList<Integer> rec = new ArrayList();
+                        ArrayList<Integer> rec2 = new ArrayList();
                         for(int i =0; i<len; i++){
                             try {
                                 sel = com.read_next_int_in_bytes();
@@ -206,10 +208,11 @@ public class Game {
                             }
                             dTaken[sel-1] = 0;
                             rec.add(sel);
+                            rec2.add(dices[sel-1]);
                         }
                         log.write("C" + clientNumber + ": TAKE " + id + " " + len + selection_toString(rec) + "\n");
-                        Collections.sort(rec);
-                        take_updater(rec);
+                        Collections.sort(rec2, Collections.<Integer>reverseOrder());
+                        take_updater(rec2);
                         throw_dices();
                         log.write("S: DICE " + pID + dices_toString() + "\n");
                         try {
@@ -232,7 +235,7 @@ public class Game {
                             com.sendErrorMessage(errorMessage, errorMessage.length());
                         }
                         log.write("S: PASS " + id + "\n");
-                        take_updater(arrayToArrayList(dices));
+                        //take_updater(arrayToArrayList(dices));
                         this.state = State.EXIT;
                     }else if (command.equals("EXIT")){
                         log.write("C" + clientNumber + ": EXIT\n");
@@ -264,6 +267,7 @@ public class Game {
                             com.sendErrorMessage(errorMessage, errorMessage.length());
                         }
                         ArrayList<Integer> rec = new ArrayList();
+                        ArrayList<Integer> rec2 = new ArrayList();
                         for(int i =0; i<len; i++){
                             try {
                                 sel = com.read_next_int_in_bytes();
@@ -275,10 +279,11 @@ public class Game {
                             }
                             dTaken[sel-1] = 0;
                             rec.add(sel);
+                            rec2.add(dices[sel-1]);
                         }
                         log.write("C" + clientNumber + ": TAKE " + id + " " + len + selection_toString(rec) + "\n");
-                        Collections.sort(rec);
-                        take_updater(rec);
+                        Collections.sort(rec2, Collections.<Integer>reverseOrder());
+                        take_updater(rec2);
                         throw_dices();
                         log.write("S: DICE " + pID + dices_toString() + "\n");
                         try {
@@ -301,7 +306,7 @@ public class Game {
                             log.flush();
                             com.sendErrorMessage(errorMessage, errorMessage.length());
                         }
-                        take_updater(arrayToArrayList(dices));
+                        //take_updater(arrayToArrayList(dices));
                         log.write("S: PASS " + id + "\n");
                         this.state = State.EXIT;
                     }else if(command.equals("EXIT")){
@@ -454,7 +459,6 @@ public class Game {
                     }
                     pool = 0;
                 }
-                // Manage in case someone disconnects
             }
         }
         this.log.close();
