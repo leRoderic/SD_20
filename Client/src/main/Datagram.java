@@ -125,8 +125,8 @@ public class Datagram {
     public void read_int() throws  IOException{
         utils.read_int32();
     }
-    public void read_char() throws  IOException{
-        utils.read_char();
+    public String  read_char() throws  IOException{
+        return utils.read_char();
     }
     public byte[] read_byte(int n) throws  IOException{
         return utils.read_bytes(n);
@@ -147,7 +147,7 @@ public class Datagram {
         return dice;
     }
 
-    public int[] read_take() throws IOException {
+    /*public int[] read_take() throws IOException {
 
         int[] numbers = new int[0];
         utils.read_string();//comanda
@@ -164,7 +164,7 @@ public class Datagram {
         }
 
         return numbers;
-    }
+    }*/
 
     public byte[] int32ToBytes(int number, ComUtils.Endianness endianness){
         return utils.int32ToBytes(number, endianness);

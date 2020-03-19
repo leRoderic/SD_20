@@ -60,6 +60,16 @@ public class Menu {
         points = sc.nextInt();
         return points;
     }
+    public int[] read_take(){
+        int len = 0;
+        len = sc.nextInt();
+        int[] numbers = new int[len];
+        for(int i = 0; i<len; i++){
+            int id = sc.nextInt();
+            numbers[i] = id;
+        }
+        return numbers;
+    }
     public String read_next_command(){
         String comand = "";
 

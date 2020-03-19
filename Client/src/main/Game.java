@@ -2,8 +2,9 @@ package main;
 
 import utils.ComUtils;
 
-import java.io.*;
+import java.io.IOException;
 import java.util.Random;
+import java.util.Scanner;
 
 
 public class Game {
@@ -15,6 +16,8 @@ public class Game {
     private int idCliente;
     private Random random = new Random();
     private boolean takeShip = false, takeCaptain = false, takeCrew = false;
+    private Scanner sc =new Scanner(System.in);
+    private String turno = "";
 
     public Game(Datagram datagram, Menu menu, int mode){
         this.datagram = datagram;
@@ -40,8 +43,7 @@ public class Game {
 
         if(mode == 0){
             idCliente = menu.getClientID();
-            String c = menu.read_next_command();
-            if(c.equals("STRT")){
+            if(sc.next().equals("STRT")){
                 try {
                     datagram.strt(idCliente);
                 } catch (IOException e) {
@@ -59,23 +61,30 @@ public class Game {
 
         while (isPartida()) {
             if (mode == 0) {
-
                 try {
                     comanda = datagram.read_command();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                String com = menu.read_next_command();
                 if (comanda.equals("CASH")) {
-                    if (com.equals("BET")) {
+                    System.out.println(comanda);
+                    try {
+                        datagram.read_space();
+                        datagram.read_int();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    if (sc.next().equals("BET")) {
                         try {
                             datagram.bett();
+                            System.out.println("Bet enviat");
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
-                    } else if (com.equals("EXIT")) {
+                    } else if (sc.next().equals("EXIT")) {
                         try {
                             datagram.exit();
+                            System.out.println("Exit enviat");
                             this.setPartida(false);
                         } catch (IOException e) {
                             e.printStackTrace();
@@ -84,40 +93,114 @@ public class Game {
                     } else {
                         System.exit(1);
                     }
-                } else if (comanda.equals("LOOT") || comanda.equals("PLAY") || comanda.equals("PNTS")) {
-                    if (com.equals("EXIT")) {
+                } else if (comanda.equals("LOOT")) {
+                    System.out.println(comanda);
+                    try {
+                        datagram.read_space();
+                        datagram.read_int();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    if (sc.next().equals("EXIT")) {
                         try {
                             datagram.exit();
+                            System.out.println("Exit enviat");
                             this.setPartida(false);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
-                    } else {
-                        System.exit(1);
                     }
+                } else if(comanda.equals("PLAY")){
+                    System.out.println(comanda);
+                    try {
+                        datagram.read_space();
+                        datagram.read_char();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    if (sc.next().equals("EXIT")) {
+                        try {
+                            datagram.exit();
+                            System.out.println("Exit enviat");
+                            this.setPartida(false);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
                 } else if (comanda.equals("DICE")) {
-                    if (com.equals("PASS")) {
+                    int[] dices = new int[5];
+                    try {
+                        dices = datagram.read_dice();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    for(int i = 0; i<dices.length; i++){
+                        System.out.println(dices[i]);
+                    }
+                    if (sc.next().equals("PASS")) {
                         try {
                             datagram.pass(idCliente);
+                            System.out.println("Pass enviat");
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
-                    } else if (com.equals("EXIT")) {
+                    } else if (sc.next().equals("EXIT")) {
                         try {
                             datagram.exit();
+                            System.out.println("Exit enviat");
                             this.setPartida(false);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
-                    } else if (com.equals("TAKE")) {
-                        /*try {
-                            datagram.take(idCliente,);
+                    } else if (sc.next().equals("TAKE")) {
+                        int[] numbers;
+                        numbers = this.read_take();
+                        try {
+                            datagram.take(idCliente,numbers);
+                            System.out.println("Take enviat");
                         } catch (IOException e) {
                             e.printStackTrace();
-                        }*/
+                        }
                     } else {
                         System.exit(1);
                     }
+                } else if(comanda.equals("PNTS")){
+                    try {
+                        datagram.read_space();
+                        datagram.read_int();
+                        datagram.read_space();
+                        datagram.read_byte(1);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    if (sc.next().equals("EXIT")) {
+                        try {
+                            datagram.exit();
+                            System.out.println("Exit enviat");
+                            this.setPartida(false);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                } else if(comanda.equals("WINS")){
+                    try {
+                        datagram.read_space();
+                        datagram.read_char();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    if (sc.next().equals("EXIT")) {
+                        try {
+                            datagram.exit();
+                            System.out.println("Exit enviat");
+                            this.setPartida(false);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
                 }
             }
             //mode aleatori
@@ -153,12 +236,13 @@ public class Game {
                 else if (comanda.equals("PLAY")) {
                     try {
                         datagram.read_space();
-                        datagram.read_char();
+                        turno = datagram.read_char();
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
                     System.out.println(comanda);
                 }
+                //if(turno.equals("0")){
                 else if (comanda.equals("DICE")) {
                     System.out.println(comanda);
                     int[] dice = new int[5];
@@ -329,4 +413,15 @@ public class Game {
             }
         }
     }
+    public int[] read_take(){
+        int len = 0;
+        len = sc.nextInt();
+        int[] numbers = new int[len];
+        for(int i = 0; i<len; i++){
+            int id = sc.nextInt();
+            numbers[i] = id;
+        }
+        return numbers;
+    }
+
 }
