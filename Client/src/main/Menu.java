@@ -55,39 +55,6 @@ public class Menu {
         return com;
     }
 
-    public int read_int(){
-        int points = 0;
-        points = sc.nextInt();
-        return points;
-    }
-    public int[] read_take(){
-        int len = 0;
-        len = sc.nextInt();
-        int[] numbers = new int[len];
-        for(int i = 0; i<len; i++){
-            int id = sc.nextInt();
-            numbers[i] = id;
-        }
-        return numbers;
-    }
-    public String read_next_command(){
-        String comand = "";
-
-        String next = sc.next();
-        if ("START".equals(next)) {
-            comand = "START";
-        } else if ("BETT".equals(next)) {
-            comand = "BETT";
-        } else if ("TAKE".equals(next)) {
-            comand = "TAKE";
-        } else if ("PASS".equals(next)) {
-            comand = "PASS";
-        } else if ("EXIT".equals(next)) {
-            comand = "EXIT";
-        }
-        return comand;
-    }
-
     public void show_dices(){
 
         System.out.println("Current roll values are: " + CYAN + RESET);

@@ -46,6 +46,7 @@ public class Game {
             if(sc.next().equals("STRT")){
                 try {
                     datagram.strt(idCliente);
+                    System.out.println("Start enviat");
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -53,13 +54,14 @@ public class Game {
         }
         if(mode == 1) {
             try {
-                datagram.strt(9999);
+                datagram.strt(9999);//id por defecto: 9999
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
 
         while (isPartida()) {
+            //modo manual
             if (mode == 0) {
                 try {
                     comanda = datagram.read_command();
@@ -400,7 +402,7 @@ public class Game {
                             datagram.read_char();
                             System.out.println(comanda);
                             try {
-                                Thread.sleep(4000);
+                                Thread.sleep(4000);//comentarlo con la profe
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
                             }

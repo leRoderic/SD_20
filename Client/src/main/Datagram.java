@@ -147,24 +147,6 @@ public class Datagram {
         return dice;
     }
 
-    /*public int[] read_take() throws IOException {
-
-        int[] numbers = new int[0];
-        utils.read_string();//comanda
-        utils.read_space();
-        utils.read_int32();//ID
-        utils.read_space();
-        int lenBytes = utils.read_int32();//Len
-
-
-
-        for(int i = 0; i < lenBytes; i++){
-            byte[] take = utils.read_bytes(4);
-            numbers[i] = utils.bytesToInt32(take, ComUtils.Endianness.BIG_ENNDIAN);
-        }
-
-        return numbers;
-    }*/
 
     public byte[] int32ToBytes(int number, ComUtils.Endianness endianness){
         return utils.int32ToBytes(number, endianness);
