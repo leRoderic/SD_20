@@ -19,6 +19,7 @@ public class Game {
     private boolean captain, ship, crew, improveLast;
     private Random random = new Random();
     private HashMap<Integer, Integer> players;
+    private final int UKNWN_LIMIT = 3;
 
     public Game(Socket s1, Socket s2, boolean singlePlayer, HashMap<Integer, Integer> players) throws IOException {
 
@@ -48,7 +49,7 @@ public class Game {
         int pool = 0;
         String command = "";
         String errorMessage = "";
-        int pID = -1;
+        int pID = -1, stpdCounter = 0;
         int len = 0, sel = 0, id = 0, cCash = 0;
         int pPoints = 0, sPoints = 0;
         boolean finished = false;
@@ -68,6 +69,7 @@ public class Game {
                         com.sendErrorMessage(errorMessage, errorMessage.length());
                     }
                     if(command.equals("STRT")){
+                        stpdCounter = 0;
                         try {
                             pID = com.readNextInt();
                         } catch (Exception e) {
@@ -98,6 +100,7 @@ public class Game {
                         }
 
                     }else if(command.equals("EXIT")){
+                        stpdCounter = 0;
                         log.write("C" + clientNumber + ": EXIT\n");
                         this.state = State.QUIT;
                     }else{
@@ -105,6 +108,10 @@ public class Game {
                         log.write("S: ERRO " + errorMessage.length() + " " + errorMessage + "\n");
                         log.flush();
                         com.sendErrorMessage(errorMessage, errorMessage.length());
+                        stpdCounter++;
+                        if(stpdCounter >= UKNWN_LIMIT){
+                            this.state = State.QUIT;
+                        }
                     }
                     break;
                 case BETT:
@@ -133,6 +140,7 @@ public class Game {
                         }
                     }
                     if(command.equals("BETT")){
+                        stpdCounter = 0;
                         cCash -= 2;
                         pool += 4;
                         log.write("C" + clientNumber + ": BETT\n");
@@ -167,6 +175,7 @@ public class Game {
                         }
                         this.state = State.ROLL1;
                     }else if (command.equals("EXIT")){
+                        stpdCounter = 0;
                         log.write("C" + clientNumber + ": EXIT\n");
                         this.state = State.QUIT;
                     }else {
@@ -174,6 +183,10 @@ public class Game {
                         log.write("S: ERRO " + errorMessage.length() + " " + errorMessage + "\n");
                         log.flush();
                         com.sendErrorMessage(errorMessage, errorMessage.length());
+                        stpdCounter++;
+                        if(stpdCounter >= UKNWN_LIMIT){
+                            this.state = State.QUIT;
+                        }
                     }
                     break;
                 case ROLL1:
@@ -186,6 +199,7 @@ public class Game {
                         com.sendErrorMessage(errorMessage, errorMessage.length());
                     }
                     if(command.equals("TAKE")){
+                        stpdCounter = 0;
                         try {
                             id = com.readNextInt();
                             len = com.read_next_int_in_bytes();
@@ -226,6 +240,7 @@ public class Game {
                         this.state = State.ROLL2;
 
                     }else if(command.equals("PASS")){
+                        stpdCounter = 0;
                         try {
                             id = com.readNextInt();
                         } catch (Exception e) {
@@ -238,6 +253,7 @@ public class Game {
                         //take_updater(arrayToArrayList(dices));
                         this.state = State.EXIT;
                     }else if (command.equals("EXIT")){
+                        stpdCounter = 0;
                         log.write("C" + clientNumber + ": EXIT\n");
                         this.state = State.QUIT;
                         break;
@@ -245,6 +261,10 @@ public class Game {
                         errorMessage = "Command not understood";
                         log.write("S: ERRO " + errorMessage.length() + " " + errorMessage + "\n");
                         com.sendErrorMessage(errorMessage, errorMessage.length());
+                        stpdCounter++;
+                        if(stpdCounter >= UKNWN_LIMIT){
+                            this.state = State.QUIT;
+                        }
                     }
                     break;
                 case ROLL2:
@@ -257,6 +277,7 @@ public class Game {
                         com.sendErrorMessage(errorMessage, errorMessage.length());
                     }
                     if(command.equals("TAKE")){
+                        stpdCounter = 0;
                         try {
                             id = com.readNextInt();
                             len = com.read_next_int_in_bytes();
@@ -298,6 +319,7 @@ public class Game {
                         this.state = State.EXIT;
 
                     }else if(command.equals("PASS")){
+                        stpdCounter = 0;
                         try {
                             id = com.readNextInt();
                         } catch (Exception e) {
@@ -317,9 +339,19 @@ public class Game {
                         log.write("S: ERRO " + errorMessage.length() + " " + errorMessage + "\n");
                         log.flush();
                         com.sendErrorMessage(errorMessage, errorMessage.length());
+                        stpdCounter++;
+                        if(stpdCounter >= UKNWN_LIMIT){
+                            this.state = State.QUIT;
+                        }
                     }
                     break;
                 case QUIT:
+                    if(stpdCounter >= UKNWN_LIMIT){
+                        errorMessage = "Finishing game due to unknown command received several times";
+                        log.write("S: ERRO " + errorMessage.length() + " " + errorMessage + "\n");
+                        log.flush();
+                        com.sendErrorMessage(errorMessage, errorMessage.length());
+                    }
                     finished = true;
                     break;
                 case EXIT:
@@ -390,7 +422,7 @@ public class Game {
                 fCom = this.com2;
                 sCom = this.com1;
             }
-
+                // COMO ACABAR EL BUCLE???? RETURN -1 DE PUNTOS JUGADOR??
             while(true){
                 pool += 4;
 
