@@ -122,8 +122,8 @@ public class Datagram {
     public void read_space() throws  IOException{
         utils.read_space();
     }
-    public void read_int() throws  IOException{
-        utils.read_int32();
+    public int read_int() throws  IOException{
+        return utils.read_int32();
     }
     public String  read_char() throws  IOException{
         return utils.read_char();
@@ -156,12 +156,24 @@ public class Datagram {
         return utils.bytesToInt32(number, endianness);
     }
 
+    public void sendErrorMessage(String text, int len) throws IOException {
+
+        // Format: ERRO <LEN> <ERROR_TEXT>
+        String c = Command.ERRO.name();
+        utils.write_string(c);
+        utils.write_space();
+        utils.write_char((char) (len + '0'));
+        utils.write_space();
+        utils.write_string_variable(len, text);
+
+    }
 
     private enum Command {
         STRT,
         BETT,
         TAKE,
         PASS,
-        EXIT
+        EXIT,
+        ERRO
     }
 }
