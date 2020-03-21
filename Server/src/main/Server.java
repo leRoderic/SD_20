@@ -93,6 +93,7 @@ public class Server {
                 singlePlayer = false;
 
             try {
+                //System.out.println(InetAddress.getLocalHost().toString().split("/")[1]);
                 InetAddress address = InetAddress.getByName("25.98.169.216"); //InetAddress.getLocalHost();
                 server = new ServerSocket(serverPort, 50, address);
                 System.out.println("Info> Server ready with IP " + server.getInetAddress().toString().split("/")[1] +

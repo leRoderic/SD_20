@@ -213,6 +213,12 @@ public class ComUtils {
         bStr = read_bytes(1);
     }
 
+    /**
+     * Read space + integer.
+     *
+     * @return read int
+     * @throws IOException e
+     */
     public int read_nextInt() throws IOException {
 
         read_space();
@@ -252,7 +258,7 @@ public class ComUtils {
      * @param endianness final endiannness
      * @return the integer converted
      */
-    private int bytesToInt32(byte bytes[], Endianness endianness) {
+    public int bytesToInt32(byte bytes[], Endianness endianness) {
 
         int number;
 
@@ -274,7 +280,7 @@ public class ComUtils {
      * @return whatever has been read
      * @throws IOException excep
      */
-    private byte[] read_bytes(int numBytes) throws IOException {
+    public byte[] read_bytes(int numBytes) throws IOException {
 
         int len = 0;
         byte bStr[] = new byte[numBytes];
@@ -288,6 +294,12 @@ public class ComUtils {
         return bStr;
     }
 
+    /**
+     * Reads space + integer and returns it in bytes.
+     *
+     * @return
+     * @throws IOException
+     */
     public int read_next_int_in_bytes() throws IOException {
 
         read_space();
