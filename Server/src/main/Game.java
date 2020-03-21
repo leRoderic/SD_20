@@ -64,17 +64,18 @@ public class Game {
                     } catch (Exception e) {
                         errorMessage = e.getMessage();
 
-                        log.write("S: ERRO " + errorMessage.length() + " " + errorMessage + "\n");
+                        log.write("S: ERRO '" + errorMessage.length() + "' " + errorMessage + "\n");
                         log.flush();
                         com.sendErrorMessage(errorMessage, errorMessage.length());
                     }
+                    command = "ASD";
                     if(command.equals("STRT")){
                         stpdCounter = 0;
                         try {
                             pID = com.readNextInt();
                         } catch (Exception e) {
                             errorMessage = e.getMessage();
-                            log.write("S: ERRO " + errorMessage.length() + " " + errorMessage + "\n");
+                            log.write("S: ERRO '" + errorMessage.length() + "' " + errorMessage + "\n");
                             log.flush();
                             com.sendErrorMessage(errorMessage, errorMessage.length());
                         }
@@ -94,7 +95,7 @@ public class Game {
                             com.cash(cCash);
                         } catch (Exception e) {
                             errorMessage = e.getMessage();
-                            log.write("S: ERRO " + errorMessage.length() + " " + errorMessage + "\n");
+                            log.write("S: ERRO '" + errorMessage.length() + "' " + errorMessage + "\n");
                             log.flush();
                             com.sendErrorMessage(errorMessage, errorMessage.length());
                         }
@@ -105,7 +106,7 @@ public class Game {
                         this.state = State.QUIT;
                     }else{
                         errorMessage = "Command not understood";
-                        log.write("S: ERRO " + errorMessage.length() + " " + errorMessage + "\n");
+                        log.write("S: ERRO '" + errorMessage.length() + "' " + errorMessage + "\n");
                         log.flush();
                         com.sendErrorMessage(errorMessage, errorMessage.length());
                         stpdCounter++;
@@ -134,7 +135,7 @@ public class Game {
                             finished = true;
                         }else {
                             errorMessage = e.getMessage();
-                            log.write("S: ERRO " + errorMessage.length() + " " + errorMessage + "\n");
+                            log.write("S: ERRO '" + errorMessage.length() + "' " + errorMessage + "\n");
                             log.flush();
                             com.sendErrorMessage(errorMessage, errorMessage.length());
                         }
@@ -149,16 +150,16 @@ public class Game {
                             com.loot(2);
                         } catch (Exception e) {
                             errorMessage = e.getMessage();
-                            log.write("S: ERRO " + errorMessage.length() + " " + errorMessage + "\n");
+                            log.write("S: ERRO '" + errorMessage.length() + "' " + errorMessage + "\n");
                             log.flush();
                             com.sendErrorMessage(errorMessage, errorMessage.length());
                         }
-                        log.write("S: PLAY " + com.getWinValue() + " \n");
+                        log.write("S: PLAY '" + com.getWinValue() + "' \n");
                         try {
                             com.play(com.getWinValue());
                         } catch (Exception e) {
                             errorMessage = e.getMessage();
-                            log.write("S: ERRO " + errorMessage.length() + " " + errorMessage + "\n");
+                            log.write("S: ERRO '" + errorMessage.length() + "' " + errorMessage + "\n");
                             log.flush();
                             com.sendErrorMessage(errorMessage, errorMessage.length());
                         }
@@ -169,7 +170,7 @@ public class Game {
                             com.dice(pID, dices);
                         } catch (Exception e) {
                             errorMessage = e.getMessage();
-                            log.write("S: ERRO " + errorMessage.length() + " " + errorMessage + "\n");
+                            log.write("S: ERRO '" + errorMessage.length() + "' " + errorMessage + "\n");
                             log.flush();
                             com.sendErrorMessage(errorMessage, errorMessage.length());
                         }
@@ -180,7 +181,7 @@ public class Game {
                         this.state = State.QUIT;
                     }else {
                         errorMessage = "Command not understood";
-                        log.write("S: ERRO " + errorMessage.length() + " " + errorMessage + "\n");
+                        log.write("S: ERRO '" + errorMessage.length() + "' " + errorMessage + "\n");
                         log.flush();
                         com.sendErrorMessage(errorMessage, errorMessage.length());
                         stpdCounter++;
@@ -194,7 +195,7 @@ public class Game {
                         command = com.read_command();
                     } catch (Exception e) {
                         errorMessage = e.getMessage();
-                        log.write("S: ERRO " + errorMessage.length() + " " + errorMessage + "\n");
+                        log.write("S: ERRO '" + errorMessage.length() + "' " + errorMessage + "\n");
                         log.flush();
                         com.sendErrorMessage(errorMessage, errorMessage.length());
                     }
@@ -205,7 +206,7 @@ public class Game {
                             len = com.read_next_int_in_bytes();
                         } catch (Exception e) {
                             errorMessage = e.getMessage();
-                            log.write("S: ERRO " + errorMessage.length() + " " + errorMessage + "\n");
+                            log.write("S: ERRO '" + errorMessage.length() + "' " + errorMessage + "\n");
                             log.flush();
                             com.sendErrorMessage(errorMessage, errorMessage.length());
                         }
@@ -216,7 +217,7 @@ public class Game {
                                 sel = com.read_next_int_in_bytes();
                             } catch (Exception e) {
                                 errorMessage = e.getMessage();
-                                log.write("S: ERRO " + errorMessage.length() + " " + errorMessage + "\n");
+                                log.write("S: ERRO '" + errorMessage.length() + "' " + errorMessage + "\n");
                                 log.flush();
                                 com.sendErrorMessage(errorMessage, errorMessage.length());
                             }
@@ -224,7 +225,7 @@ public class Game {
                             rec.add(sel);
                             rec2.add(dices[sel-1]);
                         }
-                        log.write("C" + clientNumber + ": TAKE " + id + " " + len + selection_toString(rec) + "\n");
+                        log.write("C" + clientNumber + ": TAKE " + id + " 0x0" + len + selection_toString(rec) + "\n");
                         Collections.sort(rec2, Collections.<Integer>reverseOrder());
                         take_updater(rec2);
                         throw_dices();
@@ -233,7 +234,7 @@ public class Game {
                             com.dice(pID, dices);
                         } catch (Exception e) {
                             errorMessage = e.getMessage();
-                            log.write("S: ERRO " + errorMessage.length() + " " + errorMessage + "\n");
+                            log.write("S: ERRO '" + errorMessage.length() + "' " + errorMessage + "\n");
                             log.flush();
                             com.sendErrorMessage(errorMessage, errorMessage.length());
                         }
@@ -245,12 +246,11 @@ public class Game {
                             id = com.readNextInt();
                         } catch (Exception e) {
                             errorMessage = e.getMessage();
-                            log.write("S: ERRO " + errorMessage.length() + " " + errorMessage + "\n");
+                            log.write("S: ERRO '" + errorMessage.length() + "' " + errorMessage + "\n");
                             log.flush();
                             com.sendErrorMessage(errorMessage, errorMessage.length());
                         }
                         log.write("S: PASS " + id + "\n");
-                        //take_updater(arrayToArrayList(dices));
                         this.state = State.EXIT;
                     }else if (command.equals("EXIT")){
                         stpdCounter = 0;
@@ -259,7 +259,7 @@ public class Game {
                         break;
                     }else{
                         errorMessage = "Command not understood";
-                        log.write("S: ERRO " + errorMessage.length() + " " + errorMessage + "\n");
+                        log.write("S: ERRO '" + errorMessage.length() + "' " + errorMessage + "\n");
                         com.sendErrorMessage(errorMessage, errorMessage.length());
                         stpdCounter++;
                         if(stpdCounter >= UKNWN_LIMIT){
@@ -272,7 +272,7 @@ public class Game {
                         command = com.read_command();
                     } catch (Exception e) {
                         errorMessage = e.getMessage();
-                        log.write("S: ERRO " + errorMessage.length() + " " + errorMessage + "\n");
+                        log.write("S: ERRO '" + errorMessage.length() + "' " + errorMessage + "\n");
                         log.flush();
                         com.sendErrorMessage(errorMessage, errorMessage.length());
                     }
@@ -283,7 +283,7 @@ public class Game {
                             len = com.read_next_int_in_bytes();
                         } catch (Exception e) {
                             errorMessage = e.getMessage();
-                            log.write("S: ERRO " + errorMessage.length() + " " + errorMessage + "\n");
+                            log.write("S: ERRO '" + errorMessage.length() + "' " + errorMessage + "\n");
                             log.flush();
                             com.sendErrorMessage(errorMessage, errorMessage.length());
                         }
@@ -294,7 +294,7 @@ public class Game {
                                 sel = com.read_next_int_in_bytes();
                             } catch (Exception e) {
                                 errorMessage = e.getMessage();
-                                log.write("S: ERRO " + errorMessage.length() + " " + errorMessage + "\n");
+                                log.write("S: ERRO '" + errorMessage.length() + "' " + errorMessage + "\n");
                                 log.flush();
                                 com.sendErrorMessage(errorMessage, errorMessage.length());
                             }
@@ -302,7 +302,7 @@ public class Game {
                             rec.add(sel);
                             rec2.add(dices[sel-1]);
                         }
-                        log.write("C" + clientNumber + ": TAKE " + id + " " + len + selection_toString(rec) + "\n");
+                        log.write("C" + clientNumber + ": TAKE " + id + " 0x0" + len + selection_toString(rec) + "\n");
                         Collections.sort(rec2, Collections.<Integer>reverseOrder());
                         take_updater(rec2);
                         throw_dices();
@@ -311,7 +311,7 @@ public class Game {
                             com.dice(pID, dices);
                         } catch (Exception e) {
                             errorMessage = e.getMessage();
-                            log.write("S: ERRO " + errorMessage.length() + " " + errorMessage + "\n");
+                            log.write("S: ERRO '" + errorMessage.length() + "' " + errorMessage + "\n");
                             log.flush();
                             com.sendErrorMessage(errorMessage, errorMessage.length());
                         }
@@ -324,11 +324,10 @@ public class Game {
                             id = com.readNextInt();
                         } catch (Exception e) {
                             errorMessage = e.getMessage();
-                            log.write("S: ERRO " + errorMessage.length() + " " + errorMessage + "\n");
+                            log.write("S: ERRO '" + errorMessage.length() + "' " + errorMessage + "\n");
                             log.flush();
                             com.sendErrorMessage(errorMessage, errorMessage.length());
                         }
-                        //take_updater(arrayToArrayList(dices));
                         log.write("S: PASS " + id + "\n");
                         this.state = State.EXIT;
                     }else if(command.equals("EXIT")){
@@ -336,7 +335,7 @@ public class Game {
                         this.state = State.QUIT;
                     }else{
                         errorMessage = "Command not understood";
-                        log.write("S: ERRO " + errorMessage.length() + " " + errorMessage + "\n");
+                        log.write("S: ERRO '" + errorMessage.length() + "' " + errorMessage + "\n");
                         log.flush();
                         com.sendErrorMessage(errorMessage, errorMessage.length());
                         stpdCounter++;
@@ -348,7 +347,7 @@ public class Game {
                 case QUIT:
                     if(stpdCounter >= UKNWN_LIMIT){
                         errorMessage = "Finishing game due to unknown command received several times";
-                        log.write("S: ERRO " + errorMessage.length() + " " + errorMessage + "\n");
+                        log.write("S: ERRO '" + errorMessage.length() + "' " + errorMessage + "\n");
                         log.flush();
                         com.sendErrorMessage(errorMessage, errorMessage.length());
                     }
@@ -363,7 +362,7 @@ public class Game {
                         com.points(pID, pPoints);
                     } catch (Exception e) {
                         errorMessage = e.getMessage();
-                        log.write("S: ERRO " + errorMessage.length() + " " + errorMessage + "\n");
+                        log.write("S: ERRO '" + errorMessage.length() + "' " + errorMessage + "\n");
                         log.flush();
                         com.sendErrorMessage(errorMessage, errorMessage.length());
                     }
@@ -383,11 +382,11 @@ public class Game {
                     }
                     pool = 0;
                     try {
-                        log.write("S: WINS " + win + "\n");
+                        log.write("S: WINS '" + win + "'\n");
                         com.wins(win);
                     } catch (Exception e) {
                         errorMessage = e.getMessage();
-                        log.write("S: ERRO " + errorMessage.length() + " " + errorMessage + "\n");
+                        log.write("S: ERRO '" + errorMessage.length() + "' " + errorMessage + "\n");
                         log.flush();
                         com.sendErrorMessage(errorMessage, errorMessage.length());
                     }
@@ -396,7 +395,7 @@ public class Game {
                         com.cash(cCash);
                     } catch (Exception e) {
                         errorMessage = e.getMessage();
-                        log.write("S: ERRO " + errorMessage.length() + " " + errorMessage + "\n");
+                        log.write("S: ERRO '" + errorMessage.length() + "' " + errorMessage + "\n");
                         log.flush();
                         com.sendErrorMessage(errorMessage, errorMessage.length());
                     }
@@ -418,6 +417,7 @@ public class Game {
         int fID = 0, sID = 0;
         int fPoints = 0, sPoints = 0;
         int pool = 0, cCash1 = 0, cCash2 = 0;
+        boolean fComExit = false, sComExit = false;
         String errorMessage = "";
 
         if(this.singlePlayer){
@@ -431,28 +431,38 @@ public class Game {
                 fCom = this.com2;
                 sCom = this.com1;
             }
-                // COMO ACABAR EL BUCLE???? RETURN -1 DE PUNTOS JUGADOR??
-            while(this.com1.isConnected() && this.com2.isConnected()){
+
+            while(true){
                 pool += 4;
 
                 ret = one_player(fCom,false, Integer.toString(fCom.getWinValue()+ 1));
                 this.state = State.INIT;
-                fID = ret[0];
-                fPoints = ret[1];
+                if(ret == null){
+                    fComExit = true;
+                    break;
+                }else{
+                    fID = ret[0];
+                    fPoints = ret[1];
+                }
                 ret = one_player(sCom,false, Integer.toString(sCom.getWinValue()+ 1));
                 this.state = State.INIT;
-                sID = ret[0];
-                sPoints = ret[1];
+                if(ret == null){
+                    sComExit = true;
+                    break;
+                }else{
+                    sID = ret[0];
+                    sPoints = ret[1];
+                }
 
                 if (fPoints > sPoints) {
                     try {
-                        log.write("S: WINS " + fCom.getWinValue() + "\n");
-                        log.write("S: WINS " + fCom.getWinValue() + "\n");
+                        log.write("S: WINS '" + fCom.getWinValue() + "'\n");
+                        log.write("S: WINS '" + fCom.getWinValue() + "'\n");
                         fCom.wins(fCom.getWinValue());
                         sCom.wins(fCom.getWinValue());
                     } catch (Exception e) {
                         errorMessage = e.getMessage();
-                        log.write("S: ERRO " + errorMessage.length() + " " + errorMessage + "\n");
+                        log.write("S: ERRO '" + errorMessage.length() + "' " + errorMessage + "\n");
                         log.flush();
                         fCom.sendErrorMessage(errorMessage, errorMessage.length());
                         sCom.sendErrorMessage(errorMessage, errorMessage.length());
@@ -469,13 +479,13 @@ public class Game {
                     sCom = tCom;
                 }else if (sPoints > fPoints) {
                     try {
-                        log.write("S: WINS " + sCom.getWinValue() + "\n");
-                        log.write("S: WINS " + sCom.getWinValue() + "\n");
+                        log.write("S: WINS '" + sCom.getWinValue() + "'\n");
+                        log.write("S: WINS '" + sCom.getWinValue() + "'\n");
                         fCom.wins(sCom.getWinValue());
                         sCom.wins(sCom.getWinValue());
                     } catch (Exception e) {
                         errorMessage = e.getMessage();
-                        log.write("S: ERRO " + errorMessage.length() + errorMessage + "\n");
+                        log.write("S: ERRO '" + errorMessage.length() + "' " + errorMessage + "\n");
                         log.flush();
                         fCom.sendErrorMessage(errorMessage, errorMessage.length());
                         sCom.sendErrorMessage(errorMessage, errorMessage.length());
@@ -488,13 +498,13 @@ public class Game {
                     pool = 0;
                 }else if (sPoints == fPoints) {
                     try {
-                        log.write("S: WINS " + 2 + "\n");
-                        log.write("S: WINS " + 2 + "\n");
+                        log.write("S: WINS '" + 2 + "'\n");
+                        log.write("S: WINS '" + 2 + "'\n");
                         fCom.wins(2);
                         sCom.wins(2);
                     } catch (Exception e) {
                         errorMessage = e.getMessage();
-                        log.write("S: ERRO " + errorMessage.length() + errorMessage + "\n");
+                        log.write("S: ERRO '" + errorMessage.length() + "' " + errorMessage + "\n");
                         log.flush();
                         fCom.sendErrorMessage(errorMessage, errorMessage.length());
                         sCom.sendErrorMessage(errorMessage, errorMessage.length());
@@ -514,20 +524,20 @@ public class Game {
                     sCom.cash(cCash2);
                 } catch (Exception e) {
                     errorMessage = e.getMessage();
-                    log.write("S: ERRO " + errorMessage.length() + errorMessage + "\n");
+                    log.write("S: ERRO '" + errorMessage.length() + "' " + errorMessage + "\n");
                     log.flush();
                     fCom.sendErrorMessage(errorMessage, errorMessage.length());
                     sCom.sendErrorMessage(errorMessage, errorMessage.length());
                 }
                 this.log.flush();
             }
-            errorMessage = "The other player left, aborting game";
-            if(!this.com1.isConnected()){
-                log.write("S: ERRO " + errorMessage.length() + errorMessage + "\n");
+            errorMessage = "The other player left, aborting game and exiting";
+            if(fComExit){
+                log.write("S: ERRO '" + errorMessage.length() + "' " + errorMessage + "\n");
                 log.flush();
                 this.com2.sendErrorMessage(errorMessage, errorMessage.length());
-            }else{
-                log.write("S: ERRO " + errorMessage.length() + errorMessage + "\n");
+            }else if(sComExit){
+                log.write("S: ERRO '" + errorMessage.length() + "' " + errorMessage + "\n");
                 log.flush();
                 this.com1.sendErrorMessage(errorMessage, errorMessage.length());
             }
@@ -581,31 +591,31 @@ public class Game {
                         if(value_in_dices(4)){
                             this.crew = true;
                             dTaken[get_value_index(4)] = 0;
-                            sel = "3 " + get_value_index(6) + " " + get_value_index(5) + " " + get_value_index(4);
+                            sel = "0x03 0x0" + get_value_index(6) + " 0x0" + get_value_index(5) + " 0x0" + get_value_index(4);
                         }else
-                            sel = "2 " + get_value_index(6) + " " + get_value_index(5);
+                            sel = "0x02 0x0" + get_value_index(6) + " 0x0" + get_value_index(5);
                     }else
-                        sel = "1 " + get_value_index(6);
+                        sel = "0x01 0x0" + get_value_index(6);
                 }else if(ship && !captain && value_in_dices(5)){
                     this.captain = true;
                     dTaken[get_value_index(5)] = 0;
                     if(value_in_dices(4)){
                         this.crew = true;
                         dTaken[get_value_index(4)] = 0;
-                        sel = "2 " + get_value_index(5) + " " + get_value_index(4);
+                        sel = "0x02 0x0" + get_value_index(5) + " 0x0" + get_value_index(4);
                     }else
-                        sel = "1 " + get_value_index(5);
+                        sel = "0x01 0x0" + get_value_index(5);
                 }else if(ship && captain && !crew && value_in_dices(4)){
                     this.crew = true;
                     dTaken[get_value_index(4)] = 0;
-                    sel = "1 " + get_value_index(4);
+                    sel = "0x01 0x0" + get_value_index(4);
                 }
                 log.write("S: TAKE 1010 " + sel + "\n");
                 throw_dices();
                 log.write("S: DICE 1010" + dices_toString() + "\n");
             }
         }
-        log.write("S: PNTS 1010 " + getPoints() + "\n");
+        log.write("S: PNTS 1010 '" + getPoints() + "'\n");
         
         return getPoints();
     }
@@ -663,7 +673,7 @@ public class Game {
         String ret = "";
         for(int i=0; i< a.size(); i++){
 
-            ret = ret + " " + a.get(i);
+            ret = ret + " 0x0" + a.get(i);
         }
         return ret;
     }
@@ -702,7 +712,7 @@ public class Game {
 
         String ret = "";
         for(int i=0; i<5; i++){
-            ret = ret + " " + dices[i];
+            ret = ret + " '" + dices[i] + "'";
         }
         return ret;
     }

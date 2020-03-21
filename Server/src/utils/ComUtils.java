@@ -78,18 +78,11 @@ public class ComUtils {
      */
     public String read_char() throws IOException {
 
-        String result;
-        byte[] bStr = new byte[STRSIZE];
-        char[] cStr = new char[STRSIZE];
+        String res;
+        byte bStr[] = new byte[1];
+        bStr = read_bytes(1);
 
-        bStr = read_bytes(STRSIZE);
-
-        for(int i = 0; i < STRSIZE;i++)
-            cStr[i] = (char) bStr[i];
-
-        result = String.valueOf(cStr);
-
-        return result.trim();
+        return String.valueOf(bStr[0]);
     }
 
     /**
@@ -125,22 +118,11 @@ public class ComUtils {
      */
     public void write_char(char c) throws IOException {
 
-        int numBytes, lenStr;
-        byte bStr[] = new byte[STRSIZE];
+        byte bStr[] = new byte[1];
 
-        lenStr = 1;
+        bStr[0] = (byte)c;
 
-        if (lenStr > STRSIZE)
-            numBytes = STRSIZE;
-        else
-            numBytes = lenStr;
-
-        bStr[0] = (byte) c;
-
-        for(int i = numBytes; i < STRSIZE; i++)
-            bStr[i] = (byte) ' ';
-
-        dataOutputStream.write(bStr, 0, STRSIZE);
+        dataOutputStream.write(bStr, 0, 1);
     }
 
     /**

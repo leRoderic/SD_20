@@ -41,7 +41,7 @@ public class Datagram {
      */
     public boolean isConnected(){
 
-        return this.socket.isConnected();
+        return !this.socket.isClosed();
     }
 
     /**
@@ -90,7 +90,7 @@ public class Datagram {
 
         utils.write_string(c);
         utils.write_space();
-        utils.write_char((char) (len + '0'));
+        utils.write_char((char) len);
         utils.write_space();
         utils.write_string_variable(len, text);
     }
@@ -181,7 +181,7 @@ public class Datagram {
         utils.write_space();
         utils.write_int32(id);
         utils.write_space();
-        utils.write_byte(utils.int32ToBytes(points, ComUtils.Endianness.BIG_ENNDIAN)[3]); //THIS MAY CHANGE TODO
+        utils.write_byte(utils.int32ToBytes(points, ComUtils.Endianness.BIG_ENNDIAN)[3]);
     }
 
     /**
@@ -196,7 +196,7 @@ public class Datagram {
 
         utils.write_command(c);
         utils.write_space();
-        utils.write_char((char)(t + '0'));
+        utils.write_char((char)t);
     }
 
     /**
@@ -211,7 +211,7 @@ public class Datagram {
 
         utils.write_command(c);
         utils.write_space();
-        utils.write_char((char) (t + '0'));
+        utils.write_char((char) t);
     }
 
     /**

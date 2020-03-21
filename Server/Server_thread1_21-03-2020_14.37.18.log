@@ -1,0 +1,25 @@
+C2: STRT 111
+S: CASH 10
+C2: BETT
+S: LOOT 2
+S: PLAY '1' 
+S: DICE 111 '4' '6' '5' '3' '1'
+S: PASS 111
+S: PNTS 111 0
+C1: STRT 9999
+S: CASH 10
+C1: BETT
+S: LOOT 2
+S: PLAY '0' 
+S: DICE 9999 '4' '4' '3' '4' '6'
+C1: TAKE 9999 1 0x05
+S: DICE 9999 '2' '2' '5' '2' '6'
+C1: TAKE 9999 1 0x03
+S: DICE 9999 '4' '5' '5' '6' '6'
+S: PNTS 9999 11
+S: WINS '0'
+S: WINS '0'
+S: CASH 0
+S: CASH 14
+C2: EXIT
+S: ERRO '48' The other player left, aborting game and exiting

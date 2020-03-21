@@ -35,10 +35,10 @@ public class ComUtilsTest {
         try {
 
             ComUtils comUtils = new ComUtils(s);
-            comUtils.write_char('c');
+            comUtils.write_char((char)(23));
             String readed = comUtils.read_char();
 
-            assertEquals("c", readed);
+            assertEquals("23", readed);
 
         } catch (IOException e) {
             e.printStackTrace();
