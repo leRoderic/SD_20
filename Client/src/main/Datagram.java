@@ -157,13 +157,12 @@ public class Datagram {
     }
 
     public String readErrorMessage() throws IOException {
-
-        // Format: ERRO <LEN> <ERROR_TEXT>
-        this.read_command();
+        // Format: ERRO <SP><LEN><SP><ERROR_TEXT>
         this.read_space();
-        String len = this.read_char();
+        String i = this.read_char();
         this.read_space();
-        String c = utils.read_string_variable(Integer.parseInt(len));
+        int len = Integer.parseInt(i);
+        String c = utils.read_string_variable(len);
 
         return c;
     }
