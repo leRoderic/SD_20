@@ -417,14 +417,14 @@ public class Game {
         int fID = 0, sID = 0;
         int fPoints = 0, sPoints = 0;
         int pool = 0, cCash1 = 0, cCash2 = 0;
-        boolean fComExit = false, sComExit = false;
+        boolean fComExit = false, sComExit = false, swap = false;
         String errorMessage = "";
 
         if(this.singlePlayer){
             one_player(this.com1, true, "");
         }else{
 
-            if(random.nextInt(3)==0){
+            if(random.nextInt(1)==0){
                 fCom = this.com1;
                 sCom = this.com2;
             }else{
@@ -468,15 +468,17 @@ public class Game {
                         sCom.sendErrorMessage(errorMessage, errorMessage.length());
                     }
                     synchronized (players){
+
                         cCash1 = players.get(fID);
-                        cCash1 += pool;
+                        cCash2 = players.get(sID);
+                        cCash1 = cCash1 + pool - 2;
+                        cCash2 = cCash2 - 2;
                         players.put(fID, cCash1);
+                        players.put(sID, cCash2);
                     }
                     pool = 0;
                     // Swap turns --> loser first
-                    tCom = fCom;
-                    fCom = sCom;
-                    sCom = tCom;
+                    swap = true;
                 }else if (sPoints > fPoints) {
                     try {
                         log.write("S: WINS '" + sCom.getWinValue() + "'\n");
@@ -491,8 +493,12 @@ public class Game {
                         sCom.sendErrorMessage(errorMessage, errorMessage.length());
                     }
                     synchronized (players){
+
+                        cCash1 = players.get(fID);
                         cCash2 = players.get(sID);
-                        cCash2 += pool;
+                        cCash2 = cCash2 + pool - 2;
+                        cCash1 = cCash1 - 2;
+                        players.put(fID, cCash1);
                         players.put(sID, cCash2);
                     }
                     pool = 0;
@@ -510,10 +516,9 @@ public class Game {
                         sCom.sendErrorMessage(errorMessage, errorMessage.length());
                     }
                     synchronized (players){
+
                         cCash1 = players.get(fID);
                         cCash2 = players.get(sID);
-                        players.put(fID, cCash1 + 2);
-                        players.put(sID, cCash2 + 2);
                     }
                     pool = 0;
                 }
@@ -530,6 +535,11 @@ public class Game {
                     sCom.sendErrorMessage(errorMessage, errorMessage.length());
                 }
                 this.log.flush();
+                if(swap){
+                    tCom = fCom;
+                    fCom = sCom;
+                    sCom = tCom;
+                }
             }
             errorMessage = "The other player left, aborting game and exiting";
             if(fComExit){

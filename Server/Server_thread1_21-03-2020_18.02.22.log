@@ -1,0 +1,22 @@
+C1: STRT 111
+S: CASH 10
+C1: BETT
+S: LOOT 2
+S: PLAY '0' 
+S: DICE 111 '5' '3' '3' '4' '1'
+S: PASS 111
+S: PNTS 111 0
+C2: STRT 7391
+S: CASH 10
+C2: BETT
+S: LOOT 2
+S: PLAY '1' 
+S: DICE 7391 '2' '1' '2' '5' '1'
+C2: TAKE 7391 0x00
+S: DICE 7391 '6' '3' '1' '6' '5'
+C2: TAKE 7391 0x02 0x01 0x05
+S: DICE 7391 '6' '1' '2' '2' '5'
+S: PNTS 7391 0
+S: WINS '0'
+S: WINS '0'
+S: ERRO '44' Connection reset by peer: socket write error

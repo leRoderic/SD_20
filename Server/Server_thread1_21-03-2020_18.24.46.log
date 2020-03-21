@@ -1,0 +1,20 @@
+C: STRT 4024
+S: CASH 10
+C: BETT
+S: LOOT 2
+S: PLAY '0' 
+S: DICE 4024 '5' '4' '2' '2' '3'
+C: TAKE 4024 0x00
+S: DICE 4024 '6' '2' '3' '2' '4'
+C: TAKE 4024 0x01 0x01
+S: DICE 4024 '6' '2' '1' '6' '3'
+S: PNTS 4024 0
+S: DICE 1010 '6' '4' '3' '5' '5'
+S: TAKE 1010 0x03 0x00 0x03 0x01
+S: DICE 1010 '6' '4' '1' '5' '4'
+S: TAKE 1010 0x03 0x00 0x03 0x01
+S: DICE 1010 '6' '4' '2' '5' '3'
+S: PNTS 1010 '5'
+S: WINS '1'
+S: CASH 8
+C: EXIT

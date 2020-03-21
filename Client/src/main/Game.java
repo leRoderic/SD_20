@@ -144,7 +144,7 @@ public class Game {
                     System.out.println("");
                     if(this.tirada >= 0) {
                         this.tirada = this.tirada-1;
-                        System.out.print("Cliente " + idCliente + ": ");
+                        System.out.print("Client " + idCliente + ": ");
                         String c = sc.next();
                         if (c.equals("TAKE")) {
                             int[] numbers;
@@ -224,7 +224,7 @@ public class Game {
                         t = false;
                         try {
                             datagram.bett();
-                            System.out.println("Cliente " + idCliente +": BET");
+                            System.out.println("Client " + idCliente +": BET");
                         } catch (IOException e) {
                             System.out.println("ERROR: Couldn't not send command BET");
                         }
@@ -237,7 +237,7 @@ public class Game {
                                 e.printStackTrace();
                             }*/
                             datagram.exit();
-                            System.out.println("Cliente " + idCliente +": EXIT");
+                            System.out.println("Client " + idCliente +": EXIT");
                             setPartida(false);
                         } catch (IOException e) {
                             System.out.println("ERROR: Couldn't not send command EXIT");
@@ -322,7 +322,7 @@ public class Game {
                                     sel[2] = cr;
                                     try {
                                         datagram.take(idCliente, sel);
-                                        System.out.println("Cliente " + idCliente +": TAKE");
+                                        System.out.println("Client " + idCliente +": TAKE");
                                     } catch (IOException e) {
                                         System.out.println("ERROR: Couldn't not send command TAKE");
                                     }
@@ -334,7 +334,7 @@ public class Game {
                                     sel[1] = ca;
                                     try {
                                         datagram.take(idCliente, sel);
-                                        System.out.println("Cliente " + idCliente +": TAKE");
+                                        System.out.println("Client " + idCliente +": TAKE");
                                     } catch (IOException e) {
                                         System.out.println("ERROR: Couldn't not send command TAKE");
                                     }
@@ -344,7 +344,7 @@ public class Game {
                                     sel[0] = sh;
                                     try {
                                         datagram.take(idCliente, sel);
-                                        System.out.println("Cliente " + idCliente +": TAKE");
+                                        System.out.println("Client " + idCliente +": TAKE");
                                     } catch (IOException e) {
                                         System.out.println("ERROR: Couldn't not send command TAKE");
                                     }
@@ -362,7 +362,7 @@ public class Game {
                                     sel[1] = cr;
                                     try {
                                         datagram.take(idCliente, sel);
-                                        System.out.println("Cliente " + idCliente +": TAKE");
+                                        System.out.println("Client " + idCliente +": TAKE");
                                     } catch (IOException e) {
                                         System.out.println("ERROR: Couldn't not send command TAKE");
                                     }
@@ -372,7 +372,7 @@ public class Game {
                                     sel[0] = ca;
                                     try {
                                         datagram.take(idCliente, sel);
-                                        System.out.println("Cliente " + idCliente +": TAKE");
+                                        System.out.println("Client " + idCliente +": TAKE");
                                     } catch (IOException e) {
                                         System.out.println("ERROR: Couldn't not send command TAKE");
                                     }
@@ -384,7 +384,7 @@ public class Game {
                                 sel[0] = cr;
                                 try {
                                     datagram.take(idCliente, sel);
-                                    System.out.println("Cliente " + idCliente +": TAKE");
+                                    System.out.println("Client " + idCliente +": TAKE");
                                 } catch (IOException e) {
                                     System.out.println("ERROR: Couldn't not send command TAKE");
                                 }
@@ -393,7 +393,7 @@ public class Game {
                                 sel = new int[0];
                                 try {
                                     datagram.take(idCliente, sel);
-                                    System.out.println("Cliente " + idCliente +": TAKE");
+                                    System.out.println("Client " + idCliente +": TAKE");
                                 } catch (IOException e) {
                                     System.out.println("ERROR: Couldn't not send command TAKE");
                                 }
@@ -401,7 +401,7 @@ public class Game {
                         } else {
                             try {
                                 datagram.pass(idCliente);
-                                System.out.println("Cliente " + idCliente +": PASS");
+                                System.out.println("Client " + idCliente +": PASS");
                             } catch (IOException e) {
                                 System.out.println("ERROR: Couldn't not send command PASS");
                             }

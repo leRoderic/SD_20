@@ -1,0 +1,20 @@
+C: STRT 111
+S: CASH 10
+C: BETT
+S: LOOT 2
+S: PLAY '0' 
+S: DICE 111 '5' '2' '3' '2' '3'
+C: TAKE 111 0x00
+S: DICE 111 '2' '2' '2' '2' '1'
+C: TAKE 111 0x00
+S: DICE 111 '2' '6' '6' '4' '5'
+S: PNTS 111 8
+S: DICE 1010 '4' '5' '4' '5' '5'
+S: TAKE 1010 
+S: DICE 1010 '6' '4' '2' '6' '3'
+S: TAKE 1010 0x01 0x00
+S: DICE 1010 '6' '5' '2' '2' '4'
+S: PNTS 1010 '0'
+S: WINS '0'
+S: CASH 12
+C: EXIT
