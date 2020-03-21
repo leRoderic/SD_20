@@ -66,12 +66,9 @@ public class ComUtils {
      */
     public String read_char() throws IOException {
 
-        String str;
         byte bStr[] = new byte[1];
         bStr = read_bytes(1);
-        char c = (char) bStr[0];
-        str = String.valueOf(c);
-        return str;
+        return String.valueOf(bStr[0]);
 
     }
 

@@ -157,7 +157,6 @@ public class Datagram {
     }
 
     public String readErrorMessage() throws IOException {
-
         // Format: ERRO <SP><LEN><SP><ERROR_TEXT>
         this.read_space();
         String i = this.read_char();
