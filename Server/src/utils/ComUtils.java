@@ -120,6 +120,7 @@ public class ComUtils {
 
         byte bStr[] = new byte[1];
 
+
         bStr[0] = (byte)c;
 
         dataOutputStream.write(bStr, 0, 1);
