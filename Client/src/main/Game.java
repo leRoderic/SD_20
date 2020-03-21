@@ -46,10 +46,10 @@ public class Game {
 
         if(mode == 0){
             idCliente = menu.getClientID();
+            System.out.print("Cliente "+idCliente+": ");
             if(sc.next().equals("STRT")){
                 try {
                     datagram.strt(idCliente);
-                    System.out.println("Start enviat");
                 } catch (IOException e) {
                     error = e.getMessage();
                     datagram.sendErrorMessage(error,error.length());
@@ -84,13 +84,12 @@ public class Game {
                         datagram.sendErrorMessage(error,error.length());
                     }
                     System.out.println(comanda + " " + cash);
-                    System.out.println("Cliente "+idCliente+": ");
+                    System.out.print("Cliente "+idCliente+": ");
                     String c = sc.next();
                     if (c.equals("BET")) {
+                        this.tirada = 3;
                         try {
                             datagram.bett();
-                            this.tirada = 2;
-                            System.out.println("Bet enviat");
                         } catch (IOException e) {
                             error = e.getMessage();
                             datagram.sendErrorMessage(error,error.length());
@@ -98,7 +97,6 @@ public class Game {
                     } else if (c.equals("EXIT")) {
                         try {
                             datagram.exit();
-                            System.out.println("Exit enviat");
                             this.setPartida(false);
                         } catch (IOException e) {
                             error = e.getMessage();
@@ -109,14 +107,15 @@ public class Game {
                         System.exit(1);
                     }
                 } else if (comanda.equals("LOOT")) {
-                    System.out.println(comanda);
+                    int loot = 0;
                     try {
                         datagram.read_space();
-                        datagram.read_int();
+                        loot = datagram.read_int();
                     } catch (IOException e) {
                         error = e.getMessage();
                         datagram.sendErrorMessage(error,error.length());
                     }
+                    System.out.println(comanda + " " + loot);
                     /*if (sc.next().equals("EXIT")) {
                         try {
                             datagram.exit();
@@ -126,7 +125,6 @@ public class Game {
                         }
                     }*/
                 } else if(comanda.equals("PLAY")){
-                    System.out.println(comanda);
                     try {
                         datagram.read_space();
                         turno = datagram.read_char();
@@ -145,30 +143,28 @@ public class Game {
                     }*/
 
                 } else if (comanda.equals("DICE")) {
-                    tirada = tirada-1;
-                    System.out.println(comanda);
+                    this.tirada = this.tirada-1;
+                    System.out.print(comanda + " ");
                     int[] dices = new int[5];
                     try {
                         dices = datagram.read_dice();
-                        //System.out.println(datagram.read_dice());
                     } catch (IOException e) {
                         error = e.getMessage();
                         datagram.sendErrorMessage(error,error.length());
                     }
                     for(int i = 0; i<dices.length; i++){
-                        System.out.println(dices[i]);
+                        System.out.print(dices[i] + " ");
                     }
-                    if(tirada > 0) {
-                        tirada = tirada-1;
-                        System.out.println("Cliente " + idCliente + ": ");
+                    System.out.println("");
+                    if(this.tirada >= 0) {
+                        this.tirada = this.tirada-1;
+                        System.out.print("Cliente " + idCliente + ": ");
                         String c = sc.next();
                         if (c.equals("TAKE")) {
-
                             int[] numbers;
                             numbers = this.read_take();
                             try {
                                 datagram.take(idCliente, numbers);
-                                System.out.println("Take enviat");
                             } catch (IOException e) {
                                 error = e.getMessage();
                                 datagram.sendErrorMessage(error,error.length());
@@ -176,7 +172,6 @@ public class Game {
                         } else if (c.equals("PASS")) {
                             try {
                                 datagram.pass(idCliente);
-                                System.out.println("Pass enviat");
                             } catch (IOException e) {
                                 error = e.getMessage();
                                 datagram.sendErrorMessage(error,error.length());
@@ -184,7 +179,6 @@ public class Game {
                         } else if (c.equals("EXIT")) {
                             try {
                                 datagram.exit();
-                                System.out.println("Exit enviat");
                                 this.setPartida(false);
                             } catch (IOException e) {
                                 error = e.getMessage();
@@ -227,11 +221,10 @@ public class Game {
                         datagram.sendErrorMessage(error,error.length());
                     }
                     System.out.println(comanda + " " + win);
-                    System.out.println("Cliente "+idCliente+": ");
+                    System.out.print("Cliente "+idCliente+": ");
                     if (sc.next().equals("EXIT")) {
                         try {
                             datagram.exit();
-                            System.out.println("Exit enviat");
                             this.setPartida(false);
                         } catch (IOException e) {
                             error = e.getMessage();
