@@ -66,18 +66,13 @@ public class ComUtils {
      */
     public String read_char() throws IOException {
 
-        String result;
-        byte[] bStr = new byte[STRSIZE];
-        char[] cStr = new char[STRSIZE];
+        String str;
+        byte bStr[] = new byte[1];
+        bStr = read_bytes(1);
+        char c = (char) bStr[0];
+        str = String.valueOf(c);
+        return str;
 
-        bStr = read_bytes(STRSIZE);
-
-        for(int i = 0; i < STRSIZE;i++)
-            cStr[i] = (char) bStr[i];
-
-        result = String.valueOf(cStr);
-
-        return result.trim();
     }
 
     /**
@@ -124,23 +119,6 @@ public class ComUtils {
         }
     }
 
-    /*public int[] read_take() throws IOException {
-
-        int[] numbers;
-        read_string();//comanda
-        read_space();
-        read_int32();//ID
-        read_space();
-        int lenBytes = read_int32();//Len
-
-        byte[] take = read_bytes(lenBytes);
-
-        for(int i = 0; i < lenBytes; i++){
-            //TODO numbers[i] = this.bytesToInt32(take[i], Endianness.BIG_ENNDIAN);
-        }
-
-        return numbers;
-    }
 
     /**
      * Write a char.
@@ -150,22 +128,9 @@ public class ComUtils {
      */
     public void write_char(char c) throws IOException {
 
-        int numBytes, lenStr;
-        byte[] bStr = new byte[STRSIZE];
-
-        lenStr = 1;
-
-        if (lenStr > STRSIZE)
-            numBytes = STRSIZE;
-        else
-            numBytes = lenStr;
-
+        byte bStr[] = new byte[1];
         bStr[0] = (byte) c;
-
-        for(int i = numBytes; i < STRSIZE; i++)
-            bStr[i] = (byte) ' ';
-
-        dataOutputStream.write(bStr, 0, STRSIZE);
+        dataOutputStream.write(bStr, 0, 1);
     }
 
     /**
