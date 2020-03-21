@@ -7,13 +7,28 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.util.HashMap;
 
+/**
+ * <h1>Server class</h1>
+ * Server's main class.
+ *
+ * @author  leRoderic
+ * @version 1.0
+ * @since   24-02-2020
+ */
+
 public class Server {
 
     private static final String RED = "\u001B[31m";
     private static final String GREEN = "\033[0;32m";
     private static final String RESET = "\u001B[0m";
-    static HashMap<Integer, Integer> players = new HashMap<Integer, Integer>();
+    static HashMap<Integer, Integer> players = new HashMap<Integer, Integer>(); // Stores player's cash.
 
+    /**
+     * Single player server mode.
+     *
+     * @param sv    server socket
+     * @throws SocketException s
+     */
     private static void singlePlayerBehaviour(ServerSocket sv) throws SocketException {
 
 
@@ -28,17 +43,20 @@ public class Server {
             s.setSoTimeout(500*1000);
             System.out.println("Info> Player connected, creating new game");
             try {
-                // Un-comment next line to debug a single game. Also comment lines 30 and 31.
-                //new Game(s, null , true, players).run();
                 Thread t = (new Thread(new GameThread(s, null, true, players)));
                 t.start();
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
-
     }
 
+    /**
+     * Two player server game mode.
+     *
+     * @param sv    server socket
+     * @throws SocketException e
+     */
     private static void twoPlayerBehaviour(ServerSocket sv) throws SocketException {
 
         System.out.println("Info> Server set as player vs player.");
@@ -69,6 +87,11 @@ public class Server {
         }
     }
 
+    /**
+     * The 'main' program.
+     * @param args  arguments passed to the program
+     * @throws IOException e
+     */
     public static void main(String[] args) throws IOException {
 
         int serverPort, gameMode;
@@ -93,9 +116,9 @@ public class Server {
                 singlePlayer = false;
 
             try {
-                //System.out.println(InetAddress.getLocalHost().toString().split("/")[1]);
-                InetAddress address = InetAddress.getByName("25.98.169.216"); //InetAddress.getLocalHost();
-                server = new ServerSocket(serverPort, 50, address);
+                InetAddress add = InetAddress.getByName(InetAddress.getLocalHost().toString().split("/")[1]);
+                //InetAddress add = InetAddress.getByName("25.98.169.216");
+                server = new ServerSocket(serverPort, 50, add);
                 System.out.println("Info> Server ready with IP " + server.getInetAddress().toString().split("/")[1] +
                         " on port number " + serverPort);
 

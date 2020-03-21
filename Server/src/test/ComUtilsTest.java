@@ -1,11 +1,18 @@
 import org.junit.Test;
 import utils.ComUtils;
 import utils.MockSocket;
-
 import java.io.IOException;
-
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+
+/**
+ * <h1>ComUtils test class</h1>
+ * Tests class functions.
+ *
+ * @author  leRoderic
+ * @version 1.0
+ * @since   21-03-2020
+ */
 
 public class ComUtilsTest {
 
