@@ -17,6 +17,9 @@ import static org.junit.Assert.assertEquals;
 public class ComUtilsTest {
 
     @Test
+    /**
+     * Tests write_int32 function.
+     */
     public void write_read_int_test() throws IOException {
 
         MockSocket s = new MockSocket();
@@ -35,6 +38,9 @@ public class ComUtilsTest {
     }
 
     @Test
+    /**
+     * Tests write and read char functions.
+     */
     public void write_read_char_test() throws IOException {
 
         MockSocket s = new MockSocket();
@@ -53,6 +59,9 @@ public class ComUtilsTest {
     }
 
     @Test
+    /**
+     * Tests write and read string functions.
+     */
     public void write_read_string_test() throws IOException {
 
         MockSocket s = new MockSocket();
@@ -61,7 +70,7 @@ public class ComUtilsTest {
 
             ComUtils comUtils = new ComUtils(s);
             comUtils.write_string("EXIT");
-            String readed = comUtils.read_char();
+            String readed = comUtils.read_string();
 
             assertEquals("EXIT", readed);
 
@@ -71,6 +80,9 @@ public class ComUtilsTest {
     }
 
     @Test
+    /**
+     * Tests read and write string variable functions.
+     */
     public void write_read_variable_string_test() throws IOException {
 
         MockSocket s = new MockSocket();
@@ -89,6 +101,9 @@ public class ComUtilsTest {
     }
 
     @Test
+    /**
+     * Tests int32 to bytes function with big endian.
+     */
     public void int32_to_bytes_big_endian_test() throws IOException {
 
         MockSocket s = new MockSocket();
@@ -106,6 +121,9 @@ public class ComUtilsTest {
     }
 
     @Test
+    /**
+     * Tests int32 to bytes function with little endian.
+     */
     public void int32_to_bytes_litle_endian_test() throws IOException {
 
         MockSocket s = new MockSocket();
@@ -123,6 +141,9 @@ public class ComUtilsTest {
     }
 
     @Test
+    /**
+     * Tests bytes to int32 function with big endian.
+     */
     public void bytes_to_int32_big_endian_test() throws IOException {
 
         MockSocket s = new MockSocket();
@@ -140,6 +161,9 @@ public class ComUtilsTest {
     }
 
     @Test
+    /**
+     * Tests bytes to int32 function with little endian.
+     */
     public void bytes_to_int32_litle_endian_test() throws IOException {
 
         MockSocket s = new MockSocket();
@@ -157,6 +181,9 @@ public class ComUtilsTest {
     }
 
     @Test
+    /**
+     * Tests write and read byte functions.
+     */
     public void write_read_byte_test() throws IOException {
 
         MockSocket s = new MockSocket();

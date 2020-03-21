@@ -129,21 +129,20 @@ public class Server {
 
             }catch(Exception e){
 
-                if(e instanceof IOException){
+                if(e instanceof IllegalArgumentException){
+                    System.out.println(RED + "Error> " + RESET + "Port parameter is outside the specified range of valid " +
+                            "port values.");
+                }else if(e instanceof IOException){
                     System.out.println(RED + "Error> " + RESET + "I/O error occurred: " + e.getMessage());
                 }else if(e instanceof SecurityException){
                     System.out.println(RED + "Error> " + RESET + "Connection not allowed for security reasons.");
-                }else if(e instanceof IllegalArgumentException){
-                    System.out.println(RED + "Error> " + RESET + "Port parameter is outside the specified range of valid " +
-                            "port values.");
                 }
             }
 
         }else if (args.length == 1 && args[0].equals("-h")){
-            System.out.println("Usage: java Server -p <port> -i 1|2]");
+            System.out.println("Usage: java Server -p <port> -i 1|2");
         }else{
             System.out.println("Invalid parameters. Server parameters are: -p <port> -i 1|2");
-            System.exit(1);
         }
 
     }

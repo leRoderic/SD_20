@@ -9,7 +9,7 @@ import java.util.List;
 
 /**
  * <h1>MockSocket class</h1>
- * Socket that requires no connection to server.
+ * Socket that requires no connection to server. Used for JUnit tests.
  *
  * @author  leRoderic
  * @version 1.0
