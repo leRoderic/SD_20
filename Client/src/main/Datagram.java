@@ -122,11 +122,11 @@ public class Datagram {
     public void read_space() throws  IOException{
         utils.read_space();
     }
-    public void read_int() throws  IOException{
-        utils.read_int32();
+    public int read_int() throws  IOException{
+        return utils.read_int32();
     }
-    public void read_char() throws  IOException{
-        utils.read_char();
+    public String  read_char() throws  IOException{
+        return utils.read_char();
     }
     public byte[] read_byte(int n) throws  IOException{
         return utils.read_bytes(n);
@@ -147,24 +147,6 @@ public class Datagram {
         return dice;
     }
 
-    public int[] read_take() throws IOException {
-
-        int[] numbers = new int[0];
-        utils.read_string();//comanda
-        utils.read_space();
-        utils.read_int32();//ID
-        utils.read_space();
-        int lenBytes = utils.read_int32();//Len
-
-
-
-        for(int i = 0; i < lenBytes; i++){
-            byte[] take = utils.read_bytes(4);
-            numbers[i] = utils.bytesToInt32(take, ComUtils.Endianness.BIG_ENNDIAN);
-        }
-
-        return numbers;
-    }
 
     public byte[] int32ToBytes(int number, ComUtils.Endianness endianness){
         return utils.int32ToBytes(number, endianness);
@@ -174,12 +156,24 @@ public class Datagram {
         return utils.bytesToInt32(number, endianness);
     }
 
+    public void sendErrorMessage(String text, int len) throws IOException {
+
+        // Format: ERRO <LEN> <ERROR_TEXT>
+        String c = Command.ERRO.name();
+        utils.write_string(c);
+        utils.write_space();
+        utils.write_char((char) (len + '0'));
+        utils.write_space();
+        utils.write_string_variable(len, text);
+
+    }
 
     private enum Command {
         STRT,
         BETT,
         TAKE,
         PASS,
-        EXIT
+        EXIT,
+        ERRO
     }
 }
