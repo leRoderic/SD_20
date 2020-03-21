@@ -35,16 +35,6 @@ public class Datagram {
     }
 
     /**
-     * Check if socket is still connected and active
-     *
-     * @return true: connected   false: !connected
-     */
-    public boolean isConnected(){
-
-        return !this.socket.isClosed();
-    }
-
-    /**
      * Getter of the client's win value.
      * The win value identifies the client when playing against another player. This value, with range 0-1, is set by
      * the server and is used when the server sends the WINS command to each client.
@@ -115,7 +105,8 @@ public class Datagram {
 
         for(int i=0; i <5; i++){
             utils.write_space();
-            utils.write_char(digits[vals[i]]);
+            utils.write_char((char)vals[i]);
+            //utils.write_char(digits[vals[i]]);
         }
     }
 

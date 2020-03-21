@@ -37,7 +37,7 @@ public class ComUtilsTest {
             ComUtils comUtils = new ComUtils(s);
             comUtils.write_char((char)(23));
             String readed = comUtils.read_char();
-
+            int a = Integer.parseInt(readed);
             assertEquals("23", readed);
 
         } catch (IOException e) {

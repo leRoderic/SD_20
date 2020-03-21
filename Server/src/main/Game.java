@@ -29,7 +29,7 @@ public class Game {
             this.com2 = new Datagram(s2);
             this.com2.setWinValue(1);
         }
-        
+
         // Original .log file name format was "Server-"Thread.currentThread().getName(). This caused the log file to have
         // always the same name (Server-main.log). Therefore to avoid overwriting older logs and to better match each log to
         // its thread, its been change to the current format.
@@ -69,7 +69,6 @@ public class Game {
                         log.flush();
                         com.sendErrorMessage(errorMessage, errorMessage.length());
                     }
-                    command = "ASD";
                     if(command.equals("STRT")){
                         stpdCounter = 0;
                         try {
