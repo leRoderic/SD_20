@@ -35,6 +35,16 @@ public class Datagram {
     }
 
     /**
+     * Check if socket is still connected and active
+     *
+     * @return true: connected   false: !connected
+     */
+    public boolean isConnected(){
+
+        return this.socket.isConnected();
+    }
+
+    /**
      * Getter of the client's win value.
      * The win value identifies the client when playing against another player. This value, with range 0-1, is set by
      * the server and is used when the server sends the WINS command to each client.

@@ -153,9 +153,9 @@ public class Game {
                             log.flush();
                             com.sendErrorMessage(errorMessage, errorMessage.length());
                         }
-                        log.write("S: PLAY 0\n");
+                        log.write("S: PLAY " + com.getWinValue() + " \n");
                         try {
-                            com.play(0);
+                            com.play(com.getWinValue());
                         } catch (Exception e) {
                             errorMessage = e.getMessage();
                             log.write("S: ERRO " + errorMessage.length() + " " + errorMessage + "\n");
@@ -391,6 +391,15 @@ public class Game {
                         log.flush();
                         com.sendErrorMessage(errorMessage, errorMessage.length());
                     }
+                    log.write("S: CASH " + cCash + "\n");
+                    try {
+                        com.cash(cCash);
+                    } catch (Exception e) {
+                        errorMessage = e.getMessage();
+                        log.write("S: ERRO " + errorMessage.length() + " " + errorMessage + "\n");
+                        log.flush();
+                        com.sendErrorMessage(errorMessage, errorMessage.length());
+                    }
                     this.state = State.BETT;
                     synchronized (players){
 
@@ -415,7 +424,7 @@ public class Game {
             one_player(this.com1, true, "");
         }else{
 
-            if(random.nextInt(1)==0){
+            if(random.nextInt(3)==0){
                 fCom = this.com1;
                 sCom = this.com2;
             }else{
@@ -423,18 +432,21 @@ public class Game {
                 sCom = this.com1;
             }
                 // COMO ACABAR EL BUCLE???? RETURN -1 DE PUNTOS JUGADOR??
-            while(true){
+            while(this.com1.isConnected() && this.com2.isConnected()){
                 pool += 4;
 
-                ret = one_player(fCom,false, "" + fCom.getWinValue() + 1);
+                ret = one_player(fCom,false, Integer.toString(fCom.getWinValue()+ 1));
+                this.state = State.INIT;
                 fID = ret[0];
                 fPoints = ret[1];
-                ret = one_player(sCom,false, "" + sCom.getWinValue() + 1);
+                ret = one_player(sCom,false, Integer.toString(sCom.getWinValue()+ 1));
+                this.state = State.INIT;
                 sID = ret[0];
                 sPoints = ret[1];
 
                 if (fPoints > sPoints) {
                     try {
+                        log.write("S: WINS " + fCom.getWinValue() + "\n");
                         log.write("S: WINS " + fCom.getWinValue() + "\n");
                         fCom.wins(fCom.getWinValue());
                         sCom.wins(fCom.getWinValue());
@@ -447,7 +459,8 @@ public class Game {
                     }
                     synchronized (players){
                         cCash1 = players.get(fID);
-                        players.put(fID, cCash1 + pool);
+                        cCash1 += pool;
+                        players.put(fID, cCash1);
                     }
                     pool = 0;
                     // Swap turns --> loser first
@@ -456,6 +469,7 @@ public class Game {
                     sCom = tCom;
                 }else if (sPoints > fPoints) {
                     try {
+                        log.write("S: WINS " + sCom.getWinValue() + "\n");
                         log.write("S: WINS " + sCom.getWinValue() + "\n");
                         fCom.wins(sCom.getWinValue());
                         sCom.wins(sCom.getWinValue());
@@ -468,11 +482,13 @@ public class Game {
                     }
                     synchronized (players){
                         cCash2 = players.get(sID);
-                        players.put(sID, cCash2 + pool);
+                        cCash2 += pool;
+                        players.put(sID, cCash2);
                     }
                     pool = 0;
                 }else if (sPoints == fPoints) {
                     try {
+                        log.write("S: WINS " + 2 + "\n");
                         log.write("S: WINS " + 2 + "\n");
                         fCom.wins(2);
                         sCom.wins(2);
@@ -491,6 +507,29 @@ public class Game {
                     }
                     pool = 0;
                 }
+                try {
+                    log.write("S: CASH " + cCash1 + "\n");
+                    fCom.cash(cCash1);
+                    log.write("S: CASH " + cCash2 + "\n");
+                    sCom.cash(cCash2);
+                } catch (Exception e) {
+                    errorMessage = e.getMessage();
+                    log.write("S: ERRO " + errorMessage.length() + errorMessage + "\n");
+                    log.flush();
+                    fCom.sendErrorMessage(errorMessage, errorMessage.length());
+                    sCom.sendErrorMessage(errorMessage, errorMessage.length());
+                }
+                this.log.flush();
+            }
+            errorMessage = "The other player left, aborting game";
+            if(!this.com1.isConnected()){
+                log.write("S: ERRO " + errorMessage.length() + errorMessage + "\n");
+                log.flush();
+                this.com2.sendErrorMessage(errorMessage, errorMessage.length());
+            }else{
+                log.write("S: ERRO " + errorMessage.length() + errorMessage + "\n");
+                log.flush();
+                this.com1.sendErrorMessage(errorMessage, errorMessage.length());
             }
         }
         this.log.close();
