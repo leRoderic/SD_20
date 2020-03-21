@@ -156,16 +156,16 @@ public class Datagram {
         return utils.bytesToInt32(number, endianness);
     }
 
-    public void sendErrorMessage(String text, int len) throws IOException {
+    public String readErrorMessage() throws IOException {
 
         // Format: ERRO <LEN> <ERROR_TEXT>
-        String c = Command.ERRO.name();
-        utils.write_string(c);
-        utils.write_space();
-        utils.write_char((char) (len + '0'));
-        utils.write_space();
-        utils.write_string_variable(len, text);
+        this.read_command();
+        this.read_space();
+        String len = this.read_char();
+        this.read_space();
+        String c = utils.read_string_variable(Integer.parseInt(len));
 
+        return c;
     }
 
     private enum Command {
@@ -174,6 +174,5 @@ public class Datagram {
         TAKE,
         PASS,
         EXIT,
-        ERRO
     }
 }
