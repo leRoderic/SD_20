@@ -43,6 +43,7 @@ public class Game {
     private void partida(int mode) throws IOException {
         String error = "";
         String comanda = null;
+        boolean t = true;
 
         if(mode == 0){
             idCliente = menu.getClientID();
@@ -51,8 +52,8 @@ public class Game {
                 try {
                     datagram.strt(idCliente);
                 } catch (IOException e) {
-                    error = e.getMessage();
-                    datagram.sendErrorMessage(error,error.length());
+                    error = datagram.readErrorMessage();
+                    System.out.println(error);
                 }
             }
         }
@@ -61,8 +62,8 @@ public class Game {
                 datagram.strt(9999);//id por defecto: 9999
                 System.out.println("Cliente 9999: STRT");
             } catch (IOException e) {
-                error = e.getMessage();
-                datagram.sendErrorMessage(error,error.length());
+                error = datagram.readErrorMessage();
+                System.out.println(error);
             }
         }
 
@@ -72,16 +73,16 @@ public class Game {
                 try {
                     comanda = datagram.read_command();
                 } catch (IOException e) {
-                    error = e.getMessage();
-                    datagram.sendErrorMessage(error,error.length());
+                    error = datagram.readErrorMessage();
+                    System.out.println(error);
                 }
                 if (comanda.equals("CASH")) {
                     try {
                         datagram.read_space();
                          cash = datagram.read_int();
                     } catch (IOException e) {
-                        error = e.getMessage();
-                        datagram.sendErrorMessage(error,error.length());
+                        error = datagram.readErrorMessage();
+                        System.out.println(error);
                     }
                     System.out.println(comanda + " " + cash);
                     System.out.print("Cliente "+idCliente+": ");
@@ -91,16 +92,16 @@ public class Game {
                         try {
                             datagram.bett();
                         } catch (IOException e) {
-                            error = e.getMessage();
-                            datagram.sendErrorMessage(error,error.length());
+                            error = datagram.readErrorMessage();
+                            System.out.println(error);
                         }
                     } else if (c.equals("EXIT")) {
                         try {
                             datagram.exit();
                             this.setPartida(false);
                         } catch (IOException e) {
-                            error = e.getMessage();
-                            datagram.sendErrorMessage(error,error.length());
+                            error = datagram.readErrorMessage();
+                            System.out.println(error);
                         }
 
                     } else {
@@ -112,8 +113,8 @@ public class Game {
                         datagram.read_space();
                         loot = datagram.read_int();
                     } catch (IOException e) {
-                        error = e.getMessage();
-                        datagram.sendErrorMessage(error,error.length());
+                        error = datagram.readErrorMessage();
+                        System.out.println(error);
                     }
                     System.out.println(comanda + " " + loot);
                     /*if (sc.next().equals("EXIT")) {
@@ -129,8 +130,8 @@ public class Game {
                         datagram.read_space();
                         turno = datagram.read_char();
                     } catch (IOException e) {
-                        error = e.getMessage();
-                        datagram.sendErrorMessage(error,error.length());
+                        error = datagram.readErrorMessage();
+                        System.out.println(error);
                     }
                     System.out.println(comanda + " " + turno);
                     /*if (sc.next().equals("EXIT")) {
@@ -149,8 +150,8 @@ public class Game {
                     try {
                         dices = datagram.read_dice();
                     } catch (IOException e) {
-                        error = e.getMessage();
-                        datagram.sendErrorMessage(error,error.length());
+                        error = datagram.readErrorMessage();
+                        System.out.println(error);
                     }
                     for(int i = 0; i<dices.length; i++){
                         System.out.print(dices[i] + " ");
@@ -166,23 +167,23 @@ public class Game {
                             try {
                                 datagram.take(idCliente, numbers);
                             } catch (IOException e) {
-                                error = e.getMessage();
-                                datagram.sendErrorMessage(error,error.length());
+                                error = datagram.readErrorMessage();
+                                System.out.println(error);
                             }
                         } else if (c.equals("PASS")) {
                             try {
                                 datagram.pass(idCliente);
                             } catch (IOException e) {
-                                error = e.getMessage();
-                                datagram.sendErrorMessage(error,error.length());
+                                error = datagram.readErrorMessage();
+                                System.out.println(error);
                             }
                         } else if (c.equals("EXIT")) {
                             try {
                                 datagram.exit();
                                 this.setPartida(false);
                             } catch (IOException e) {
-                                error = e.getMessage();
-                                datagram.sendErrorMessage(error,error.length());
+                                error = datagram.readErrorMessage();
+                                System.out.println(error);
                             }
                         } else {
                             System.exit(1);
@@ -198,8 +199,8 @@ public class Game {
                         int bytePoint = datagram.bytesToInt32(b, ComUtils.Endianness.BIG_ENNDIAN);
                         System.out.println(comanda + " " + bytePoint);
                     } catch (IOException e) {
-                        error = e.getMessage();
-                        datagram.sendErrorMessage(error,error.length());
+                        error = datagram.readErrorMessage();
+                        System.out.println(error);
                     }
                     /*if (sc.next().equals("EXIT")) {
                         try {
@@ -217,11 +218,11 @@ public class Game {
                         datagram.read_space();
                        win =  datagram.read_char();
                     } catch (IOException e) {
-                        error = e.getMessage();
-                        datagram.sendErrorMessage(error,error.length());
+                        error = datagram.readErrorMessage();
+                        System.out.println(error);
                     }
                     System.out.println(comanda + " " + win);
-                    System.out.print("Cliente "+idCliente+": ");
+                    /*System.out.print("Cliente "+idCliente+": ");
                     if (sc.next().equals("EXIT")) {
                         try {
                             datagram.exit();
@@ -230,7 +231,7 @@ public class Game {
                             error = e.getMessage();
                             datagram.sendErrorMessage(error,error.length());
                         }
-                    }
+                    }*/
 
                 }
             }
@@ -239,24 +240,38 @@ public class Game {
                 try {
                     comanda = datagram.read_command();
                 } catch (IOException e) {
-                    error = e.getMessage();
-                    datagram.sendErrorMessage(error,error.length());
+                    error = datagram.readErrorMessage();
+                    System.out.println(error);
                 }
                 if (comanda.equals("CASH")) {
                     try {
                         datagram.read_space();
                         cash = datagram.read_int();
                     } catch (IOException e) {
-                        error = e.getMessage();
-                        datagram.sendErrorMessage(error,error.length());
+                        error = datagram.readErrorMessage();
+                        System.out.println(error);
                     }
                     System.out.println(comanda + " " + cash);
-                    try {
-                        datagram.bett();
-                        System.out.println("Cliente 9999: BET");
-                    } catch (IOException e) {
-                        error = e.getMessage();
-                        datagram.sendErrorMessage(error,error.length());
+                    if(t) {
+                        this.tirada = 2;
+                        t = false;
+                        try {
+                            datagram.bett();
+                            System.out.println("Cliente 9999: BET");
+                        } catch (IOException e) {
+                            error = datagram.readErrorMessage();
+                            System.out.println(error);
+                        }
+
+                    } else {
+                        try {
+                            datagram.exit();
+                            System.out.println("Cliente 9999: EXIT");
+                            setPartida(false);
+                        } catch (IOException e) {
+                            error = datagram.readErrorMessage();
+                            System.out.println(error);
+                        }
                     }
                 }
                 else if (comanda.equals("LOOT")) {
@@ -264,8 +279,8 @@ public class Game {
                         datagram.read_space();
                         datagram.read_int();
                     } catch (IOException e) {
-                        error = e.getMessage();
-                        datagram.sendErrorMessage(error,error.length());
+                        error = datagram.readErrorMessage();
+                        System.out.println(error);
                     }
                     System.out.println(comanda);
                 }
@@ -274,8 +289,8 @@ public class Game {
                         datagram.read_space();
                         turno = datagram.read_char();
                     } catch (IOException e) {
-                        error = e.getMessage();
-                        datagram.sendErrorMessage(error,error.length());
+                        error = datagram.readErrorMessage();
+                        System.out.println(error);
                     }
                     System.out.println(comanda);
                 }
@@ -286,150 +301,151 @@ public class Game {
                     try {
                         dice = datagram.read_dice();
                     } catch (IOException e) {
-                        error = e.getMessage();
-                        datagram.sendErrorMessage(error,error.length());
+                        error = datagram.readErrorMessage();
+                        System.out.println(error);
                     }
-                    if(random.nextInt(5)!=0) {
-                        int posCaptain = -1, posShip = -1, posCrew = -1;
-                        boolean ship = false;
-                        boolean captain = false;
-                        boolean crew = false;
-                        for (int i = 0; i < dice.length; i++) {
-                            if (dice[i] == 6) {
-                                ship = true;
-                                posShip = i;
-                                break;
-                            }
-                        }
-                        if (ship) {
+                    if(this.tirada > 0) {
+                        this.tirada = this.tirada - 1;
+                        if (random.nextInt(5) != 0) {
+                            int posCaptain = -1, posShip = -1, posCrew = -1;
+                            boolean ship = false;
+                            boolean captain = false;
+                            boolean crew = false;
                             for (int i = 0; i < dice.length; i++) {
-                                if (dice[i] == 5) {
-                                    captain = true;
-                                    posCaptain = i;
+                                if (dice[i] == 6) {
+                                    ship = true;
+                                    posShip = i;
                                     break;
                                 }
                             }
-                        }
-                        if (captain) {
-                            for (int i = 0; i < dice.length; i++) {
-                                if (dice[i] == 4) {
-                                    crew = true;
-                                    posCrew = i;
-                                    break;
+                            if (ship) {
+                                for (int i = 0; i < dice.length; i++) {
+                                    if (dice[i] == 5) {
+                                        captain = true;
+                                        posCaptain = i;
+                                        break;
+                                    }
                                 }
                             }
-                        }
-                        int[] sel;
-                        if(!takeShip && ship){
-                            takeShip = true;
-                            if(!takeCaptain && captain){
+                            if (captain) {
+                                for (int i = 0; i < dice.length; i++) {
+                                    if (dice[i] == 4) {
+                                        crew = true;
+                                        posCrew = i;
+                                        break;
+                                    }
+                                }
+                            }
+                            int[] sel;
+                            if (!takeShip && ship) {
+                                takeShip = true;
+                                if (!takeCaptain && captain) {
+                                    takeCaptain = true;
+                                    if (!takeCrew && crew) {
+                                        takeCrew = true;
+                                    }
+                                }
+                                if (takeShip && takeCaptain && takeCrew) {
+                                    sel = new int[3];
+                                    int sh = posShip + 1;
+                                    int ca = posCaptain + 1;
+                                    int cr = posCrew + 1;
+                                    sel[0] = sh;
+                                    sel[1] = ca;
+                                    sel[2] = cr;
+                                    try {
+                                        datagram.take(9999, sel);
+                                        System.out.println("Cliente 9999: TAKE");
+                                    } catch (IOException e) {
+                                        error = datagram.readErrorMessage();
+                                        System.out.println(error);
+                                    }
+                                } else if (takeShip && takeCaptain) {
+                                    sel = new int[2];
+                                    int sh = posShip + 1;
+                                    int ca = posCaptain + 1;
+                                    sel[0] = sh;
+                                    sel[1] = ca;
+                                    try {
+                                        datagram.take(9999, sel);
+                                        System.out.println("Cliente 9999: TAKE");
+                                    } catch (IOException e) {
+                                        error = datagram.readErrorMessage();
+                                        System.out.println(error);
+                                    }
+                                } else if (takeShip) {
+                                    sel = new int[1];
+                                    int sh = posShip + 1;
+                                    sel[0] = sh;
+                                    try {
+                                        datagram.take(9999, sel);
+                                        System.out.println("Cliente 9999: TAKE");
+                                    } catch (IOException e) {
+                                        error = datagram.readErrorMessage();
+                                        System.out.println(error);
+                                    }
+                                }
+                            } else if (takeShip && captain && !takeCaptain) {
                                 takeCaptain = true;
-                                if(!takeCrew && crew){
+                                if (!takeCrew && crew) {
                                     takeCrew = true;
                                 }
-                            }
-                            if(takeShip && takeCaptain && takeCrew) {
-                                sel = new int[3];
-                                int sh = posShip + 1;
-                                int ca = posCaptain + 1;
-                                int cr = posCrew + 1;
-                                sel[0] = sh;
-                                sel[1] = ca;
-                                sel[2] = cr;
-                                try {
-                                    datagram.take(9999, sel);
-                                    System.out.println("Cliente 9999: TAKE");
-                                } catch (IOException e) {
-                                    error = e.getMessage();
-                                    datagram.sendErrorMessage(error,error.length());
+                                if (takeCaptain && takeCrew) {
+                                    sel = new int[2];
+                                    int ca = posCaptain + 1;
+                                    int cr = posCrew + 1;
+                                    sel[0] = ca;
+                                    sel[1] = cr;
+                                    try {
+                                        datagram.take(9999, sel);
+                                        System.out.println("Cliente 9999: TAKE");
+                                    } catch (IOException e) {
+                                        error = datagram.readErrorMessage();
+                                        System.out.println(error);
+                                    }
+                                } else if (takeCaptain) {
+                                    sel = new int[1];
+                                    int ca = posCaptain + 1;
+                                    sel[0] = ca;
+                                    try {
+                                        datagram.take(9999, sel);
+                                        System.out.println("Cliente 9999: TAKE");
+                                    } catch (IOException e) {
+                                        error = datagram.readErrorMessage();
+                                        System.out.println(error);
+                                    }
                                 }
-                            }
-                            else if(takeShip && takeCaptain){
-                                sel = new int[2];
-                                int sh = posShip + 1;
-                                int ca = posCaptain + 1;
-                                sel[0] = sh;
-                                sel[1] = ca;
-                                try {
-                                    datagram.take(9999, sel);
-                                    System.out.println("Cliente 9999: TAKE");
-                                } catch (IOException e) {
-                                    error = e.getMessage();
-                                    datagram.sendErrorMessage(error,error.length());
-                                }
-                            }
-                            else if(takeShip){
-                                sel = new int[1];
-                                int sh = posShip + 1;
-                                sel[0] = sh;
-                                try {
-                                    datagram.take(9999, sel);
-                                    System.out.println("Cliente 9999: TAKE");
-                                } catch (IOException e) {
-                                    error = e.getMessage();
-                                    datagram.sendErrorMessage(error,error.length());
-                                }
-                            }
-                        }else if(takeShip && captain && !takeCaptain){
-                            takeCaptain = true;
-                            if(!takeCrew && crew){
+                            } else if (takeShip && takeCaptain && crew && !takeCrew) {
                                 takeCrew = true;
-                            }
-                            if(takeCaptain && takeCrew) {
-                                sel = new int[2];
-                                int ca = posCaptain + 1;
-                                int cr = posCrew + 1;
-                                sel[0] = ca;
-                                sel[1] = cr;
-                                try {
-                                    datagram.take(9999, sel);
-                                    System.out.println("Cliente 9999: TAKE");
-                                } catch (IOException e) {
-                                    error = e.getMessage();
-                                    datagram.sendErrorMessage(error,error.length());
-                                }
-                            }else if(takeCaptain){
                                 sel = new int[1];
-                                int ca = posCaptain + 1;
-                                sel[0] = ca;
+                                int cr = posCrew + 1;
+                                sel[0] = cr;
                                 try {
                                     datagram.take(9999, sel);
                                     System.out.println("Cliente 9999: TAKE");
                                 } catch (IOException e) {
-                                    error = e.getMessage();
-                                    datagram.sendErrorMessage(error,error.length());
+                                    error = datagram.readErrorMessage();
+                                    System.out.println(error);
+                                }
+                            } else {
+                                //TAKE 0x00
+                                sel = new int[0];
+                                try {
+                                    datagram.take(9999, sel);
+                                    System.out.println("Cliente 9999: TAKE");
+                                } catch (IOException e) {
+                                    error = datagram.readErrorMessage();
+                                    System.out.println(error);
                                 }
                             }
-                        }else if(takeShip && takeCaptain && crew && !takeCrew){
-                            takeCrew = true;
-                            sel = new int[1];
-                            int cr = posCrew + 1;
-                            sel[0] = cr;
+                        } else {
                             try {
-                                datagram.take(9999, sel);
-                                System.out.println("Cliente 9999: TAKE");
+                                datagram.pass(9999);
+                                System.out.println("Cliente 9999: PASS");
                             } catch (IOException e) {
-                                error = e.getMessage();
-                                datagram.sendErrorMessage(error,error.length());
+                                error = datagram.readErrorMessage();
+                                System.out.println(error);
                             }
-                        }else{
-                            //TAKE 0x00
-                            sel = new int[0];
-                            try {
-                                datagram.take(9999, sel);
-                                System.out.println("Cliente 9999: TAKE");
-                            } catch (IOException e) {
-                                error = e.getMessage();
-                                datagram.sendErrorMessage(error,error.length());
-                            }
-                        }
-                    }else{
-                        try {
-                            datagram.pass(9999);
-                            System.out.println("Cliente 9999: PASS");
-                        } catch (IOException e) {
-                            error = e.getMessage();
-                            datagram.sendErrorMessage(error,error.length());
                         }
                     }
 
@@ -444,27 +460,20 @@ public class Game {
                         b[3] = datagram.read_byte(1)[0];
                         bytePoint = datagram.bytesToInt32(b, ComUtils.Endianness.BIG_ENNDIAN);
                     } catch (IOException e) {
-                        error = e.getMessage();
-                        datagram.sendErrorMessage(error,error.length());
+                        error = datagram.readErrorMessage();
+                        System.out.println(error);
                     }
                     System.out.println(comanda + " " + bytePoint);
                 }
                 else if (comanda.equals("WINS")) {
-                        try {
-                            datagram.read_space();
-                            win = datagram.read_char();
-                            System.out.println(comanda + " " + win);
-                            Thread.sleep(4000);//comentarlo con la profe
-                            System.out.println("Cliente 9999: EXIT");
-                            datagram.exit();
-                            this.setPartida(false);
-                        } catch (IOException e) {
-                            error = e.getMessage();
-                            datagram.sendErrorMessage(error,error.length());
-                        } catch (InterruptedException e) {
-                            error = e.getMessage();
-                            datagram.sendErrorMessage(error,error.length());
-                        }
+                    try {
+                        datagram.read_space();
+                        win = datagram.read_char();
+                        System.out.println(comanda + " " + win);
+                    } catch (IOException e) {
+                        error = datagram.readErrorMessage();
+                        System.out.println(error);
+                    }
                 }
             }
         }
