@@ -21,6 +21,12 @@ public class ComUtils {
     private DataOutputStream dataOutputStream;
 
 
+    /**
+     * Constructor of ComUtils
+     *
+     * @param s     Instance of Socket
+     * @throws IOException
+     */
     public ComUtils(Socket s) throws IOException {
 
         dataInputStream = new DataInputStream(s.getInputStream());
@@ -53,6 +59,12 @@ public class ComUtils {
         dataOutputStream.write(bytes, 0, 4);
     }
 
+    /**
+     * Write a byte value
+     *
+     * @param b     Byte value
+     * @throws IOException
+     */
     public void write_byte(byte b) throws IOException {
 
         dataOutputStream.write(b);
@@ -97,6 +109,15 @@ public class ComUtils {
         write_string(c);
     }
 
+    /**
+     *
+     * Write take command
+     *
+     * @param c         Command
+     * @param id        Client ID
+     * @param sel       Selection values
+     * @throws IOException
+     */
     public void write_take(String c, int id, int[] sel) throws IOException {
 
         int lSel = sel.length;
@@ -198,6 +219,23 @@ public class ComUtils {
         // least for now. Might need to be changed once the Server's logs are implemented.
         byte[] bStr = new byte[1];
         bStr = read_bytes(1);
+    }
+
+    /**
+     * Receiving the error message
+     *
+     * @return Error message
+     * @throws IOException
+     */
+    public String readErrorMessage() throws IOException {
+        // Format: ERRO <SP><LEN><SP><ERROR_TEXT>
+        this.read_space();
+        String i = this.read_char();
+        this.read_space();
+        int len = Integer.parseInt(i);
+        String c = this.read_string_variable(len);
+
+        return c;
     }
 
     /**

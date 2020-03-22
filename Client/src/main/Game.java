@@ -7,6 +7,9 @@ import java.util.Random;
 import java.util.Scanner;
 
 
+/**
+ * <h1>Game class</h1>
+ */
 public class Game {
 
     private Menu menu;
@@ -22,6 +25,14 @@ public class Game {
     private int cash = 0;
     private int tirada;
 
+    /**
+     * Constructor of Game
+     *
+     * @param datagram  Instance of Datagram
+     * @param menu      Instance of Menu
+     * @param mode      Geme mode
+     * @throws IOException
+     */
     public Game(Datagram datagram, Menu menu, int mode) throws IOException {
         this.datagram = datagram;
         this.menu = menu;
@@ -40,6 +51,12 @@ public class Game {
         this.partida = partida;
     }
 
+    /**
+     * Starts the game.
+     *
+     * @param mode      Game mode
+     * @throws IOException
+     */
     private void partida(int mode) throws IOException {
         String error = "";
         String comanda = null;
@@ -47,7 +64,7 @@ public class Game {
 
         if(mode == 0){
             idCliente = menu.getClientID();
-            System.out.print("Cliente "+idCliente+": ");
+            System.out.print("Client "+idCliente+": ");
             if(sc.next().equals("STRT")){
                 try {
                     datagram.strt(idCliente);
@@ -60,7 +77,7 @@ public class Game {
             idCliente = random.nextInt(9999)+1;
             try {
                 datagram.strt(idCliente);
-                System.out.println("Cliente " + idCliente + ": STRT");
+                System.out.println("Client " + idCliente + ": STRT");
             } catch (IOException e) {
                 System.out.println("ERROR: Couldn't not send command STRT");
             }
@@ -91,7 +108,7 @@ public class Game {
                         System.out.println("ERROR: Couldn't not read command CASH");
                     }
                     System.out.println(comanda + " " + cash);
-                    System.out.print("Cliente "+idCliente+": ");
+                    System.out.print("Client "+idCliente+": ");
                     String c = sc.next();
                     if (c.equals("BET")) {
                         this.tirada = 3;
@@ -435,6 +452,8 @@ public class Game {
             }
         }
     }
+
+
     public int[] read_take(){
         int len = 0;
         len = sc.nextInt();

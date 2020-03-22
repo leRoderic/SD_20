@@ -2,8 +2,18 @@ package main;
 
 import java.io.IOException;
 
+/**
+ * <h1>Client class</h1>
+ */
+
 public class Client {
 
+    /**
+     * The 'main' program.
+     *
+     * @param args  arguments passed to the program
+     * @throws IOException e
+     */
     // Has to have -h parameter.
     // Client parameters -s [SERVER] -p [PORT] -i [0 o 1]
     public static void main(String[] args) throws IOException {
