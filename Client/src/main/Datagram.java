@@ -9,7 +9,6 @@ import java.net.UnknownHostException;
  * <h1>Datagram class</h1>
  * Communication functions between Client and Server.
  *
- * @author  leRoderic
  * @version 1.0
  * @since   24-02-2020
  */
@@ -22,6 +21,14 @@ public class Datagram {
     private static final String GREEN = "\033[0;32m";
     private static final String RESET = "\u001B[0m";
 
+    /**
+     * Constructor of Datagram
+     *
+     * @param serverAddress     Server IP address
+     * @param port              Conection port
+     * @param gameMode          Game mode.
+     * @throws IOException
+     */
     public Datagram(String serverAddress, int port, int gameMode) throws IOException {
 
         try{
@@ -115,22 +122,32 @@ public class Datagram {
 
         utils.write_command(c);
     }
+
     public String read_command() throws IOException{
 
         return utils.read_string();
     }
+
     public void read_space() throws  IOException{
         utils.read_space();
     }
+
     public int read_int() throws  IOException{
         return utils.read_int32();
     }
+
     public String  read_char() throws  IOException{
         return utils.read_char();
     }
+
     public byte[] read_byte(int n) throws  IOException{
         return utils.read_bytes(n);
     }
+
+    /**
+     * @return Dices values
+     * @throws IOException
+     */
     public int[] read_dice() throws IOException {
 
         int[] dice = new int[5];
@@ -157,14 +174,7 @@ public class Datagram {
     }
 
     public String readErrorMessage() throws IOException {
-        // Format: ERRO <SP><LEN><SP><ERROR_TEXT>
-        this.read_space();
-        String i = this.read_char();
-        this.read_space();
-        int len = Integer.parseInt(i);
-        String c = utils.read_string_variable(len);
-
-        return c;
+        return utils.readErrorMessage();
     }
 
     private enum Command {

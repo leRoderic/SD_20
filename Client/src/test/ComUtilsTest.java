@@ -54,7 +54,7 @@ public class ComUtilsTest {
 
             ComUtils comUtils = new ComUtils(s);
             comUtils.write_string("EXIT");
-            String readed = comUtils.read_char();
+            String readed = comUtils.read_string();
 
             assertEquals("EXIT", readed);
 
