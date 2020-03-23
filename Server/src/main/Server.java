@@ -116,8 +116,8 @@ public class Server {
                 singlePlayer = false;
 
             try {
-                InetAddress add = InetAddress.getByName(InetAddress.getLocalHost().toString().split("/")[1]);
-                //InetAddress add = InetAddress.getByName("25.98.169.216");
+                //InetAddress add = InetAddress.getByName(InetAddress.getLocalHost().toString().split("/")[1]);
+                InetAddress add = InetAddress.getByName("25.98.169.216");
                 server = new ServerSocket(serverPort, 50, add);
                 System.out.println("Info> Server ready with IP " + server.getInetAddress().toString().split("/")[1] +
                         " on port number " + serverPort);

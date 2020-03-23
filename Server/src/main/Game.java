@@ -78,7 +78,7 @@ public class Game {
         int pool = 0;
         String command = "";
         String errorMessage = "";
-        int pID = -1, stpdCounter = 0;
+        int pID = -1;
         int len = 0, sel = 0, id = 0, cCash = 0;
         int pPoints = 0, sPoints = 0;
         boolean finished = false;
@@ -91,20 +91,23 @@ public class Game {
                     try {
                         command = com.read_command();
                     } catch (Exception e) {
-                        errorMessage = e.getMessage();
+                        errorMessage = "Exiting due to error " + e.getMessage();
                         log.write("S: ERRO '" + errorMessage.length() + "' " + errorMessage + "\n");
                         log.flush(); // If an error occurs, the log is dumped immediately to prevent losses of data.
                         com.sendErrorMessage(errorMessage, errorMessage.length());
+                        this.state = State.QUIT;
+                        break;
                     }
                     if(command.equals("STRT")){
-                        stpdCounter = 0;
                         try {
                             pID = com.readNextInt();
                         } catch (Exception e) {
-                            errorMessage = e.getMessage();
+                            errorMessage = "Exiting due to error " + e.getMessage();
                             log.write("S: ERRO '" + errorMessage.length() + "' " + errorMessage + "\n");
-                            log.flush();
+                            log.flush(); // If an error occurs, the log is dumped immediately to prevent losses of data.
                             com.sendErrorMessage(errorMessage, errorMessage.length());
+                            this.state = State.QUIT;
+                            break;
                         }
                         log.write("C" + clientNumber + ": STRT " + pID + "\n");
                         this.state = State.BETT;
@@ -121,14 +124,15 @@ public class Game {
                         try {
                             com.cash(cCash);
                         } catch (Exception e) {
-                            errorMessage = e.getMessage();
+                            errorMessage = "Exiting due to error " + e.getMessage();
                             log.write("S: ERRO '" + errorMessage.length() + "' " + errorMessage + "\n");
-                            log.flush();
+                            log.flush(); // If an error occurs, the log is dumped immediately to prevent losses of data.
                             com.sendErrorMessage(errorMessage, errorMessage.length());
+                            this.state = State.QUIT;
+                            break;
                         }
 
                     }else if(command.equals("EXIT")){
-                        stpdCounter = 0;
                         log.write("C" + clientNumber + ": EXIT\n");
                         this.state = State.QUIT;
                     }else{
@@ -136,12 +140,7 @@ public class Game {
                         log.write("S: ERRO '" + errorMessage.length() + "' " + errorMessage + "\n");
                         log.flush();
                         com.sendErrorMessage(errorMessage, errorMessage.length());
-                        stpdCounter++;
-                        if(stpdCounter >= UKNWN_LIMIT){
-                            // If a unknown command is sent a UKNWN_LIMIT number of times the game is finished. If a player
-                            // does not now how to play it should learn first.
-                            this.state = State.QUIT;
-                        }
+                        this.state = State.QUIT;
                     }
                     break;
                 case BETT:
@@ -154,6 +153,14 @@ public class Game {
                             players.put(pID, 10);
                         }
                     }
+                    if(cCash < 2){
+                        finished = true;
+                        errorMessage = "You can't play because you are broke!";
+                        log.write("S: ERRO '" + errorMessage.length() + "' " + errorMessage + "\n");
+                        log.flush();
+                        com.sendErrorMessage(errorMessage, errorMessage.length());
+                        break;
+                    }
                     try {
                         command = "";
                         command = com.read_command();
@@ -163,14 +170,15 @@ public class Game {
                             log.close();
                             finished = true;
                         }else {
-                            errorMessage = e.getMessage();
+                            errorMessage = "Exiting due to error " + e.getMessage();
                             log.write("S: ERRO '" + errorMessage.length() + "' " + errorMessage + "\n");
-                            log.flush();
+                            log.flush(); // If an error occurs, the log is dumped immediately to prevent losses of data.
                             com.sendErrorMessage(errorMessage, errorMessage.length());
+                            this.state = State.QUIT;
+                            break;
                         }
                     }
                     if(command.equals("BETT")){
-                        stpdCounter = 0;
                         cCash -= 2;
                         pool += 4;
                         // ClientNumber is used to identify each client as the log is generated(C1 or C2).
@@ -179,20 +187,24 @@ public class Game {
                         try {
                             com.loot(2);
                         } catch (Exception e) {
-                            errorMessage = e.getMessage();
+                            errorMessage = "Exiting due to error " + e.getMessage();
                             log.write("S: ERRO '" + errorMessage.length() + "' " + errorMessage + "\n");
-                            log.flush();
+                            log.flush(); // If an error occurs, the log is dumped immediately to prevent losses of data.
                             com.sendErrorMessage(errorMessage, errorMessage.length());
+                            this.state = State.QUIT;
+                            break;
                         }
                         // Win value is also used to indicate turns. efficiency++
                         log.write("S: PLAY '" + com.getWinValue() + "' \n");
                         try {
                             com.play(com.getWinValue());
                         } catch (Exception e) {
-                            errorMessage = e.getMessage();
+                            errorMessage = "Exiting due to error " + e.getMessage();
                             log.write("S: ERRO '" + errorMessage.length() + "' " + errorMessage + "\n");
-                            log.flush();
+                            log.flush(); // If an error occurs, the log is dumped immediately to prevent losses of data.
                             com.sendErrorMessage(errorMessage, errorMessage.length());
+                            this.state = State.QUIT;
+                            break;
                         }
                         // Resets the taken dices to all not taken.
                         reset_taken_values();
@@ -202,15 +214,16 @@ public class Game {
                         try {
                             com.dice(pID, dices);
                         } catch (Exception e) {
-                            errorMessage = e.getMessage();
+                            errorMessage = "Exiting due to error " + e.getMessage();
                             log.write("S: ERRO '" + errorMessage.length() + "' " + errorMessage + "\n");
-                            log.flush();
+                            log.flush(); // If an error occurs, the log is dumped immediately to prevent losses of data.
                             com.sendErrorMessage(errorMessage, errorMessage.length());
+                            this.state = State.QUIT;
+                            break;
                         }
                         this.state = State.ROLL1;
                     }else if (command.equals("EXIT")){
                         // Client can EXIT at any time.
-                        stpdCounter = 0;
                         log.write("C" + clientNumber + ": EXIT\n");
                         this.state = State.QUIT;
                     }else {
@@ -218,32 +231,32 @@ public class Game {
                         log.write("S: ERRO '" + errorMessage.length() + "' " + errorMessage + "\n");
                         log.flush();
                         com.sendErrorMessage(errorMessage, errorMessage.length());
-                        stpdCounter++;
-                        if(stpdCounter >= UKNWN_LIMIT){
-                            this.state = State.QUIT;
-                        }
+                        this.state = State.QUIT;
                     }
                     break;
                 case ROLL1:
                     try {
                         command = com.read_command();
                     } catch (Exception e) {
-                        errorMessage = e.getMessage();
+                        errorMessage = "Exiting due to error " + e.getMessage();
                         log.write("S: ERRO '" + errorMessage.length() + "' " + errorMessage + "\n");
-                        log.flush();
+                        log.flush(); // If an error occurs, the log is dumped immediately to prevent losses of data.
                         com.sendErrorMessage(errorMessage, errorMessage.length());
+                        this.state = State.QUIT;
+                        break;
                     }
                     if(command.equals("TAKE")){
                         // After entering a valid command the stupid counter is set back to 0.
-                        stpdCounter = 0;
                         try {
                             id = com.readNextInt();
                             len = com.read_next_int_in_bytes();
                         } catch (Exception e) {
-                            errorMessage = e.getMessage();
+                            errorMessage = "Exiting due to error " + e.getMessage();
                             log.write("S: ERRO '" + errorMessage.length() + "' " + errorMessage + "\n");
-                            log.flush();
+                            log.flush(); // If an error occurs, the log is dumped immediately to prevent losses of data.
                             com.sendErrorMessage(errorMessage, errorMessage.length());
+                            this.state = State.QUIT;
+                            break;
                         }
                         ArrayList<Integer> rec = new ArrayList();
                         ArrayList<Integer> rec2 = new ArrayList();
@@ -252,14 +265,18 @@ public class Game {
                             try {
                                 sel = com.read_next_int_in_bytes();
                             } catch (Exception e) {
-                                errorMessage = e.getMessage();
+                                errorMessage = "Exiting due to error " + e.getMessage();
                                 log.write("S: ERRO '" + errorMessage.length() + "' " + errorMessage + "\n");
-                                log.flush();
+                                log.flush(); // If an error occurs, the log is dumped immediately to prevent losses of data.
                                 com.sendErrorMessage(errorMessage, errorMessage.length());
+                                this.state = State.QUIT;
+                                break;
                             }
-                            dTaken[sel-1] = 0; // Blocks a dice from being thrown again.
-                            rec.add(sel); // For log purposes.
-                            rec2.add(dices[sel-1]); // Also, for log purposes.
+                            if(take_validator(sel)){
+                                dTaken[sel-1] = 0; // Blocks a dice from being thrown again.
+                                rec.add(sel); // For log purposes.
+                                rec2.add(dices[sel-1]); // Also, for log purposes.
+                            }
                         }
                         log.write("C" + clientNumber + ": TAKE " + id + " 0x0" + len + selection_toString(rec) + "\n");
                         // take_updater needs the values sorted in decreasing order. Makes sense if you look at its
@@ -271,59 +288,62 @@ public class Game {
                         try {
                             com.dice(pID, dices);
                         } catch (Exception e) {
-                            errorMessage = e.getMessage();
+                            errorMessage = "Exiting due to error " + e.getMessage();
                             log.write("S: ERRO '" + errorMessage.length() + "' " + errorMessage + "\n");
-                            log.flush();
+                            log.flush(); // If an error occurs, the log is dumped immediately to prevent losses of data.
                             com.sendErrorMessage(errorMessage, errorMessage.length());
+                            this.state = State.QUIT;
+                            break;
                         }
                         this.state = State.ROLL2;
 
                     }else if(command.equals("PASS")){
-                        stpdCounter = 0;
                         try {
                             id = com.readNextInt();
                         } catch (Exception e) {
-                            errorMessage = e.getMessage();
+                            errorMessage = "Exiting due to error " + e.getMessage();
                             log.write("S: ERRO '" + errorMessage.length() + "' " + errorMessage + "\n");
-                            log.flush();
+                            log.flush(); // If an error occurs, the log is dumped immediately to prevent losses of data.
                             com.sendErrorMessage(errorMessage, errorMessage.length());
+                            this.state = State.QUIT;
+                            break;
                         }
                         log.write("S: PASS " + id + "\n");
                         this.state = State.EXIT;
                     }else if (command.equals("EXIT")){
-                        stpdCounter = 0;
                         log.write("C" + clientNumber + ": EXIT\n");
                         this.state = State.QUIT;
                         break;
                     }else{
                         errorMessage = "Command not understood";
                         log.write("S: ERRO '" + errorMessage.length() + "' " + errorMessage + "\n");
+                        log.flush();
                         com.sendErrorMessage(errorMessage, errorMessage.length());
-                        stpdCounter++;
-                        if(stpdCounter >= UKNWN_LIMIT){
-                            this.state = State.QUIT;
-                        }
+                        this.state = State.QUIT;
                     }
                     break;
                 case ROLL2:
                     try {
                         command = com.read_command();
                     } catch (Exception e) {
-                        errorMessage = e.getMessage();
+                        errorMessage = "Exiting due to error " + e.getMessage();
                         log.write("S: ERRO '" + errorMessage.length() + "' " + errorMessage + "\n");
-                        log.flush();
+                        log.flush(); // If an error occurs, the log is dumped immediately to prevent losses of data.
                         com.sendErrorMessage(errorMessage, errorMessage.length());
+                        this.state = State.QUIT;
+                        break;
                     }
                     if(command.equals("TAKE")){
-                        stpdCounter = 0;
                         try {
                             id = com.readNextInt();
                             len = com.read_next_int_in_bytes();
                         } catch (Exception e) {
-                            errorMessage = e.getMessage();
+                            errorMessage = "Exiting due to error " + e.getMessage();
                             log.write("S: ERRO '" + errorMessage.length() + "' " + errorMessage + "\n");
-                            log.flush();
+                            log.flush(); // If an error occurs, the log is dumped immediately to prevent losses of data.
                             com.sendErrorMessage(errorMessage, errorMessage.length());
+                            this.state = State.QUIT;
+                            break;
                         }
                         ArrayList<Integer> rec = new ArrayList();
                         ArrayList<Integer> rec2 = new ArrayList();
@@ -331,14 +351,18 @@ public class Game {
                             try {
                                 sel = com.read_next_int_in_bytes();
                             } catch (Exception e) {
-                                errorMessage = e.getMessage();
+                                errorMessage = "Exiting due to error " + e.getMessage();
                                 log.write("S: ERRO '" + errorMessage.length() + "' " + errorMessage + "\n");
-                                log.flush();
+                                log.flush(); // If an error occurs, the log is dumped immediately to prevent losses of data.
                                 com.sendErrorMessage(errorMessage, errorMessage.length());
+                                this.state = State.QUIT;
+                                break;
                             }
-                            dTaken[sel-1] = 0;
-                            rec.add(sel);
-                            rec2.add(dices[sel-1]);
+                            if(take_validator(sel)){
+                                dTaken[sel-1] = 0; // Blocks a dice from being thrown again.
+                                rec.add(sel); // For log purposes.
+                                rec2.add(dices[sel-1]); // Also, for log purposes.
+                            }
                         }
                         log.write("C" + clientNumber + ": TAKE " + id + " 0x0" + len + selection_toString(rec) + "\n");
                         Collections.sort(rec2, Collections.<Integer>reverseOrder());
@@ -348,10 +372,12 @@ public class Game {
                         try {
                             com.dice(pID, dices);
                         } catch (Exception e) {
-                            errorMessage = e.getMessage();
+                            errorMessage = "Exiting due to error " + e.getMessage();
                             log.write("S: ERRO '" + errorMessage.length() + "' " + errorMessage + "\n");
-                            log.flush();
+                            log.flush(); // If an error occurs, the log is dumped immediately to prevent losses of data.
                             com.sendErrorMessage(errorMessage, errorMessage.length());
+                            this.state = State.QUIT;
+                            break;
                         }
                         // If the client chooses to take values again, if better values are gained on the last roll they
                         // will automatically be improved on the player's score.
@@ -359,14 +385,15 @@ public class Game {
                         this.state = State.EXIT;
 
                     }else if(command.equals("PASS")){
-                        stpdCounter = 0;
                         try {
                             id = com.readNextInt();
                         } catch (Exception e) {
-                            errorMessage = e.getMessage();
+                            errorMessage = "Exiting due to error " + e.getMessage();
                             log.write("S: ERRO '" + errorMessage.length() + "' " + errorMessage + "\n");
-                            log.flush();
+                            log.flush(); // If an error occurs, the log is dumped immediately to prevent losses of data.
                             com.sendErrorMessage(errorMessage, errorMessage.length());
+                            this.state = State.QUIT;
+                            break;
                         }
                         log.write("S: PASS " + id + "\n");
                         this.state = State.EXIT;
@@ -378,20 +405,10 @@ public class Game {
                         log.write("S: ERRO '" + errorMessage.length() + "' " + errorMessage + "\n");
                         log.flush();
                         com.sendErrorMessage(errorMessage, errorMessage.length());
-                        stpdCounter++;
-                        if(stpdCounter >= UKNWN_LIMIT){
-                            this.state = State.QUIT;
-                        }
+                        this.state = State.QUIT;
                     }
                     break;
                 case QUIT:
-                    if(stpdCounter >= UKNWN_LIMIT){
-                        // In case a not quite smart player does not send any correct commands the game will be terminated.
-                        errorMessage = "Finishing game due to unknown command received several times";
-                        log.write("S: ERRO '" + errorMessage.length() + "' " + errorMessage + "\n");
-                        log.flush();
-                        com.sendErrorMessage(errorMessage, errorMessage.length());
-                    }
                     finished = true;
                     break;
                 case EXIT:
@@ -402,10 +419,12 @@ public class Game {
                     try {
                         com.points(pID, pPoints);
                     } catch (Exception e) {
-                        errorMessage = e.getMessage();
+                        errorMessage = "Exiting due to error " + e.getMessage();
                         log.write("S: ERRO '" + errorMessage.length() + "' " + errorMessage + "\n");
-                        log.flush();
+                        log.flush(); // If an error occurs, the log is dumped immediately to prevent losses of data.
                         com.sendErrorMessage(errorMessage, errorMessage.length());
+                        this.state = State.QUIT;
+                        break;
                     }
                     if(!isSP) {
                         return new int[]{pID, pPoints};
@@ -430,19 +449,23 @@ public class Game {
                         log.write("S: WINS '" + win + "'\n");
                         com.wins(win);
                     } catch (Exception e) {
-                        errorMessage = e.getMessage();
+                        errorMessage = "Exiting due to error " + e.getMessage();
                         log.write("S: ERRO '" + errorMessage.length() + "' " + errorMessage + "\n");
-                        log.flush();
+                        log.flush(); // If an error occurs, the log is dumped immediately to prevent losses of data.
                         com.sendErrorMessage(errorMessage, errorMessage.length());
+                        this.state = State.QUIT;
+                        break;
                     }
                     log.write("S: CASH " + cCash + "\n");
                     try {
                         com.cash(cCash);
                     } catch (Exception e) {
-                        errorMessage = e.getMessage();
+                        errorMessage = "Exiting due to error " + e.getMessage();
                         log.write("S: ERRO '" + errorMessage.length() + "' " + errorMessage + "\n");
-                        log.flush();
+                        log.flush(); // If an error occurs, the log is dumped immediately to prevent losses of data.
                         com.sendErrorMessage(errorMessage, errorMessage.length());
+                        this.state = State.QUIT;
+                        break;
                     }
                     this.state = State.BETT;
                     synchronized (players){
@@ -468,6 +491,7 @@ public class Game {
         int fPoints = 0, sPoints = 0;
         int pool = 0, cCash1 = 0, cCash2 = 0;
         boolean fComExit = false, sComExit = false, swap = false;
+        boolean fFirstTime = false, sFirstTime = false;
         String errorMessage = "";
 
         if(this.singlePlayer){
@@ -489,8 +513,19 @@ public class Game {
                 pool += 4;
 
                 // First player plays.
+                if(!fFirstTime){
+                    fFirstTime = true;
+                    this.state = State.INIT;
+                }else{
+                    this.state = State.BETT;
+                }
                 ret = one_player(fCom,false, Integer.toString(fCom.getWinValue()+ 1));
-                this.state = State.INIT; // Reset game state.
+                if(!sFirstTime){
+                    sFirstTime = true;
+                    this.state = State.INIT;
+                }else{
+                    this.state = State.BETT;
+                }
 
                 if(ret == null){ // In case the player exits the game the loop will be broken.
                     fComExit = true;
@@ -501,8 +536,7 @@ public class Game {
                     fPoints = ret[1];
                 }
                 // The other player plays.
-                ret = one_player(sCom,false, Integer.toString(sCom.getWinValue()+ 1));
-                this.state = State.INIT;
+                ret = one_player(sCom,false, Integer.toString(sCom.getWinValue() + 1));
                 // Same as before, in case the second player decides to skip normal execution and exits early.
                 if(ret == null){
                     sComExit = true;
@@ -798,6 +832,24 @@ public class Game {
             ret = ret + " 0x0" + a.get(i);
         }
         return ret;
+    }
+
+    /**
+     * Checks if a selection is valid.
+     *
+     * @param v value to check
+     * @return valid or not valid
+     */
+    private boolean take_validator(int v){
+
+        if(v == 4){
+            // You can only select crew(4) if you have ship and captain.
+            return ship&captain;
+        }else if(v == 5){
+            // You can only select captain(5) if you have ship.
+            return ship;
+        }
+        return true;
     }
 
     /**

@@ -1,0 +1,12 @@
+C1: STRT 25
+S: CASH 10
+C1: BETT
+S: LOOT 2
+S: PLAY '0' 
+S: DICE 25 '6' '6' '4' '3' '4'
+C1: TAKE 25 0x02 0x01 0x03
+S: DICE 25 '6' '2' '4' '2' '3'
+S: PASS 25
+S: PNTS 25 0
+S: ERRO '22' Command not understood
+S: ERRO '22' Command not understood
