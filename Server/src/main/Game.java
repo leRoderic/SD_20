@@ -67,18 +67,19 @@ public class Game {
     /**
      * Single player game mode.
      *
+     * @param player_id player's id
      * @param com   the socket used for the communications
      * @param isSP  gamemode
      * @param clientNumber  to identify clients on the log
      * @return  player points + id in case of single player, otherwise null or -1
      * @throws IOException e
      */
-    private int[] one_player (Datagram com, boolean isSP, String clientNumber) throws IOException {
+    private int[] one_player (int player_id, Datagram com, boolean isSP, String clientNumber) throws IOException {
 
         int pool = 0;
         String command = "";
         String errorMessage = "";
-        int pID = -1;
+        int pID = player_id;
         int len = 0, sel = 0, id = 0, cCash = 0;
         int pPoints = 0, sPoints = 0;
         boolean finished = false;
@@ -308,7 +309,7 @@ public class Game {
                             this.state = State.QUIT;
                             break;
                         }
-                        log.write("S: PASS " + id + "\n");
+                        log.write("C"+clientNumber+": PASS " + id + "\n");
                         this.state = State.EXIT;
                     }else if (command.equals("EXIT")){
                         log.write("C" + clientNumber + ": EXIT\n");
@@ -395,7 +396,7 @@ public class Game {
                             this.state = State.QUIT;
                             break;
                         }
-                        log.write("S: PASS " + id + "\n");
+                        log.write("C"+clientNumber+": PASS " + id + "\n");
                         this.state = State.EXIT;
                     }else if(command.equals("EXIT")){
                         log.write("C" + clientNumber + ": EXIT\n");
@@ -487,7 +488,7 @@ public class Game {
 
         Datagram fCom, sCom, tCom;
         int[] ret;
-        int fID = 0, sID = 0;
+        int fID = -1, sID = -1;
         int fPoints = 0, sPoints = 0;
         int pool = 0, cCash1 = 0, cCash2 = 0;
         boolean fComExit = false, sComExit = false, swap = false;
@@ -496,12 +497,12 @@ public class Game {
 
         if(this.singlePlayer){
             // In case of single player.
-            one_player(this.com1, true, "");
+            one_player(-1, this.com1, true, "");
         }else{
             // Two player mode.
 
             // The player who starts first is selected randomly, so that's what this is.
-            if(random.nextInt(1)==0){
+            if(random.nextInt(3)==0){
                 fCom = this.com1;
                 sCom = this.com2;
             }else{
@@ -519,7 +520,7 @@ public class Game {
                 }else{
                     this.state = State.BETT;
                 }
-                ret = one_player(fCom,false, Integer.toString(fCom.getWinValue()+ 1));
+                ret = one_player(fID, fCom,false, Integer.toString(fCom.getWinValue()+ 1));
                 if(!sFirstTime){
                     sFirstTime = true;
                     this.state = State.INIT;
@@ -536,7 +537,7 @@ public class Game {
                     fPoints = ret[1];
                 }
                 // The other player plays.
-                ret = one_player(sCom,false, Integer.toString(sCom.getWinValue() + 1));
+                ret = one_player(sID, sCom,false, Integer.toString(sCom.getWinValue() + 1));
                 // Same as before, in case the second player decides to skip normal execution and exits early.
                 if(ret == null){
                     sComExit = true;
