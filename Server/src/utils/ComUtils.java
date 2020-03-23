@@ -63,7 +63,7 @@ public class ComUtils {
      * Writes a single byte.
      *
      * @param b byte to be written
-     * @throws IOException
+     * @throws IOException excep
      */
     public void write_byte(byte b) throws IOException {
 
@@ -90,7 +90,7 @@ public class ComUtils {
      *
      * @param c command
      * @param id client's id
-     * @throws IOException
+     * @throws IOException excep
      */
     public void write_command_pint(String c, int id) throws IOException {
 
@@ -102,8 +102,8 @@ public class ComUtils {
     /**
      * Write a command that requires no parameters. EXIT or BETT.
      *
-     * @param c
-     * @throws IOException
+     * @param c command to be written
+     * @throws IOException excep
      */
     public void write_command(String c) throws IOException {
 
@@ -177,6 +177,8 @@ public class ComUtils {
 
     /**
      * Write a blank space (' ') to the Data Output Stream.
+     *
+     * @throws IOException excep
      */
     public void write_space() throws IOException {
 
@@ -187,6 +189,8 @@ public class ComUtils {
 
     /**
      * Reads a blank space (' ').
+     *
+     * @throws IOException excep
      */
     public void read_space() throws IOException {
 
@@ -280,8 +284,8 @@ public class ComUtils {
     /**
      * Reads space + integer and returns it in bytes.
      *
-     * @return
-     * @throws IOException
+     * @return read integer in bytes
+     * @throws IOException excep
      */
     public int read_next_int_in_bytes() throws IOException {
 
@@ -296,7 +300,7 @@ public class ComUtils {
      *
      * @param size the size of the string
      * @return the read string
-     * @throws IOException
+     * @throws IOException excep
      */
     public  String read_string_variable(int size) throws IOException {
 

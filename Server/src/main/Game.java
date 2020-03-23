@@ -653,8 +653,8 @@ public class Game {
     /**
      * Server emulated play. Very smart AI.
      *
-     * @return
-     * @throws IOException
+     * @return server points
+     * @throws IOException excep
      */
     private int serverPlays() throws IOException {
 

@@ -26,7 +26,7 @@ public class Datagram {
      * Constructor for Datagram class.
      *
      * @param s the socket
-     * @throws IOException
+     * @throws IOException excep
      */
     public Datagram(Socket s) throws IOException {
 
@@ -48,7 +48,7 @@ public class Datagram {
     /**
      * Setter for the win value.
      *
-     * @param winValue
+     * @param winValue win value
      */
     public void setWinValue(int winValue) {
         this.winValue = winValue;
@@ -137,7 +137,8 @@ public class Datagram {
     /**
      * Sends loot command.
      *
-     * @throws IOException
+     * @param coins the number of coins
+     * @throws IOException excep
      */
     public void loot(int coins) throws IOException {
 
