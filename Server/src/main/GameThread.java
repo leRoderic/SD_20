@@ -39,7 +39,7 @@ public class GameThread implements Runnable{
         try {
             game.run();
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("Info> Player disconnected abruptly, check log for more details.");
         }
     }
 }
