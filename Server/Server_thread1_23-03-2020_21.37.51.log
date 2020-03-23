@@ -1,0 +1,10 @@
+C2: STRT 111
+S: CASH 10
+C2: BETT
+S: LOOT 2
+S: PLAY '1' 
+S: DICE 111 '6' '4' '2' '3' '1'
+C2: PASS 111
+S: PNTS 111 0
+S: ERRO '37' Exiting due to error Connection reset
+S: ERRO '57' The other player left abruptly, aborting game and exiting

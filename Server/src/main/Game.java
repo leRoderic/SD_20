@@ -487,10 +487,10 @@ public class Game {
     public void run() throws IOException {
 
         Datagram fCom, sCom, tCom;
-        int[] ret;
+        int[] ret = null;
         int fID = -1, sID = -1;
         int fPoints = 0, sPoints = 0;
-        int pool = 0, cCash1 = 0, cCash2 = 0;
+        int pool = 0, cCash1 = 0, cCash2 = 0, abruptExit = -1;
         boolean fComExit = false, sComExit = false, swap = false;
         boolean fFirstTime = false, sFirstTime = false;
         String errorMessage = "";
@@ -520,7 +520,12 @@ public class Game {
                 }else{
                     this.state = State.BETT;
                 }
-                ret = one_player(fID, fCom,false, Integer.toString(fCom.getWinValue()+ 1));
+                try {
+                    ret = one_player(fID, fCom, false, Integer.toString(fCom.getWinValue() + 1));
+                }catch(Exception e){
+                    abruptExit = 1;
+                    break;
+                }
                 if(!sFirstTime){
                     sFirstTime = true;
                     this.state = State.INIT;
@@ -535,9 +540,15 @@ public class Game {
                     // Otherwise, player's id and points are retrieved.
                     fID = ret[0];
                     fPoints = ret[1];
+                    ret = null;
                 }
                 // The other player plays.
+                try{
                 ret = one_player(sID, sCom,false, Integer.toString(sCom.getWinValue() + 1));
+                }catch(Exception e){
+                    abruptExit = 2;
+                    break;
+                }
                 // Same as before, in case the second player decides to skip normal execution and exits early.
                 if(ret == null){
                     sComExit = true;
@@ -545,6 +556,7 @@ public class Game {
                 }else{
                     sID = ret[0];
                     sPoints = ret[1];
+                    ret = null;
                 }
 
                 if (fPoints > sPoints) {
@@ -648,6 +660,18 @@ public class Game {
                 log.write("S: ERRO '" + errorMessage.length() + "' " + errorMessage + "\n");
                 log.flush();
                 this.com1.sendErrorMessage(errorMessage, errorMessage.length());
+            }else if(abruptExit != -1){
+                errorMessage = "The other player left abruptly, aborting game and exiting";
+                log.write("S: ERRO '" + errorMessage.length() + "' " + errorMessage + "\n");
+                log.flush();
+                switch(abruptExit){
+                    case 1:
+                        sCom.sendErrorMessage(errorMessage, errorMessage.length());
+                        break;
+                    case 2:
+                        fCom.sendErrorMessage(errorMessage, errorMessage.length());
+                        break;
+                }
             }
         }
         // Closing the log, very important.

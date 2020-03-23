@@ -1,0 +1,8 @@
+C1: STRT 111
+S: CASH 10
+C1: BETT
+S: LOOT 2
+S: PLAY '0' 
+S: DICE 111 '1' '4' '6' '6' '6'
+C1: EXIT
+S: ERRO '48' The other player left, aborting game and exiting
