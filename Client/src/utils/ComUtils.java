@@ -25,7 +25,7 @@ public class ComUtils {
      * Constructor of ComUtils
      *
      * @param s     Instance of Socket
-     * @throws IOException
+     * @throws IOException excep
      */
     public ComUtils(Socket s) throws IOException {
 
@@ -63,7 +63,7 @@ public class ComUtils {
      * Write a byte value
      *
      * @param b     Byte value
-     * @throws IOException
+     * @throws IOException e
      */
     public void write_byte(byte b) throws IOException {
 
@@ -89,7 +89,7 @@ public class ComUtils {
      *
      * @param c command
      * @param id client's id
-     * @throws IOException
+     * @throws IOException e
      */
     public void write_command_pint(String c, int id) throws IOException {
 
@@ -101,8 +101,8 @@ public class ComUtils {
     /**
      * Write a command that requires no parameters. EXIT or BETT.
      *
-     * @param c
-     * @throws IOException
+     * @param c command to be written
+     * @throws IOException e
      */
     public void write_command(String c) throws IOException {
 
@@ -116,7 +116,7 @@ public class ComUtils {
      * @param c         Command
      * @param id        Client ID
      * @param sel       Selection values
-     * @throws IOException
+     * @throws IOException e
      */
     public void write_take(String c, int id, int[] sel) throws IOException {
 
@@ -202,6 +202,8 @@ public class ComUtils {
 
     /**
      * Write a blank space (' ') to the Data Output Stream.
+     *
+     * @throws IOException excep
      */
     public void write_space() throws IOException {
 
@@ -212,6 +214,8 @@ public class ComUtils {
 
     /**
      * Reads a blank space (' ').
+     *
+     * @throws IOException excep
      */
     public void read_space() throws IOException {
 
@@ -225,7 +229,7 @@ public class ComUtils {
      * Receiving the error message
      *
      * @return Error message
-     * @throws IOException
+     * @throws IOException e
      */
     public String readErrorMessage() throws IOException {
         // Format: ERRO <SP><LEN><SP><ERROR_TEXT>
@@ -312,7 +316,7 @@ public class ComUtils {
      *
      * @param size the size of the string
      * @return the read string
-     * @throws IOException
+     * @throws IOException e
      */
     public  String read_string_variable(int size) throws IOException {
 

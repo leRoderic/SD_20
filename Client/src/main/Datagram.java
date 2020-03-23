@@ -27,7 +27,7 @@ public class Datagram {
      * @param serverAddress     Server IP address
      * @param port              Conection port
      * @param gameMode          Game mode.
-     * @throws IOException
+     * @throws IOException excep
      */
     public Datagram(String serverAddress, int port, int gameMode) throws IOException {
 
@@ -56,7 +56,7 @@ public class Datagram {
 
     /**
      * Client's start command. Writes/sends ID to server.
-     * Format:  STRT<SP><ID>
+     * Format:  STRT ID
      *
      * @param id client's ID
      * @throws IOException excep
@@ -72,7 +72,7 @@ public class Datagram {
      * Client's BETT command.
      * Format: BETT
      *
-     * @throws IOException
+     * @throws IOException excep
      */
     public void bett() throws IOException {
 
@@ -83,10 +83,11 @@ public class Datagram {
 
     /**
      * Client's TAKE command.
-     * Format: TAKE<SP><ID><LEN>*5(<SP><POS>)
+     * Format: TAKE ID LEN *5( POS)
      *
      * @param id client's ID
      * @param sel client's dice selection
+     * @throws IOException excep
      */
     public void take(int id, int[] sel) throws IOException {
 
@@ -97,7 +98,7 @@ public class Datagram {
 
     /**
      * Client's PASS command.
-     * Format: PASS<SP><ID>
+     * Format: PASS ID
      *
      * @param id client's id
      * @throws IOException excep
@@ -113,7 +114,7 @@ public class Datagram {
      * Client's EXIT command.
      * Format: EXIT
      *
-     * @throws IOException
+     * @throws IOException excep
      */
     public void exit() throws IOException {
 
@@ -123,30 +124,62 @@ public class Datagram {
         utils.write_command(c);
     }
 
+    /**
+     * Reads the next command.
+     *
+     * @return read command
+     * @throws IOException excep
+     */
     public String read_command() throws IOException{
 
         return utils.read_string();
     }
 
+    /**
+     * Reads a space.
+     *
+     * @throws IOException excep
+     */
     public void read_space() throws  IOException{
         utils.read_space();
     }
 
+    /**
+     * Reads an integer.
+     *
+     * @return read integer
+     * @throws IOException excep
+     */
     public int read_int() throws  IOException{
         return utils.read_int32();
     }
 
+    /**
+     * Reads a char.
+     *
+     * @return read char
+     * @throws IOException excep
+     */
     public String  read_char() throws  IOException{
         return utils.read_char();
     }
 
+    /**
+     * Reads a determined number of bytes.
+     *
+     * @param n number of bytes to be reade
+     * @return read bytes
+     * @throws IOException excep
+     */
     public byte[] read_byte(int n) throws  IOException{
         return utils.read_bytes(n);
     }
 
     /**
+     * Reads DICE datagram.
+     *
      * @return Dices values
-     * @throws IOException
+     * @throws IOException excep
      */
     public int[] read_dice() throws IOException {
 
@@ -164,15 +197,34 @@ public class Datagram {
         return dice;
     }
 
-
+    /**
+     * Converts an integer to bytes.
+     *
+     * @param number integer to be converted
+     * @param endianness endianness
+     * @return integer converted to bytes
+     */
     public byte[] int32ToBytes(int number, ComUtils.Endianness endianness){
         return utils.int32ToBytes(number, endianness);
     }
 
+    /**
+     * Converts a bunch of bytes to a 4 byte integer.
+     *
+     * @param number bytes to be converted
+     * @param endianness endianness
+     * @return converted integer
+     */
     public int bytesToInt32(byte[] number, ComUtils.Endianness endianness){
         return utils.bytesToInt32(number, endianness);
     }
 
+    /**
+     * Reads an ERRO datagram
+     *
+     * @return read datagram
+     * @throws IOException excep
+     */
     public String readErrorMessage() throws IOException {
         return utils.readErrorMessage();
     }

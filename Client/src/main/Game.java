@@ -31,7 +31,7 @@ public class Game {
      * @param datagram  Instance of Datagram
      * @param menu      Instance of Menu
      * @param mode      Geme mode
-     * @throws IOException
+     * @throws IOException excep
      */
     public Game(Datagram datagram, Menu menu, int mode) throws IOException {
         this.datagram = datagram;
@@ -55,7 +55,7 @@ public class Game {
      * Starts the game.
      *
      * @param mode      Game mode
-     * @throws IOException
+     * @throws IOException excep
      */
     private void partida(int mode) throws IOException {
         String error = "";

@@ -38,7 +38,6 @@ public class Client {
             System.out.println("Usage: java Client -s <server> -p <port> [-i 0|1]");
         }else{
             System.out.println("Invalid parameters. Client parameters are: -s <server> -p <port> [-i 0|1]");
-            System.exit(1);
         }
 
     }
