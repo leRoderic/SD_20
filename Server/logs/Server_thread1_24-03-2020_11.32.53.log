@@ -1,0 +1,37 @@
+C: STRT 25
+S: CASH 10
+C: BETT
+S: LOOT 2
+S: PLAY '0' 
+S: DICE 25 '6' '6' '5' '3' '3'
+C: TAKE 25 0x02 0x01 0x03
+S: DICE 25 '6' '3' '5' '5' '6'
+C: TAKE 25 0x00
+S: DICE 25 '6' '1' '5' '2' '5'
+S: PNTS 25 0
+S: DICE 1010 '1' '3' '6' '5' '5'
+S: PASS 1010 
+S: PNTS 1010 '0'
+S: WINS '2'
+S: CASH 10
+C: BETT
+S: LOOT 2
+S: PLAY '0' 
+S: DICE 25 '4' '3' '3' '1' '4'
+C: TAKE 25 0x00
+S: DICE 25 '4' '4' '3' '1' '6'
+C: TAKE 25 0x01
+S: DICE 25 '1' '1' '5' '3' '6'
+S: PNTS 25 0
+S: DICE 1010 '1' '2' '6' '2' '2'
+S: PASS 1010 
+S: PNTS 1010 '0'
+S: WINS '2'
+S: CASH 10
+C: BETT
+S: LOOT 2
+S: PLAY '0' 
+S: DICE 25 '5' '1' '2' '6' '3'
+C: TAKE 25 0x02 0x01
+S: DICE 25 '5' '2' '3' '3' '5'
+S: ERRO '35' Exiting due to error Read timed out

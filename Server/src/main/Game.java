@@ -29,7 +29,7 @@ public class Game {
     private boolean captain, ship, crew, improveLast;
     private Random random = new Random();
     private HashMap<Integer, Integer> players;
-    private final int UKNWN_LIMIT = 3; // Limits the syntax errors Clients can make
+    private int pool = 0;
 
     /**
      * Game's class constructor.
@@ -78,7 +78,6 @@ public class Game {
      */
     private int[] one_player (int player_id, Datagram com, boolean isSP, String clientNumber) throws IOException {
 
-        int pool = 0;
         String command = "";
         String errorMessage = "";
         int pID = player_id;
@@ -182,13 +181,21 @@ public class Game {
                         }
                     }
                     if(command.equals("BETT")){
-                        cCash -= 2;
-                        pool += 4;
+
+                        int loot;
+                        if(pool != 0){
+                            loot = 0;// In case of a tie, you don't get 'looted', again.
+                        }else{
+                            cCash -= 2;
+                            pool += 4;
+                            loot = 2;
+                        }
+
                         // ClientNumber is used to identify each client as the log is generated(C1 or C2).
                         log.write("C" + clientNumber + ": BETT\n");
-                        log.write("S: LOOT 2\n");
+                        log.write("S: LOOT "+ loot + "\n");
                         try {
-                            com.loot(2);
+                            com.loot(loot);
                         } catch (Exception e) {
                             errorMessage = "Exiting due to error " + e.getMessage();
                             log.write("S: ERRO '" + errorMessage.length() + "' " + errorMessage + "\n");
@@ -441,13 +448,14 @@ public class Game {
                     if (pPoints > sPoints) {
                         win = 0;
                         cCash += pool;
+                        pool = 0;
+
                     }else if (sPoints > pPoints) {
                         win = 1;
-                    }else if (sPoints == pPoints) {
+                        pool = 0;
+                    }else if (sPoints == pPoints){
                         win = 2;
-                        cCash += 2;
                     }
-                    pool = 0;
                     try {
                         log.write("S: WINS '" + win + "'\n");
                         com.wins(win);
@@ -628,7 +636,6 @@ public class Game {
                         cCash1 = players.get(fID);
                         cCash2 = players.get(sID);
                     }
-                    pool = 0;
                     // In case of a tie, no swap has to be considered.
                 }
                 try {
