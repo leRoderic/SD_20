@@ -69,14 +69,14 @@ public class Server {
             } catch (IOException e) {
                 System.out.println(RED + "Error> " + RESET + "I/O error occurred: " + e.getMessage());
             }
-            //s1.setSoTimeout(30*1000); PONER TIMEOUTS Y IP LOCAL !!!!!!!!!!!!!!
+            s1.setSoTimeout(30*1000);
             System.out.println("Info> Waiting for players [1/2]");
             try {
                 s2 = sv.accept();
             } catch (IOException e) {
                 System.out.println(RED + "Error> " + RESET + "I/O error occurred: " + e.getMessage());
             }
-            //s2.setSoTimeout(30*1000);
+            s2.setSoTimeout(30*1000);
             System.out.println("Info> Players connected, creating new game.");
             try {
                 Thread t = (new Thread(new GameThread(s1, s2, false, players)));
@@ -116,8 +116,7 @@ public class Server {
                 singlePlayer = false;
 
             try {
-                //InetAddress add = InetAddress.getByName(InetAddress.getLocalHost().toString().split("/")[1]);
-                InetAddress add = InetAddress.getByName("25.98.169.216");
+                InetAddress add = InetAddress.getByName(InetAddress.getLocalHost().toString().split("/")[1]);
                 server = new ServerSocket(serverPort, 50, add);
                 System.out.println("Info> Server ready with IP " + server.getInetAddress().toString().split("/")[1] +
                         " on port number " + serverPort);
