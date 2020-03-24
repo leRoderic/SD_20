@@ -74,6 +74,9 @@ public class Game {
             }
         }
         if(mode == 1) {
+            System.out.println("===========================================================================");
+            System.out.println("               Welcome to \"Ship, Captain and Crew\" game!                 ");
+            System.out.println("===========================================================================");
             idCliente = random.nextInt(9999)+1;
             try {
                 datagram.strt(idCliente);
@@ -89,7 +92,8 @@ public class Game {
                 try {
                     comanda = datagram.read_command();
                 } catch (IOException e) {
-                    System.out.println("ERROR: Couldn't not reead command");
+                    System.out.println("ERROR: Couldn't not read command");
+                    System.exit(1);
                 }
 
                 if (comanda.equals("ERRO")) {
@@ -97,8 +101,10 @@ public class Game {
                         System.out.print(comanda + " ");
                         error = datagram.readErrorMessage();
                         System.out.println(error);
+                        System.exit(0);
                     } catch (IOException e) {
                         System.out.println("ERROR: Couldn't not read command ERRO");
+                        System.exit(1);
                     }
                 } else if (comanda.equals("CASH")) {
                     try {
@@ -106,16 +112,18 @@ public class Game {
                          cash = datagram.read_int();
                     } catch (IOException e) {
                         System.out.println("ERROR: Couldn't not read command CASH");
+                        System.exit(1);
                     }
                     System.out.println(comanda + " " + cash);
                     System.out.print("Client "+idCliente+": ");
                     String c = sc.next();
-                    if (c.equals("BET")) {
+                    if (c.equals("BETT")) {
                         this.tirada = 3;
                         try {
                             datagram.bett();
                         } catch (IOException e) {
-                            System.out.println("ERROR: Couldn't not send command BET");
+                            System.out.println("ERROR: Couldn't not send command BETT");
+                            System.exit(1);
                         }
                     } else if (c.equals("EXIT")) {
                         try {
@@ -123,9 +131,11 @@ public class Game {
                             this.setPartida(false);
                         } catch (IOException e) {
                             System.out.println("ERROR: Couldn't not send command EXIT");
+                            System.exit(1);
                         }
 
                     } else {
+                        System.out.println("ERROR: You have entered a wrong command");
                         System.exit(1);
                     }
                 } else if (comanda.equals("LOOT")) {
@@ -135,6 +145,7 @@ public class Game {
                         loot = datagram.read_int();
                     } catch (IOException e) {
                         System.out.println("ERROR: Couldn't not read command LOOT");
+                        System.exit(1);
                     }
                     System.out.println(comanda + " " + loot);
                 } else if(comanda.equals("PLAY")){
@@ -143,6 +154,7 @@ public class Game {
                         turno = datagram.read_char();
                     } catch (IOException e) {
                         System.out.println("ERROR: Couldn't not read command PLAY");
+                        System.exit(1);
                     }
                     System.out.println(comanda + " " + turno);
 
@@ -154,6 +166,7 @@ public class Game {
                         dices = datagram.read_dice();
                     } catch (IOException e) {
                         System.out.println("ERROR: Couldn't not read command DICE");
+                        System.exit(1);
                     }
                     for(int i = 0; i<dices.length; i++){
                         System.out.print(dices[i] + " ");
@@ -170,12 +183,14 @@ public class Game {
                                 datagram.take(idCliente, numbers);
                             } catch (IOException e) {
                                 System.out.println("ERROR: Couldn't not send command TAKE");
+                                System.exit(1);
                             }
                         } else if (c.equals("PASS")) {
                             try {
                                 datagram.pass(idCliente);
                             } catch (IOException e) {
                                 System.out.println("ERROR: Couldn't not send command PASS");
+                                System.exit(1);
                             }
                         } else if (c.equals("EXIT")) {
                             try {
@@ -183,8 +198,10 @@ public class Game {
                                 this.setPartida(false);
                             } catch (IOException e) {
                                 System.out.println("ERROR: Couldn't not send command EXIT");
+                                System.exit(1);
                             }
                         } else {
+                            System.out.println("ERROR: You have entered a wrong command");
                             System.exit(1);
                         }
                     }
@@ -199,6 +216,7 @@ public class Game {
                         System.out.println(comanda + " " + bytePoint);
                     } catch (IOException e) {
                         System.out.println("ERROR: Couldn't not read command PNTS");
+                        System.exit(1);
                     }
 
                 } else if(comanda.equals("WINS")){
@@ -208,6 +226,7 @@ public class Game {
                        win =  datagram.read_char();
                     } catch (IOException e) {
                         System.out.println("ERROR: Couldn't not read command WINS");
+                        System.exit(1);
                     }
                     System.out.println(comanda + " " + win);
                 }
@@ -218,6 +237,7 @@ public class Game {
                     comanda = datagram.read_command();
                 } catch (IOException e) {
                     System.out.println("ERROR: Couldn't not read command");
+                    System.exit(1);
                 }
                 if (comanda.equals("ERRO")) {
                     System.out.print(comanda + " ");
@@ -226,6 +246,7 @@ public class Game {
                         System.out.println(error);
                     } catch (IOException e) {
                         System.out.println("ERROR: Couldn't not read command ERRO");
+                        System.exit(1);
                     }
                 }
                 else if (comanda.equals("CASH")) {
@@ -234,6 +255,7 @@ public class Game {
                         cash = datagram.read_int();
                     } catch (IOException e) {
                         System.out.println("ERROR: Couldn't not read command CASH");
+                        System.exit(1);
                     }
                     System.out.println(comanda + " " + cash);
                     if(t) {
@@ -241,9 +263,10 @@ public class Game {
                         t = false;
                         try {
                             datagram.bett();
-                            System.out.println("Client " + idCliente +": BET");
+                            System.out.println("Client " + idCliente +": BETT");
                         } catch (IOException e) {
-                            System.out.println("ERROR: Couldn't not send command BET");
+                            System.out.println("ERROR: Couldn't not send command BETT");
+                            System.exit(1);
                         }
 
                     } else {
@@ -258,17 +281,20 @@ public class Game {
                             setPartida(false);
                         } catch (IOException e) {
                             System.out.println("ERROR: Couldn't not send command EXIT");
+                            System.exit(1);
                         }
                     }
                 }
                 else if (comanda.equals("LOOT")) {
+                    int loot = 0;
                     try {
                         datagram.read_space();
-                        datagram.read_int();
+                        loot = datagram.read_int();
                     } catch (IOException e) {
                         System.out.println("ERROR: Couldn't not read command LOOT");
+                        System.exit(1);
                     }
-                    System.out.println(comanda);
+                    System.out.println(comanda + " " + loot);
                 }
                 else if (comanda.equals("PLAY")) {
                     try {
@@ -276,17 +302,22 @@ public class Game {
                         turno =datagram.read_char();
                     } catch (IOException e) {
                         System.out.println("ERROR: Couldn't not read command PLAY");
+                        System.exit(1);
                     }
                     System.out.println(comanda + " " + turno);
                 }
 
                 else if (comanda.equals("DICE")) {
-                    System.out.println(comanda);
+                    System.out.print(comanda + " ");
                     int[] dice = new int[5];
                     try {
                         dice = datagram.read_dice();
                     } catch (IOException e) {
                         System.out.println("ERROR: Couldn't not read command DICE");
+                        System.exit(1);
+                    }
+                    for(int i = 0; i<dice.length; i++){
+                        System.out.print(dice[i] + " ");
                     }
                     if(this.tirada > 0) {
                         this.tirada = this.tirada - 1;
@@ -342,6 +373,7 @@ public class Game {
                                         System.out.println("Client " + idCliente +": TAKE");
                                     } catch (IOException e) {
                                         System.out.println("ERROR: Couldn't not send command TAKE");
+                                        System.exit(1);
                                     }
                                 } else if (takeShip && takeCaptain) {
                                     sel = new int[2];
@@ -354,6 +386,7 @@ public class Game {
                                         System.out.println("Client " + idCliente +": TAKE");
                                     } catch (IOException e) {
                                         System.out.println("ERROR: Couldn't not send command TAKE");
+                                        System.exit(1);
                                     }
                                 } else if (takeShip) {
                                     sel = new int[1];
@@ -364,6 +397,7 @@ public class Game {
                                         System.out.println("Client " + idCliente +": TAKE");
                                     } catch (IOException e) {
                                         System.out.println("ERROR: Couldn't not send command TAKE");
+                                        System.exit(1);
                                     }
                                 }
                             } else if (takeShip && captain && !takeCaptain) {
@@ -382,6 +416,7 @@ public class Game {
                                         System.out.println("Client " + idCliente +": TAKE");
                                     } catch (IOException e) {
                                         System.out.println("ERROR: Couldn't not send command TAKE");
+                                        System.exit(1);
                                     }
                                 } else if (takeCaptain) {
                                     sel = new int[1];
@@ -392,6 +427,7 @@ public class Game {
                                         System.out.println("Client " + idCliente +": TAKE");
                                     } catch (IOException e) {
                                         System.out.println("ERROR: Couldn't not send command TAKE");
+                                        System.exit(1);
                                     }
                                 }
                             } else if (takeShip && takeCaptain && crew && !takeCrew) {
@@ -404,6 +440,7 @@ public class Game {
                                     System.out.println("Client " + idCliente +": TAKE");
                                 } catch (IOException e) {
                                     System.out.println("ERROR: Couldn't not send command TAKE");
+                                    System.exit(1);
                                 }
                             } else {
                                 //TAKE 0x00
@@ -413,6 +450,7 @@ public class Game {
                                     System.out.println("Client " + idCliente +": TAKE");
                                 } catch (IOException e) {
                                     System.out.println("ERROR: Couldn't not send command TAKE");
+                                    System.exit(1);
                                 }
                             }
                         } else {
@@ -421,6 +459,7 @@ public class Game {
                                 System.out.println("Client " + idCliente +": PASS");
                             } catch (IOException e) {
                                 System.out.println("ERROR: Couldn't not send command PASS");
+                                System.exit(1);
                             }
                         }
                     }
@@ -437,6 +476,7 @@ public class Game {
                         bytePoint = datagram.bytesToInt32(b, ComUtils.Endianness.BIG_ENNDIAN);
                     } catch (IOException e) {
                         System.out.println("ERROR: Couldn't not read command PNTS");
+                        System.exit(1);
                     }
                     System.out.println(comanda + " " + bytePoint);
                 }
@@ -447,6 +487,7 @@ public class Game {
                         System.out.println(comanda + " " + win);
                     } catch (IOException e) {
                         System.out.println("ERROR: Couldn't not read command WINS");
+                        System.exit(1);
                     }
                 }
             }

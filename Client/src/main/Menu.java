@@ -32,6 +32,20 @@ public class Menu {
             System.out.print("> ");
             sc.next();
         }
+        System.out.println("\nThese are the available commands:");
+        System.out.println("\tSTRT");
+        System.out.println("\tBETT");
+        System.out.println("\tTAKE <LEN> <POS>*5");
+        System.out.println("\tPASS");
+        System.out.println("\tEXIT\n");
+        System.out.println("And these is how the game works:");
+        System.out.println("\t- You start by typing STRT.");
+        System.out.println("\t- After the CASH message you can either start a new game (BETT) or exit (EXIT)");
+        System.out.println("\t- After the DICE message you can either make a selection (TAKE), pass (PASS) or exit (EXIT)");
+        System.out.println("\t- If you send a wrong command the game will be terminated");
+        System.out.println("\t- If you don't have enough cash, you can't play");
+        System.out.println("\t- In the multiplayer mode you may type STRT to start a new game. If nothing appears on the" +
+                "\n\t screen is because it's the other player's turn and you have to wait.");
         System.out.println("___________________________________________________________________________");
 
         return sc.nextInt();

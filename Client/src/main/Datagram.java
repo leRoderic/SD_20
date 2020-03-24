@@ -54,6 +54,10 @@ public class Datagram {
 
     }
 
+
+    public int getDataInputStrem() throws  IOException{
+        return utils.getDataInputStrem();
+    }
     /**
      * Client's start command. Writes/sends ID to server.
      * Format:  STRT ID
