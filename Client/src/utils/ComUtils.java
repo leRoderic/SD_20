@@ -33,6 +33,10 @@ public class ComUtils {
         dataOutputStream = new DataOutputStream(s.getOutputStream());
     }
 
+     public int getDataInputStrem() throws  IOException{
+        return dataInputStream.read();
+     }
+
     /**
      * Reads a 32b integer.
      *
