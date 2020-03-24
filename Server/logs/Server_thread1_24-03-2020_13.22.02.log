@@ -1,0 +1,4 @@
+C1: STRT 111
+S: CASH 10
+C1: EXIT
+S: ERRO '48' The other player left, aborting game and exiting
