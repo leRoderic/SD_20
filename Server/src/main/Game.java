@@ -1,6 +1,7 @@
 package main;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.Socket;
@@ -54,9 +55,10 @@ public class Game {
         // its thread, its been change to the current format.
         Date asd = new Date();
         SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy_HH.mm.ss");
-
-        this.log = new BufferedWriter(new FileWriter("Server_thread" + Thread.currentThread().getId() + "_"
-                + formatter.format(asd).toString() + ".log"));
+        String fn = "Server_thread" + Thread.currentThread().getId() + "_" + formatter.format(asd).toString() + ".log";
+        (new File("logs")).mkdir();
+        File f = new File("logs/" + fn);
+        this.log = new BufferedWriter(new FileWriter(f));
         this.state = State.INIT;
         this.players = players;
         this.singlePlayer = singlePlayer;
