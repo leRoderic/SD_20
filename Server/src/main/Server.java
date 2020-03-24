@@ -40,7 +40,7 @@ public class Server {
             } catch (IOException e) {
                 System.out.println(RED + "Error> " + RESET + "I/O error occurred: " + e.getMessage());
             }
-            s.setSoTimeout(15*1000);
+            s.setSoTimeout(30*1000);
             System.out.println("Info> Player connected, creating new game");
             try {
                 Thread t = (new Thread(new GameThread(s, null, true, players)));
@@ -69,14 +69,14 @@ public class Server {
             } catch (IOException e) {
                 System.out.println(RED + "Error> " + RESET + "I/O error occurred: " + e.getMessage());
             }
-            s1.setSoTimeout(15000);
+            //s1.setSoTimeout(30*1000); PONER TIMEOUTS Y IP LOCAL !!!!!!!!!!!!!!
             System.out.println("Info> Waiting for players [1/2]");
             try {
                 s2 = sv.accept();
             } catch (IOException e) {
                 System.out.println(RED + "Error> " + RESET + "I/O error occurred: " + e.getMessage());
             }
-            s2.setSoTimeout(15000);
+            //s2.setSoTimeout(30*1000);
             System.out.println("Info> Players connected, creating new game.");
             try {
                 Thread t = (new Thread(new GameThread(s1, s2, false, players)));

@@ -1,0 +1,8 @@
+C1: STRT 25
+S: CASH 10
+C1: BETT
+S: LOOT 2
+S: PLAY '0' 
+S: DICE 25 '2' '4' '2' '1' '6'
+S: ERRO '35' Exiting due to error Read timed out
+S: ERRO '48' The other player left, aborting game and exiting

@@ -26,7 +26,7 @@ public class Game {
     private boolean singlePlayer;
     private int[] dices;
     private int[] dTaken; // Blocks selected dices
-    private boolean captain, ship, crew, improveLast;
+    private boolean captain, ship, crew, improveLast, tie;
     private Random random = new Random();
     private HashMap<Integer, Integer> players;
     private int pool = 0;
@@ -43,6 +43,7 @@ public class Game {
     public Game(Socket s1, Socket s2, boolean singlePlayer, HashMap<Integer, Integer> players) throws IOException {
 
         this.com1 = new Datagram(s1);
+        this.tie = false;
         this.com1.setWinValue(0); // To identify clients in multiplayer.
         // In single player mode only one socket is needed. The other is used in multiplayer mode.
         if(s2 != null) {
@@ -183,11 +184,12 @@ public class Game {
                     if(command.equals("BETT")){
 
                         int loot;
-                        if(pool != 0){
-                            loot = 0;// In case of a tie, you don't get 'looted', again.
+                        if(tie){
+                            loot = 0;
                         }else{
                             cCash -= 2;
-                            pool += 4;
+                            pool += 2;
+                            pool = Math.min(4, pool);
                             loot = 2;
                         }
 
@@ -203,6 +205,9 @@ public class Game {
                             com.sendErrorMessage(errorMessage, errorMessage.length());
                             this.state = State.QUIT;
                             break;
+                        }
+                        synchronized (players){
+                            players.put(pID, cCash);
                         }
                         // Win value is also used to indicate turns. efficiency++
                         log.write("S: PLAY '" + com.getWinValue() + "' \n");
@@ -269,7 +274,7 @@ public class Game {
                             break;
                         }
                         ArrayList<Integer> rec = new ArrayList();
-                        ArrayList<Integer> rec2 = new ArrayList();
+                        ArrayList<Integer> selIndex = new ArrayList();
                         // Reading client's dice selection.
                         for(int i =0; i<len; i++){
                             try {
@@ -282,17 +287,13 @@ public class Game {
                                 this.state = State.QUIT;
                                 break;
                             }
-                            if(take_validator(sel)){
-                                dTaken[sel-1] = 0; // Blocks a dice from being thrown again.
-                                rec.add(sel); // For log purposes.
-                                rec2.add(dices[sel-1]); // Also, for log purposes.
-                            }
+                            rec.add(sel);
+                            selIndex.add(sel);
                         }
                         log.write("C" + clientNumber + ": TAKE " + id + " 0x0" + len + selection_toString(rec) + "\n");
                         // take_updater needs the values sorted in decreasing order. Makes sense if you look at its
                         // implementation.
-                        Collections.sort(rec2, Collections.<Integer>reverseOrder());
-                        take_updater(rec2);
+                        take_updater(selIndex);
                         throw_dices();
                         log.write("S: DICE " + pID + dices_toString() + "\n");
                         try {
@@ -356,7 +357,8 @@ public class Game {
                             break;
                         }
                         ArrayList<Integer> rec = new ArrayList();
-                        ArrayList<Integer> rec2 = new ArrayList();
+                        ArrayList<Integer> selIndex = new ArrayList();
+                        // Reading client's dice selection.
                         for(int i =0; i<len; i++){
                             try {
                                 sel = com.read_next_int_in_bytes();
@@ -368,15 +370,13 @@ public class Game {
                                 this.state = State.QUIT;
                                 break;
                             }
-                            if(take_validator(sel)){
-                                dTaken[sel-1] = 0; // Blocks a dice from being thrown again.
-                                rec.add(sel); // For log purposes.
-                                rec2.add(dices[sel-1]); // Also, for log purposes.
-                            }
+                            rec.add(sel);
+                            selIndex.add(sel);
                         }
                         log.write("C" + clientNumber + ": TAKE " + id + " 0x0" + len + selection_toString(rec) + "\n");
-                        Collections.sort(rec2, Collections.<Integer>reverseOrder());
-                        take_updater(rec2);
+                        // take_updater needs the values sorted in decreasing order. Makes sense if you look at its
+                        // implementation.
+                        take_updater(selIndex);
                         throw_dices();
                         log.write("S: DICE " + pID + dices_toString() + "\n");
                         try {
@@ -449,12 +449,14 @@ public class Game {
                         win = 0;
                         cCash += pool;
                         pool = 0;
-
+                        tie = false;
                     }else if (sPoints > pPoints) {
                         win = 1;
                         pool = 0;
+                        tie = false;
                     }else if (sPoints == pPoints){
                         win = 2;
+                        tie = true;
                     }
                     try {
                         log.write("S: WINS '" + win + "'\n");
@@ -498,7 +500,7 @@ public class Game {
 
         Datagram fCom, sCom, tCom;
         int[] ret = null;
-        int fID = -1, sID = -1;
+        int fID = -1, sID = -1, tID = -1;
         int fPoints = 0, sPoints = 0;
         int pool = 0, cCash1 = 0, cCash2 = 0, abruptExit = -1;
         boolean fComExit = false, sComExit = false, swap = false;
@@ -582,12 +584,12 @@ public class Game {
                         fCom.sendErrorMessage(errorMessage, errorMessage.length());
                         sCom.sendErrorMessage(errorMessage, errorMessage.length());
                     }
+                    tie = false;
                     synchronized (players){
                         // Updating cash in base of who has won and who has lost.
                         cCash1 = players.get(fID);
                         cCash2 = players.get(sID);
-                        cCash1 = cCash1 + pool - 2;
-                        cCash2 = cCash2 - 2;
+                        cCash1 = cCash1 + pool;
                         players.put(fID, cCash1);
                         players.put(sID, cCash2);
                     }
@@ -611,13 +613,13 @@ public class Game {
 
                         cCash1 = players.get(fID);
                         cCash2 = players.get(sID);
-                        cCash2 = cCash2 + pool - 2;
-                        cCash1 = cCash1 - 2;
+                        cCash2 = cCash2 + pool;
                         players.put(fID, cCash1);
                         players.put(sID, cCash2);
                     }
                     // If the winner was already the second to play there is no need to swap.
                     pool = 0;
+                    tie = false;
                 }else if (sPoints == fPoints) {
                     try {
                         log.write("S: WINS '" + 2 + "'\n");
@@ -631,6 +633,7 @@ public class Game {
                         fCom.sendErrorMessage(errorMessage, errorMessage.length());
                         sCom.sendErrorMessage(errorMessage, errorMessage.length());
                     }
+                    tie = true;
                     synchronized (players){
 
                         cCash1 = players.get(fID);
@@ -656,6 +659,9 @@ public class Game {
                     tCom = fCom;
                     fCom = sCom;
                     sCom = tCom;
+                    tID = fID;
+                    fID = sID;
+                    sID = tID;
                 }
             }
             // When a player exits the game and the other one is still playing or wanting to, an error message is sent
@@ -887,23 +893,36 @@ public class Game {
     }
 
     /**
-     * Based on the player's selection it will update the main value status.
+     * Checks validity of user selection and updates it.
      *
-     * @param a player's selection
+     * @param selIndices the selection
      */
-    private void take_updater(ArrayList<Integer> a) {
+    private void take_updater(ArrayList<Integer> selIndices) {
 
-        int i;
-        for (int j = 0; j < a.size(); j++) {
+        TreeMap<Integer, Integer> notSorted = new TreeMap<Integer, Integer>();
+        for(int i=0; i<selIndices.size(); i++){
+            // DICE value - index
+            notSorted.put(-dices[selIndices.get(i)-1], selIndices.get(i));
+        }
 
-            i = a.get(j);
+        int currentVal, currentIndex;
 
-            if (i == 6 && !captain && !ship && !crew)
-                this.ship = true;
-            else if (i == 5 && !captain && !crew && ship)
-                this.captain = true;
-            else if (i == 4 && captain && ship && !crew)
-                this.crew = true;
+        for(Map.Entry m: notSorted.entrySet()){
+
+            currentVal = -(Integer) m.getKey();
+            currentIndex = (Integer) m.getValue();
+
+            if(take_validator(currentVal)){
+
+                dTaken[currentIndex - 1] = 0;
+
+                if (currentVal == 6 && !captain && !ship && !crew)
+                    this.ship = true;
+                else if (currentVal == 5 && !captain && !crew && ship)
+                    this.captain = true;
+                else if (currentVal == 4 && captain && ship && !crew)
+                    this.crew = true;
+            }
         }
     }
 
