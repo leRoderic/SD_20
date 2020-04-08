@@ -4,6 +4,6 @@
 
 ## [Repo prácticas](https://github.com/UB-GEI-SD/A)
 
-## [Práctica 2](http://ub-gei-sd.github.io/Practica2_S1) - Semana 1
+## [Práctica 2](http://ub-gei-sd.github.io/Practica2_S2) - Sesión 2
 
-![__](https://i.imgur.com/rVodYXD.png)
+![__](https://media.giphy.com/media/YFkpsHWCsNUUo/giphy.gif)
