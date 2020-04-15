@@ -1,7 +1,7 @@
 from db import db
 
-tags = db.Table('event_tags', db.Column('post_id', db.Integer, db.ForeignKey('event.id')),
-                db.Column('artist_id', db.Integer, db.ForeignKey('artist.id')))
+tags = db.Table('tags', db.Column('event_id', db.Integer, db.ForeignKey('events.id')),
+                db.Column('artist_id', db.Integer, db.ForeignKey('artists.id')))
 
 
 class EventModel(db.Model):
