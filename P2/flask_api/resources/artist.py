@@ -1,55 +1,62 @@
+from flask_restful import Resource, reqparse
+from db import db
+from models.artist import ArtistModel
+from models.event import EventModel
+
+
+class ArtistEventsList(Resource):
+
+    def get(self, id):
+        artist = ArtistModel.find_by_id(id)
+        if not artist:
+            return {'message': "Artist with id {} not found".format(id)}, 404
+        events = [a.json() for a in db.session.query(EventModel).all() if a.artist_in_event(artist.name)]
+        return {'events': events}, 200
+
+
 class ArtistList(Resource):
 
     def get(self):
-        return artists
-
-
-api.add_resource(ArtistList, '/artists')
+        return [i.json() for i in db.session.query(ArtistModel).all()]
 
 
 class Artist(Resource):
 
     def get(self, id):
-        artist = self.__get_artist__(id)
+        artist = ArtistModel.find_by_id(id)
         if artist:
-            return {'artist': artist}, 200
+            return {'artist': artist.json()}, 200
         return {'message': "Artist with id {} not found".format(id)}, 404
 
     def post(self, id=None):
-        if self.__get_artist__(id):
-            return {'message': "An artist with id {} already exists".format(id)}, 406  # Not acceptable
-        id = len(artists) if not id else id
+        if ArtistModel.find_by_id(id):
+            return {'message': "An artist with id {} already exists".format(id)}, 409
         data = self.__parse_request__()
-        artists.append({'id': id, 'name': data.get('name'), 'country': data.get('country'), 'genre': data.get('genre')})
-        return data, 200
+        new_artist = ArtistModel(data.get('name'), data.get('country'), data.get('genre'), id)
+        new_artist.save_to_db()
+        return new_artist.json(), 200
 
     def delete(self, id):
-        to_delete = self.__get_artist__(id)
+        to_delete = ArtistModel.find_by_id(id)
         if not to_delete:
-            return {'message': "There is no artist with id {}, therefore it cannot be deleted".format(id)}, 406
-        artists.remove(to_delete)
+            return {'message': "There is no artist with id {}, therefore it cannot be deleted".format(id)}, 400
+        to_delete.delete_from_db()
         return {'message': "Artist with id {} has benn successfully been deleted".format(id)}, 200
 
     def put(self, id):
         data = self.__parse_request__()
-        new_artist = {'id': id, 'name': data.get('name'), 'country': data.get('country'), 'genre': data.get('genre')}
-        existing = self.__get_artist__(id)
+        existing = ArtistModel.find_by_id(id)
         if existing:
-            artists.remove(existing)
-        artists.append(new_artist)
-        return new_artist, 200
-
-    def __get_artist__(self, id):
-        return next(filter(lambda x: x['id'] == id, artists), None)
+            existing.delete_from_db()
+        new_artist = ArtistModel(data.get('name'), data.get('country'), data.get('genre'), id)
+        new_artist.save_to_db()
+        return new_artist.json(), 200
 
     def __parse_request__(self):
         parser = reqparse.RequestParser()  # create parameters parser from request
         # define al input parameters need and its type
         parser.add_argument('name', type=str, required=True, help="This field cannot be left blank")
         parser.add_argument('country', type=str)
-        parser.add_argument('genre', type=str, action="append")  # action = "append" is needed to determine that is a
+        parser.add_argument('genre', type=str)  # action = "append" is needed to determine that is a
         # list of strings
         return parser.parse_args()
-
-
-api.add_resource(Artist, '/artist/<int:id>', '/artist')
