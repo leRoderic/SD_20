@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
+    <data-source source="LOCAL" name="data" uuid="ff6d5105-92b5-42ee-970b-0cfd3d960d3e">
+      <driver-ref>sqlite.xerial</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>org.sqlite.JDBC</jdbc-driver>
+      <jdbc-url>jdbc:sqlite:H:\rcmik\Documents\GitHub\A4_2020\P2\flask_api\data.db</jdbc-url>
+    </data-source>
+  </component>
+</project>
