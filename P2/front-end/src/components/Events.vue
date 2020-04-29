@@ -17,15 +17,15 @@
       <div class="card" style="width: 18rem" v-for="(event, index) in events" :key="event.id">
         <img class="card-img-top" :src="getImgUrl(index)" alt="Card image cap">
         <div class="card-body h-100">
-          <h4 class="card-title">{{ event.name }}</h4>
-          <h5 v-for="(artist) in event.artists" :key="artist.id">{{artist.name}}</h5>
-          <h6>{{event.city}}</h6>
-          <h6>{{event.place}}</h6>
-          <h6>{{event.date}}</h6>
-          <h6>{{event.price}}€</h6>
+          <h4 class="card-title">{{ event.event.name }}</h4>
+          <h5 v-for="(artist) in event.event.artists" :key="artist.id">{{artist.name}}</h5>
+          <h6>{{event.event.city}}</h6>
+          <h6>{{event.event.place}}</h6>
+          <h6>{{event.event.date}}</h6>
+          <h6>{{event.event.price}}€</h6>
         </div>
         <div class="card-body justify-content-center" style="background-color: #236bef; color: #ffffff">
-          <h6>Tickets available: 0</h6>
+          <h6>Tickets available: {{event.event.total_available_tickets}}</h6>
           <button id="buyTicketEvent" v-on:click="this.events_bought.push(event)" class="btn btn-success btn-lg">Add to cart</button>
         </div>
       </div>
@@ -39,11 +39,8 @@
     <h4>Money: {{ money }}</h4>
     <h4>Ticket price: <input type="text" id="ticket-price" style="width: 90px" v-model="price"></h4>
     <h4> Total tickets bought: {{ tickets_bought }} </h4>
-
   </div>
-
 </template>
-
 <script>
 import axios from 'axios'
 
