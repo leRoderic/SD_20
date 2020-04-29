@@ -1,6 +1,5 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-// HelloWorld from '@/components/HelloWorld'
 import Events from '@/components/Events'
 
 Vue.use(Router)
@@ -10,7 +9,10 @@ export default new Router({
     {
       path: '/',
       name: 'Events',
-      component: Events
+      component: Events,
+      meta: {
+        title: 'TicketIt! - Home'
+      }
     }
   ]
 })
