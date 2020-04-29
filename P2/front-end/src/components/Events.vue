@@ -8,7 +8,17 @@
     width: 100%;
     height: 15vw;
     object-fit: cover;
-}
+  }
+  .artsts {
+    font: 12px sans-serif;
+    border: 1px solid gold;
+    background: lightyellow;
+    width: 100%;
+    height: 100px;
+    float: left;
+    margin: 5px;
+    overflow: auto;
+  }
 </style>
 <template>
   <div id="app">
@@ -18,7 +28,9 @@
         <img class="card-img-top" :src="getImgUrl(index)" alt="Card image cap">
         <div class="card-body h-100">
           <h4 class="card-title">{{ event.event.name }}</h4>
-          <h5 v-for="(artist) in event.event.artists" :key="artist.id">{{artist.name}}</h5>
+          <div class="artsts">
+            <h5 v-for="(artist) in event.event.artists" :key="artist.id">{{artist.name}}</h5>
+          </div>
           <h6>{{event.event.city}}</h6>
           <h6>{{event.event.place}}</h6>
           <h6>{{event.event.date}}</h6>
