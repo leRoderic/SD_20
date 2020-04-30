@@ -1,12 +1,14 @@
-from flask_sqlalchemy import SQLAlchemy
+from models.order import OrdersModel
+from models.account import AccountsModel
 from models.artist import ArtistModel
 from models.event import EventModel
-from db import create_app
+from db import create_app, db
+
 
 app = create_app()
 app.app_context().push()
-db = SQLAlchemy(app)
 
+# Events and artists data.
 data = [["Lovin Ibiza Festival", "Amnesia Ibiza", "Ibiza", "1-05-2020", "20", "1500",
          [["Marco Faraone", "Italy", "electronic"], ["Danny Serrano", "Spain", "trap"], ["Catz 'n Dogz", "Poland", "electronic"]]],
         ["Warm Up Festival 2020", "La fica", "Murcia", "1-10-2020", "42", "80000",
@@ -37,9 +39,15 @@ data = [["Lovin Ibiza Festival", "Amnesia Ibiza", "Ibiza", "1-05-2020", "20", "1
          [["Bad Bunny", "Puerto Rico", "reggae"], ["Daddy Yankee", "Puerto Rico", "reggae"],
           ["Maikel Delacalle", "Spain", "reggae"], ["Natti Natasha", "Republica Dominicana", "reggae"]]]]
 
-# Delete database content in order to test the script.
+# Accounts data.
+users = [["test", "1234"], ["admin", "admin", 99999999999, 1]]
+
+# Cleaning database.
+print("add_data> Emptying database.")
 db.session.query(ArtistModel).delete()
 db.session.query(EventModel).delete()
+db.session.query(AccountsModel).delete()
+db.session.query(OrdersModel).delete()
 
 evnts, artsts, rep = 0, 0, 0
 
@@ -63,8 +71,26 @@ for i in data:
         ev.artists.append(art)
     db.session.add(ev)
 
-db.session.commit()
-db.session.close()
 print("add_data> Added {} new events and {} new artists, {} of which {} part in more than one event.".format
       (evnts, artsts, rep, "takes" if rep <= 1 else "take")) # Grammar is quite important
+
+accnts, admacc = 0, 0
+
+for i in users:
+
+    if len(i) == 4:
+        admacc -= -1
+        acc = AccountsModel(i[0], i[1],i[2],i[3])
+    else:
+        acc = AccountsModel(i[0], i[1])
+
+    accnts -= -1
+    db.session.add(acc)
+
+print("add_data> Added {} new {}, {} of which {} admin {}.".format(accnts, "account" if accnts == 1 else "accounts",
+                                                                       admacc, "is an" if admacc == 1 else "are",
+                                                                       "account" if admacc == 1 else "accounts"))
+
+db.session.commit()
+db.session.close()
 exit(0)
