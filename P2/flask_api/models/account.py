@@ -18,3 +18,22 @@ class AccountsModel(db.Model):
         self.password = password
         self.available_money = available_money
         self.is_admin = is_admin
+
+    @classmethod
+    def find_by_username(cls, username):
+        return db.session.query(AccountsModel).filter_by(username=username).first()
+
+    def save_to_db(self):
+        db.session.add(self)
+        db.session.commit()
+
+    def delete_from_db(self):
+        db.session.query(AccountsModel).filter_by(username=self.username).delete()
+        db.session.commit()
+
+    def json(self):
+        return {"user": {
+            "username": self.username,
+            "available_money": self.available_money,
+            "is_admin": self.is_admin
+        }}

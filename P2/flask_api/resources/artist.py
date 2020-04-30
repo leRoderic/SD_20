@@ -17,7 +17,7 @@ class ArtistEventsList(Resource):
 class ArtistList(Resource):
 
     def get(self):
-        return [i.json() for i in db.session.query(ArtistModel).all()]
+        return {"artists": [i.json() for i in db.session.query(ArtistModel).all()]}
 
 
 class Artist(Resource):
