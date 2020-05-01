@@ -1,6 +1,7 @@
 <style>
   @import '../assets/button.css';
   @import '../assets/animate.css';
+  @import '../assets/toastr.css';
 
   .flex-container {
     display: flex;
@@ -162,6 +163,7 @@
 </template>
 <script>
 import axios from 'axios'
+import * as toastr from '../assets/toastr'
 
 export default {
 
@@ -224,6 +226,7 @@ export default {
         })
     },
     addEvent (event) {
+      toastr.success('', 'Added to your cart', {timeOut: 1500, progressBar: true, newestOnTop: true, positionClass: 'toast-bottom-right'})
       this.events_bought.push({'name': event.name, 'id': event.id, 'price': event.price})
     },
     getQuantity (name) {
