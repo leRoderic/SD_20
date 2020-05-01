@@ -48,7 +48,20 @@
   @font-face {
     font-family: proxima;
     src: url('../assets/logo-font.otf') format('opentype');
-}
+  }
+  table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+  }
+  td, th {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+  }
+  tr {
+    background-color: #dddddd;
+  }
 </style>
 <template>
   <div id="app">
@@ -72,7 +85,7 @@
             <li class="nav-item">
               <div class="button" id="button-2" style="margin: 0px; margin-left: 10px">
                 <div id="slide"></div>
-                <a href="#" onclick="console.log(this.events_bought)" id="btLogin">View cart</a>
+                <a href="#" onclick="console.info(events_bought)" id="btLogin">View cart</a>
               </div>
             </li>
             <li class="nav-item">
@@ -113,13 +126,33 @@
             <h6>Tickets available: <b>{{event.event.total_available_tickets}}</b></h6>
             <div class="button" id="button-2" style="margin-bottom: 0px">
               <div id="slide"></div>
-              <a >Add to cart</a>
+              <a v-on:click="addEvent(event)">Add to cart</a>
             </div>
           </div>
         </div>
       </div>
     </div>
     <h5 style="margin-top: 80px; color: white">&copy; Copyright {{this.getYear()}} TicketIt!. All Rights Reserved.</h5>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Event Name</th>
+          <th>Quantity</th>
+          <th>Price(€)</th>
+          <th>Total</th>
+          <th></th>
+        </tr>
+        <tr v-for="(event, num) in temp" :key="event.id">
+          <th>{{event.event.name}}</th>
+          <th style="text-align: center">
+            {{num = getQuantity(event.event.name)}} - <button class="btn btn-primary" v-on:click="num+=1" style="background-color: #4CAF50;"> + </button>
+            <button class="btn btn-primary" v-on:click="num-=1" style="background-color: #f44336;"> - </button>
+          <th>{{event.event.price}}</th>
+          <th>{{event.event.price * num }}</th>
+          <th><button class="btn btn-primary" v-on:click="eliminar(event.event.name)" style="background-color: #f44336;"> Delete ticket </button></th>
+        </tr>
+      </thead>
+    </table>
   </div>
 </template>
 <script>
@@ -167,9 +200,32 @@ export default {
           console.error(error)
         })
     },
-
-    purchase (event) {
+    addEvent (event) {
       this.events_bought.push(event)
+      if (!this.temp.includes(event)) {
+        this.temp.push(event)
+      }
+    },
+    getQuantity (name) {
+      var q = 0
+      for (var i = 0; i < this.events_bought.length; i++) {
+        if (this.events_bought[i].event.name === name) {
+          q += 1
+        }
+      }
+      return q
+    },
+    eliminar (name) {
+      for (var i = 0; i < this.temp.length; i++) {
+        if (this.temp[i].event.name === name) {
+          this.temp.splice(i, 1)
+        }
+      }
+      for (var j = 0; j < this.events_bought.length; j++) {
+        if (this.events_bought[j].event.name === name) {
+          this.events_bought.splice(j, 1)
+        }
+      }
     }
   }
 
