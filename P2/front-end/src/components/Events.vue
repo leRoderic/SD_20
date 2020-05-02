@@ -138,17 +138,20 @@
           <th scope="col">Quantity</th>
           <th scope="col">Price</th>
           <th scope="col">Total</th>
+          <th scope="col"> </th>
         </tr>
-        <tr class="thead-light" v-for="index in this.events_bought" :key="index.id">
+        <tr class="thead-light" v-for="index in this.temp" :key="index.id">
           <td><b>{{index.name}}</b></td>
           <td><button type="button" class="btn btn-danger" style="border-radius: 50%; width: 40px; height: 40px;
-            margin-right: 10px"><b>-</b></button>
-            1
+            margin-right: 10px" v-on:click="decrease(index)" :disabled="getQuantity(index.name) == 0"><b>-</b></button>
+            {{getQuantity(index.name)}}
           <button type="button" class="btn btn-success" style="border-radius: 50%; width: 40px; height: 40px;
-            margin-left: 10px"><b>+</b></button>
+            margin-left: 10px" v-on:click="increase(index)" ><b>+</b></button>
           </td>
           <td><b>{{index.price}}€</b></td>
-          <td><b style="color: #236bef">PENDING€</b></td>
+          <td><b style="color: #236bef">{{index.price * getQuantity(index.name)}}</b></td>
+          <td><button type="button" class="btn btn-danger" style="border-radius: 50%;height: 40px;
+            margin-right: 10px;" v-on:click="eliminar(index)"><b>Delete ticket</b></button></td>
         </tr>
       </table>
       <div style="text-align: center" id="emptyCartMessage">
@@ -178,7 +181,8 @@ export default {
       price: 10,
       money: 100,
       events_bought: [],
-      events: []
+      events: [],
+      temp: []
     }
   },
 
@@ -227,28 +231,38 @@ export default {
     },
     addEvent (event) {
       toastr.success('', 'Added to your cart', {timeOut: 1500, progressBar: true, newestOnTop: true, positionClass: 'toast-bottom-right'})
-      this.events_bought.push({'name': event.name, 'id': event.id, 'price': event.price})
+      this.events_bought.push(event) // {'name': event.name, 'id': event.id, 'price': event.price}
+      if (!this.temp.includes(event)) {
+        this.temp.push(event)
+      }
     },
     getQuantity (name) {
       var q = 0
-      for (var i = 0; i < this.events_bought.length; i++) {
-        if (this.events_bought[i].event.name === name) {
+      for (var i = 0; i < this.events_bought.length - 1; i++) {
+        if (this.events_bought[i].name === name) {
           q += 1
         }
       }
       return q
     },
-    eliminar (name) {
-      for (var i = 0; i < this.temp.length; i++) {
-        if (this.temp[i].event.name === name) {
-          this.temp.splice(i, 1)
+    eliminar (event) {
+      var index = this.temp.indexOf(event)
+      this.temp.splice(index, 1)
+      for (var i = this.events_bought.length - 1; i--;) {
+        if (this.events_bought[i].name === event.name) {
+          this.events_bought.splice(i, 1)
         }
       }
-      for (var j = 0; j < this.events_bought.length; j++) {
-        if (this.events_bought[j].event.name === name) {
-          this.events_bought.splice(j, 1)
-        }
+    },
+    increase (event) {
+      this.events_bought.push(event)
+      if (!this.temp.includes(event)) {
+        this.temp.push(event)
       }
+    },
+    decrease (event) {
+      var index = this.events_bought.indexOf(event)
+      this.events_bought.splice(index, 1)
     }
   }
 
