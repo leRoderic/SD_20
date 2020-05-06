@@ -60,8 +60,8 @@
 
 </style>
 <template>
-  <div id="app">
-    <video autoplay muted loop id="vbgnd">
+  <div>
+    <video autoplay loop muted id="vbgnd">
       <source src="../assets/video.mp4" type="video/mp4" id="vbgnd2">
     </video>
     <nav class="navbar navbar-expand-md navbar-dark bg-dark animated slideInDown"
@@ -88,10 +88,10 @@
             </div>
           </li>
           <li class="nav-item">
-            <div id="login">
+            <div id="login" v-if="this.logged == NONE">
               <div class="button" id="button-2" style="margin: 0px; margin-left: 10px">
                 <div id="slide"></div>
-                <a href="#/login" id="btLogin">Login</a>
+                <router-link to="/login"><a id="btLogin">Login</a></router-link>
               </div>
             </div>
           </li>
@@ -165,7 +165,6 @@
               <a class="a2" href="#" id="btRemoveTicket" @click="deleteTicket(index)">Remove ticket</a>
             </div>
           </td>
-          <th scope="col"> </th>
         </tr>
         <tr class="thead-light" v-for="index in this.temp" :key="index.id">
           <td><b>{{index.name}}</b></td>
@@ -176,9 +175,7 @@
             margin-left: 10px" v-on:click="increase(index)" ><b>+</b></button>
           </td>
           <td><b>{{index.price}}€</b></td>
-          <td><b style="color: #236bef">{{index.price * getQuantity(index.name)}}</b></td>
-          <td><button type="button" class="btn btn-danger" style="border-radius: 50%;height: 40px;
-            margin-right: 10px;" v-on:click="eliminar(index)"><b>Delete ticket</b></button></td>
+          <td><b style="color: #236bef">{{index.price * index.quant}}</b></td>
         </tr>
       </table>
       <div style="text-align: center; margin-top: 10px" id="emptyCartMessage">

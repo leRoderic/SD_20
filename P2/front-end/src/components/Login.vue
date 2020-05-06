@@ -2,29 +2,69 @@
   @import '../assets/animate.css';
   @import '../assets/toastr.css';
   @import '../assets/login.css';
+  @import '../assets/button.css';
 
   @font-face {
     font-family: proxima;
     src: url('../assets/logo-font.otf') format('opentype');
   }
-
-  body {
-    display: -ms-flexbox;
-    display: -webkit-box;
-    display: flex;
-    -ms-flex-align: center;
-    -ms-flex-pack: center;
+  .buttona {
+    display: -webkit-inline-box;
+    display: inline-flex;
+    height: 40px;
+    width: 100%;
+    border: 2px solid white;
+    margin: 20px 20px 20px 20px;
+    color: white;
+    text-transform: uppercase;
+    text-decoration: none;
+    font-size: .8em;
+    letter-spacing: 1.5px;
     -webkit-box-align: center;
     align-items: center;
     -webkit-box-pack: center;
     justify-content: center;
-    padding-top: 40px;
-    padding-bottom: 40px;
-  }
+    overflow: hidden;
+}
+
+a {
+  color: white;
+  text-decoration: none;
+  letter-spacing: 1px;
+}
+
+#button-2 {
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+#button-2 a {
+  position: relative;
+  transition: all .35s ease-Out;
+}
+
+#slide5 {
+  width: 100%;
+  height: 100%;
+  left: -100%;
+  background: white;
+  position: absolute;
+  transition: all .35s ease-Out;
+  bottom: 0;
+}
+
+#button-2:hover #slide5 {
+  left: 0;
+}
+
+#button-2:hover a {
+  color: black;
+}
 </style>
 
 <template>
-  <div>
+  <div class="logincotainer" style="height: 100vh; margin-top: -60px">
     <div class="animated slideInUp" id="signin">
       <div class="card" style="background-color: #343a40">
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.8/css/all.css">
@@ -43,7 +83,7 @@
                 ><i class="fa fa-user" style="color: white"></i> </span>
                 </div>
                 <input name="" class="form-control" placeholder="Username" type="email" id="username"
-                       @click="runAnimation" v-model="username">
+                       v-model="username">
               </div>
             </div>
             <div class="form-group">
@@ -57,21 +97,21 @@
             </div>
             <div class="form-group">
               <div id="login">
-                <div class="button" id="button-2" style="margin: 0px; margin-top: 20px">
-                  <div id="slide"></div>
-                  <a href="#" id="btLogin" @click="doLogin">Sign in</a>
+                <div class="buttona animated infinite pulse delay-5s" id="button-2" style="margin: 0px; margin-top: 20px; width: 100%">
+                  <div id="slide5" style="width: 100%;"></div>
+                  <a href="#" id="btLogin" @click="doLogin" style="width: 100%">Sign in</a>
                 </div>
               </div>
               <div id="create">
-                <div class="button" id="button-2" style="margin: 0px; margin-top: 15px">
-                  <div id="slide"></div>
+                <div class="buttona" id="button-2" style="margin: 0px; margin-top: 15px">
+                  <div id="slide5"></div>
                   <a href="#" id="btCreate" @click="toggleSignIn">Create account</a>
                 </div>
               </div>
               <div id="events">
-                <div class="button" id="button-2" style="margin: 0px; margin-top: 15px; margin-bottom: -30px">
-                  <div id="slide"></div>
-                  <a href="/" id="btBack">Back to events</a>
+                <div class="buttona" id="button-2" style="margin: 0px; margin-top: 15px; margin-bottom: -30px">
+                  <div id="slide5"></div>
+                  <router-link to="/"><a id="btBack">Back to events</a></router-link>
                 </div>
               </div>
             </div>
@@ -101,7 +141,7 @@
                 ><i class="fa fa-user" style="color: white"></i> </span>
                 </div>
                 <input name="" class="form-control" placeholder="Username" type="email" id="cusername"
-                       @click="runAnimation" v-model="username">
+                        v-model="username">
               </div>
             </div>
             <div class="form-group">
@@ -115,20 +155,20 @@
             </div>
             <div class="form-group">
               <div id="login">
-                <div class="button" id="button-2" style="margin: 0px; margin-top: 20px">
-                  <div id="slide"></div>
+                <div class="buttona animated infinite pulse delay-5s" id="button-2" style="margin: 0px; margin-top: 20px">
+                  <div id="slide5"></div>
                   <a href="#" id="btLogin" @click="createAccount">Create account</a>
                 </div>
               </div>
               <div id="create">
-                <div class="button" id="button-2" style="margin: 0px; margin-top: 15px">
-                  <div id="slide"></div>
+                <div class="buttona" id="button-2" style="margin: 0px; margin-top: 15px">
+                  <div id="slide5"></div>
                   <a href="#" id="btCreate" @click="resetInput">Reset</a>
                 </div>
               </div>
               <div id="events">
-                <div class="button" id="button-2" style="margin: 0px; margin-top: 15px; margin-bottom: -30px">
-                  <div id="slide"></div>
+                <div class="buttona" id="button-2" style="margin: 0px; margin-top: 15px; margin-bottom: -30px">
+                  <div id="slide5"></div>
                   <a href="#" id="btBack" @click="toggleSignIn">Back to sign in</a>
                 </div>
               </div>
@@ -215,9 +255,13 @@ export default {
       if (document.getElementById('signin').style.display == 'block') {
         document.getElementById('signin').style.display = 'none'
         document.getElementById('createaccount').style.display = 'block'
+        this.username = ''
+        this.password = ''
       } else {
         document.getElementById('signin').style.display = 'block'
         document.getElementById('createaccount').style.display = 'none'
+        this.username = ''
+        this.password = ''
       }
     },
     doLogin () {
