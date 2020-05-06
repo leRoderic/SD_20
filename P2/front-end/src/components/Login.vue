@@ -43,7 +43,7 @@
                 ><i class="fa fa-user" style="color: white"></i> </span>
                 </div>
                 <input name="" class="form-control" placeholder="Username" type="email" id="username"
-                       @click="runAnimation">
+                       @click="runAnimation" v-model="username">
               </div>
             </div>
             <div class="form-group">
@@ -52,7 +52,7 @@
                 <span class="input-group-text" style="background-color: #236bef; border-color: #236bef">
                   <i class="fa fa-lock" style="color: white"></i> </span>
                 </div>
-                <input class="form-control" placeholder="Password" type="password" id="password">
+                <input class="form-control" placeholder="Password" type="password" id="password" v-model="password">
               </div>
             </div>
             <div class="form-group">
@@ -101,7 +101,7 @@
                 ><i class="fa fa-user" style="color: white"></i> </span>
                 </div>
                 <input name="" class="form-control" placeholder="Username" type="email" id="cusername"
-                       @click="runAnimation">
+                       @click="runAnimation" v-model="username">
               </div>
             </div>
             <div class="form-group">
@@ -110,7 +110,7 @@
                 <span class="input-group-text" style="background-color: #236bef; border-color: #236bef">
                   <i class="fa fa-lock" style="color: white"></i> </span>
                 </div>
-                <input class="form-control" placeholder="Password" type="password" id="cpassword">
+                <input class="form-control" placeholder="Password" type="password" id="cpassword" v-model="password">
               </div>
             </div>
             <div class="form-group">
@@ -156,11 +156,34 @@ export default {
 
   data () {
     return {
-      clicked: false
+      clicked: false,
+      username: '',
+      password: ''
     }
   },
 
   methods: {
+    checkLogin () {
+      const parameters = {
+        username: this.username,
+        password: this.password
+      }
+      const path = `http://localhost:5000/login`
+      axios.post(path, parameters)
+        .then((res) => {
+          this.logged = true
+          this.token = res.data.token
+          this.find_match = true
+          this.getAccount()
+        })
+        .catch((error) => {
+          // eslint-disable-next-line
+          console.error(error)
+          this.user = ''
+          toastr.error('', 'Username or password incorrect',
+            {timeOut: 1500, progressBar: true, newestOnTop: true, positionClass: 'toast-bottom-right'})
+        })
+    },
     toggleSignIn () {
       // eslint-disable-next-line eqeqeq
       if (document.getElementById('signin').style.display == 'block') {
