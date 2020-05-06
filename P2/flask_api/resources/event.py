@@ -1,5 +1,6 @@
 from flask_restful import Resource, reqparse
 from db import db
+from models.account import auth
 from models.artist import ArtistModel
 from models.event import EventModel
 
@@ -15,6 +16,7 @@ class EventArtist(Resource):
             return {"artist": artist[0].json()}, 200
         return {'message': "Event with id {} not found".format(id_event)}, 404
 
+    @auth.login_required(role='admin')
     def post(self, id_event):
         event = EventModel.find_by_id(id_event)
         if not event:
@@ -30,6 +32,7 @@ class EventArtist(Resource):
         event.save_to_db()
         return {"artist": artist.json()}, 200
 
+    @auth.login_required(role='admin')
     def delete(self, id_event, id_artist):
         event = EventModel.find_by_id(id_event)
         if not event:
@@ -76,6 +79,7 @@ class Event(Resource):
             return event.json(), 200
         return {'message': "Event with id {} not found".format(id)}, 404
 
+    @auth.login_required(role='admin')
     def post(self, id=None):
         if EventModel.find_by_id(id):
             return {'message': "An event with id {} already exists".format(id)}, 409
@@ -85,6 +89,7 @@ class Event(Resource):
         new_event.save_to_db()
         return new_event.json(), 200
 
+    @auth.login_required(role='admin')
     def delete(self, id):
         to_delete = EventModel.find_by_id(id)
         if not to_delete:
@@ -92,6 +97,7 @@ class Event(Resource):
         to_delete.delete_from_db()
         return {'message': "Event with id {} has benn successfully been deleted".format(id)}, 200
 
+    @auth.login_required(role='admin')
     def put(self, id):
         data = self.__parse_request__()
 

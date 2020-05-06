@@ -141,7 +141,6 @@
           <th scope="col">Quantity</th>
           <th scope="col">Price</th>
           <th scope="col">Total</th>
-<<<<<<< HEAD
           <th scope="col"></th>
         </tr>
         <tr class="thead-light" v-for="index in this.events_bought" :key="index.id">
@@ -160,7 +159,6 @@
               <a class="a2" href="#" id="btRemoveTicket" @click="deleteTicket(index)">Remove ticket</a>
             </div>
           </td>
-=======
           <th scope="col"> </th>
         </tr>
         <tr class="thead-light" v-for="index in this.temp" :key="index.id">
@@ -175,7 +173,6 @@
           <td><b style="color: #236bef">{{index.price * getQuantity(index.name)}}</b></td>
           <td><button type="button" class="btn btn-danger" style="border-radius: 50%;height: 40px;
             margin-right: 10px;" v-on:click="eliminar(index)"><b>Delete ticket</b></button></td>
->>>>>>> 3bb03fb6d3b12230fe080ea23a9ff03fc7b1461f
         </tr>
       </table>
       <div style="text-align: center; margin-top: 10px" id="emptyCartMessage">
@@ -288,7 +285,6 @@ export default {
     },
     addEvent (event) {
       toastr.success('', 'Added to your cart', {timeOut: 1500, progressBar: true, newestOnTop: true, positionClass: 'toast-bottom-right'})
-<<<<<<< HEAD
       var ev = this.searchEvent(event)
       if (ev == null) {
         this.events_bought.push({'name': event.name, 'id': event.id, 'price': event.price, 'quant': 1})
@@ -303,23 +299,9 @@ export default {
         // eslint-disable-next-line eqeqeq
         if (item.id == event.id) {
           return item
-=======
-      this.events_bought.push(event) // {'name': event.name, 'id': event.id, 'price': event.price}
-      if (!this.temp.includes(event)) {
-        this.temp.push(event)
-      }
-    },
-    getQuantity (name) {
-      var q = 0
-      for (var i = 0; i < this.events_bought.length - 1; i++) {
-        if (this.events_bought[i].name === name) {
-          q += 1
->>>>>>> 3bb03fb6d3b12230fe080ea23a9ff03fc7b1461f
         }
       }
-      return null
     },
-<<<<<<< HEAD
     getEventIndex (event) {
       var i, item
       for (i in this.events_bought) {
@@ -357,26 +339,6 @@ export default {
         document.getElementById('emptyCartMessage').style.display = 'block'
         document.getElementById('checkoutButton').style.display = 'none'
       }
-=======
-    eliminar (event) {
-      var index = this.temp.indexOf(event)
-      this.temp.splice(index, 1)
-      for (var i = this.events_bought.length - 1; i--;) {
-        if (this.events_bought[i].name === event.name) {
-          this.events_bought.splice(i, 1)
-        }
-      }
-    },
-    increase (event) {
-      this.events_bought.push(event)
-      if (!this.temp.includes(event)) {
-        this.temp.push(event)
-      }
-    },
-    decrease (event) {
-      var index = this.events_bought.indexOf(event)
-      this.events_bought.splice(index, 1)
->>>>>>> 3bb03fb6d3b12230fe080ea23a9ff03fc7b1461f
     }
   }
 }

@@ -1,12 +1,10 @@
 from flask_restful import Resource, reqparse
-from flask import g
 from db import db
 from models.account import AccountsModel, auth
 
 
 class Login(Resource):
 
-    # @auth.login_required(role='user')
     def post(self):
         data = self.__parse_request__()
         username, password = data.get('username'), data.get('password')
@@ -17,10 +15,7 @@ class Login(Resource):
 
         if not user.verify_password(password):
             return {'message': "Passwords do not match"}, 400
-        '''
-        if username != g.user.username:
-            return {'message': "Usernames used in endpoint and token generation do not match"}, 400
-        '''
+
         return {'token': user.generate_auth_token().decode('ascii')}, 200
 
     def __parse_request__(self):

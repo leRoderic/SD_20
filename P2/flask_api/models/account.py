@@ -19,7 +19,6 @@ class AccountsModel(db.Model):
     orders = db.relationship('OrdersModel', backref=db.backref('orders'), lazy=True)
 
     def __init__(self, username, available_money=200, is_admin=0):
-
         self.username = username
         self.available_money = available_money
         self.is_admin = is_admin
@@ -71,11 +70,11 @@ class AccountsModel(db.Model):
 @auth.verify_password
 def verify_password(token, password):
     user = AccountsModel.verify_auth_token(token)
-    # g.user = user
     if user:
+        g.user = user
         return user
 
 
 @auth.get_user_roles
 def get_user_roles(user):
-    return ['admin'] if user.is_admin == 0 else ['user']
+    return ['admin'] if user.is_admin == 1 else ['user']

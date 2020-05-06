@@ -1,6 +1,6 @@
 from flask_restful import Resource, reqparse
 from db import db
-from models.account import AccountsModel, auth
+from models.account import AccountsModel, auth, g
 from models.event import EventModel
 from models.order import OrdersModel
 
@@ -26,6 +26,8 @@ class Orders(Resource):
         user = AccountsModel.find_by_username(username)
         if not user:
             return {'message': "User {} not found".format(username)}, 404
+        if username != g.user.username:
+            return {'message': "Usernames used in endpoint and token generation do not match"}, 400
         data = self.__parse_request__()
         ev = EventModel.find_by_id(data.get('event_id'))
         if not ev:

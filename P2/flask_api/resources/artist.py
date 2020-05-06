@@ -1,5 +1,6 @@
 from flask_restful import Resource, reqparse
 from db import db
+from models.account import auth
 from models.artist import ArtistModel
 from models.event import EventModel
 
@@ -28,6 +29,7 @@ class Artist(Resource):
             return {'artist': artist.json()}, 200
         return {'message': "Artist with id {} not found".format(id)}, 404
 
+    @auth.login_required(role='admin')
     def post(self, id=None):
         if ArtistModel.find_by_id(id):
             return {'message': "An artist with id {} already exists".format(id)}, 409
@@ -36,6 +38,7 @@ class Artist(Resource):
         new_artist.save_to_db()
         return new_artist.json(), 200
 
+    @auth.login_required(role='admin')
     def delete(self, id):
         to_delete = ArtistModel.find_by_id(id)
         if not to_delete:
@@ -43,6 +46,7 @@ class Artist(Resource):
         to_delete.delete_from_db()
         return {'message': "Artist with id {} has benn successfully been deleted".format(id)}, 200
 
+    @auth.login_required(role='admin')
     def put(self, id):
         data = self.__parse_request__()
         existing = ArtistModel.find_by_id(id)
