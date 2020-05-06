@@ -80,21 +80,27 @@
       <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
         <ul class="navbar-nav ml-auto animated bounceInLeft" style="animation-delay: 0.5s">
           <li class="nav-item">
-            <div class="button" id="button-2" style="margin: 0px; margin-left: 10px">
-              <div id="slide"></div>
-              <a href="#" @click="this.toggleCart" id="btToggleCart">View cart</a>
+            <div id="cartbt" v-if="this.logged == true">
+              <div class="button" id="button-2" style="margin: 0px; margin-left: 10px">
+                <div id="slide"></div>
+                <a href="#" @click="this.toggleCart" id="btToggleCart">View cart</a>
+              </div>
             </div>
           </li>
           <li class="nav-item">
-            <div class="button" id="button-2" style="margin: 0px; margin-left: 10px">
-              <div id="slide"></div>
-              <a href="#/login" id="btLogin">Login</a>
+            <div id="login">
+              <div class="button" id="button-2" style="margin: 0px; margin-left: 10px">
+                <div id="slide"></div>
+                <a href="#/login" id="btLogin">Login</a>
+              </div>
             </div>
           </li>
           <li class="nav-item">
-            <div class="button" id="button-2" style="margin: 0px; margin-left: 10px">
-              <div id="slide"></div>
-              <a href="#" id="btLogout">Logout</a>
+            <div id="logout" v-if="this.logged == true">
+              <div class="button" id="button-2" style="margin: 0px; margin-left: 10px">
+                <div id="slide"></div>
+                <a href="#" id="btLogout">Logout</a>
+              </div>
             </div>
           </li>
         </ul>
@@ -197,6 +203,10 @@ import * as toastr from '../assets/toastr'
 export default {
 
   created () {
+    this.username = this.$route.query.username
+    this.logged = this.$route.query.logged
+    this.is_admin = this.$route.query.is_admin
+    this.token = this.$route.query.token
     this.getEvents()
   },
 
@@ -204,12 +214,26 @@ export default {
     return {
       events_bought: [],
       events: [],
-      temp: []
+      temp: [],
+      username: '',
+      logged: false,
+      is_admin: false,
+      token: ''
     }
   },
 
   methods: {
-
+    updateLoggedView () {
+      if (this.logged) {
+        document.getElementById('cartbt').style.display = 'block'
+        document.getElementById('logout').style.display = 'block'
+        document.getElementById('login').style.display = 'none'
+      } else {
+        document.getElementById('cartbt').style.display = 'none'
+        document.getElementById('logout').style.display = 'none'
+        document.getElementById('login').style.display = 'block'
+      }
+    },
     toggleCart () {
       // eslint-disable-next-line eqeqeq
       if (document.getElementById('eventsGrid').style.display != 'none') {
@@ -240,7 +264,6 @@ export default {
       var images = require.context('../assets/', false, /\.jpg$/)
       return images('./festival' + (index % 10) + '.jpg')
     },
-
     getEvents () {
       const path = 'http://localhost:5000/events'
       axios.get(path)

@@ -158,7 +158,10 @@ export default {
     return {
       clicked: false,
       username: '',
-      password: ''
+      password: '',
+      logged: false,
+      find_match: false,
+      is_admin: false
     }
   },
 
@@ -171,10 +174,33 @@ export default {
       const path = `http://localhost:5000/login`
       axios.post(path, parameters)
         .then((res) => {
+          console.log(res.data.token)
           this.logged = true
           this.token = res.data.token
           this.find_match = true
-          this.getAccount()
+          this.is_admin = this.getAccount()
+          toastr.success('', 'You are logged in!',
+            {timeOut: 1500, progressBar: true, newestOnTop: true, positionClass: 'toast-bottom-right'})
+          this.$router.push({path: '/', query: {username: this.username, logged: this.logged, is_admin: this.is_admin, token: res.data.token}})
+        })
+        .catch((error) => {
+          // eslint-disable-next-line
+          console.error(error)
+          this.user = ''
+          toastr.error('', 'Username or password incorrect',
+            {timeOut: 1500, progressBar: true, newestOnTop: true, positionClass: 'toast-bottom-right'})
+        })
+    },
+    getAccount () {
+      const path = `http://localhost:5000/account/` + this.username
+      axios.get(path, {})
+        .then((res) => {
+          // eslint-disable-next-line eqeqeq
+          if (res.data.user.is_admin == 1) {
+            return true
+          } else {
+            return false
+          }
         })
         .catch((error) => {
           // eslint-disable-next-line
@@ -198,6 +224,8 @@ export default {
       // eslint-disable-next-line eqeqeq
       if (document.getElementById('username').value == '' || document.getElementById('password').value == '') {
         toastr.info('', 'Fill all fields to continue', {timeOut: 1500, progressBar: true, newestOnTop: true, positionClass: 'toast-bottom-right'})
+      } else {
+        this.checkLogin()
       }
     },
     createAccount () {
