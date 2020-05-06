@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Events from '@/components/Events'
+import Login from '@/components/Login'
 
 Vue.use(Router)
 
@@ -9,10 +10,12 @@ export default new Router({
     {
       path: '/',
       name: 'Events',
-      component: Events,
-      meta: {
-        title: 'TicketIt! - Home'
-      }
+      component: Events
+    },
+    {
+      path: '/login',
+      name: 'Login',
+      component: Login
     }
   ]
 })

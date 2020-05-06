@@ -88,7 +88,7 @@
           <li class="nav-item">
             <div class="button" id="button-2" style="margin: 0px; margin-left: 10px">
               <div id="slide"></div>
-              <a href="#" id="btLogin">Login</a>
+              <a href="#/login" id="btLogin">Login</a>
             </div>
           </li>
           <li class="nav-item">
