@@ -1,6 +1,6 @@
 from flask_restful import Resource, reqparse
 from db import db
-from models.account import AccountsModel
+from models.account import AccountsModel, auth
 from models.event import EventModel
 from models.order import OrdersModel
 
@@ -21,6 +21,7 @@ class Orders(Resource):
             return {'message': "User {} has no orders".format(username)}, 409
         return {'orders': [a.json() for a in ordrs]}, 200
 
+    @auth.login_required()
     def post(self, username):
         user = AccountsModel.find_by_username(username)
         if not user:

@@ -123,21 +123,44 @@
           <div class="card-body justify-content-center" style="background-color: #236bef; color: #ffffff;
             margin-top: -5rem">
             <h6>Tickets available: <b>{{event.event.total_available_tickets}}</b></h6>
-            <div class="button" id="button-2" style="margin-bottom: 0px">
+            <div class="button" id="button-2" style="margin-bottom: 0px" v-if="event.event.total_available_tickets > 0">
               <div id="slide"></div>
               <a @click="addEvent(event.event)">Add to cart</a>
+            </div>
+            <div class="button" style="margin-bottom: 0px; border: 2px solid #db0404" v-else>
+              <a style="color: #db0404"><b>Sold out</b></a>
             </div>
           </div>
         </div>
       </div>
     </div>
     <div class="animated slideInUp" id="cart" style="display: none; background-color: white; opacity: 0.88; width: 90rem">
-      <table class="table">
+      <table class="table" style="margin-bottom: -5px">
         <tr class="thead-dark">
           <th scope="col">Event name</th>
           <th scope="col">Quantity</th>
           <th scope="col">Price</th>
           <th scope="col">Total</th>
+<<<<<<< HEAD
+          <th scope="col"></th>
+        </tr>
+        <tr class="thead-light" v-for="index in this.events_bought" :key="index.id">
+          <td><div style="margin-top: 5px"><b>{{index.name}}</b></div></td>
+          <td><button type="button" class="btn btn-danger" id="decreaseTicket" style="border-radius: 50%; width: 35px; height: 35px;
+            margin-right: 10px" @click="removeTicket(index)"><b>-</b></button>
+            {{index.quant}}
+          <button type="button" class="btn btn-success" style="border-radius: 50%; width: 35px; height: 35px;
+            margin-left: 10px" id="increaseTicket" @click="addTicket(index)"><b>+</b></button>
+          </td>
+          <td><div style="margin-top: 5px"><b>{{index.price}}€</b></div></td>
+          <td><div style="margin-top: 5px"><b style="color: #236bef">{{index.price * index.quant}}€</b></div></td>
+          <td>
+            <div class="button" id="button-3" style="margin: 0px; margin-right: -60px; margin-top: -5px; border: 2px solid #db0404">
+              <div id="slide2"></div>
+              <a class="a2" href="#" id="btRemoveTicket" @click="deleteTicket(index)">Remove ticket</a>
+            </div>
+          </td>
+=======
           <th scope="col"> </th>
         </tr>
         <tr class="thead-light" v-for="index in this.temp" :key="index.id">
@@ -152,10 +175,16 @@
           <td><b style="color: #236bef">{{index.price * getQuantity(index.name)}}</b></td>
           <td><button type="button" class="btn btn-danger" style="border-radius: 50%;height: 40px;
             margin-right: 10px;" v-on:click="eliminar(index)"><b>Delete ticket</b></button></td>
+>>>>>>> 3bb03fb6d3b12230fe080ea23a9ff03fc7b1461f
         </tr>
       </table>
-      <div style="text-align: center" id="emptyCartMessage">
+      <div style="text-align: center; margin-top: 10px" id="emptyCartMessage">
         <h2>Your cart is empty! <a href="#" @click="this.toggleCart" style="color: #236bef"><u>Let's fill it up!</u></a></h2>
+      </div>
+      <div style="text-align: center; margin-top: 10px" id="checkoutButton">
+        <button type="button" class="btn btn-success" style="width: 100%; border-radius: 0%; height: 40px" @click="completePurchase()">
+          <h4 style="text-transform: uppercase; text-decoration: none; font-size: .8em; letter-spacing: 1.5px">
+          <b>Complete order</b></h4></button>
       </div>
     </div>
     <div id="footer">
@@ -176,10 +205,6 @@ export default {
 
   data () {
     return {
-      message: 'TicketIt!',
-      tickets_bought: 0,
-      price: 10,
-      money: 100,
       events_bought: [],
       events: [],
       temp: []
@@ -198,12 +223,15 @@ export default {
         document.getElementById('eventsGrid').style.display = 'inline-block'
         document.getElementById('cart').style.display = 'none'
         document.getElementById('btToggleCart').firstChild.data = 'View cart'
+        this.getEvents()
       }
       // eslint-disable-next-line eqeqeq
       if (this.events_bought.length == 0) {
         document.getElementById('emptyCartMessage').style.display = 'block'
+        document.getElementById('checkoutButton').style.display = 'none'
       } else {
         document.getElementById('emptyCartMessage').style.display = 'none'
+        document.getElementById('checkoutButton').style.display = 'block'
       }
     },
 
@@ -213,24 +241,69 @@ export default {
 
     getImgUrl (index) {
       var images = require.context('../assets/', false, /\.jpg$/)
-      return images('./festival' + (index + 1) + '.jpg')
+      return images('./festival' + (index % 10) + '.jpg')
     },
 
     getEvents () {
       const path = 'http://localhost:5000/events'
-
       axios.get(path)
-
         .then((res) => {
           this.events = res.data.events
         })
-
         .catch((error) => {
           console.error(error)
         })
     },
+    addPurchase (parameters, ename) {
+      const path = 'http://localhost:5000/orders/admin'
+      axios.post(path, parameters)
+        .then(() => {
+        })
+        .catch((error) => {
+          var msg = error.response.data.message
+          // eslint-disable-next-line eqeqeq
+          if (msg == 'Not enough available tickets in event.') {
+            toastr.error('', 'Tickets for the event \'' + ename + '\' are sold out!',
+              {timeOut: 1500, progressBar: true, newestOnTop: true, positionClass: 'toast-bottom-right'})
+            // eslint-disable-next-line eqeqeq
+          } else if (msg == 'User does not have enough money to purchase order.') {
+            toastr.error('', 'You don\'t have enough money to purchase tickets for the event \'' + ename + '\'!',
+              {timeOut: 1500, progressBar: true, newestOnTop: true, positionClass: 'toast-bottom-right'})
+          }
+        })
+    },
+    completePurchase () {
+      var i, item
+      for (i in this.events_bought) {
+        item = this.events_bought[i]
+        const parameters = {
+          'event_id': item.id,
+          'tickets_bought': item.quant
+        }
+        this.addPurchase(parameters, item.name)
+      }
+      this.events_bought = []
+      document.getElementById('emptyCartMessage').style.display = 'block'
+      document.getElementById('checkoutButton').style.display = 'none'
+    },
     addEvent (event) {
       toastr.success('', 'Added to your cart', {timeOut: 1500, progressBar: true, newestOnTop: true, positionClass: 'toast-bottom-right'})
+<<<<<<< HEAD
+      var ev = this.searchEvent(event)
+      if (ev == null) {
+        this.events_bought.push({'name': event.name, 'id': event.id, 'price': event.price, 'quant': 1})
+      } else {
+        ev.quant += 1
+      }
+    },
+    searchEvent (event) {
+      var i, item
+      for (i in this.events_bought) {
+        item = this.events_bought[i]
+        // eslint-disable-next-line eqeqeq
+        if (item.id == event.id) {
+          return item
+=======
       this.events_bought.push(event) // {'name': event.name, 'id': event.id, 'price': event.price}
       if (!this.temp.includes(event)) {
         this.temp.push(event)
@@ -241,10 +314,50 @@ export default {
       for (var i = 0; i < this.events_bought.length - 1; i++) {
         if (this.events_bought[i].name === name) {
           q += 1
+>>>>>>> 3bb03fb6d3b12230fe080ea23a9ff03fc7b1461f
         }
       }
-      return q
+      return null
     },
+<<<<<<< HEAD
+    getEventIndex (event) {
+      var i, item
+      for (i in this.events_bought) {
+        item = this.events_bought[i]
+        // eslint-disable-next-line eqeqeq
+        if (item.id == event.id) {
+          return i
+        }
+      }
+      return -1
+    },
+    addTicket (event) {
+      var ev = this.searchEvent(event)
+      ev.quant += 1
+      toastr.info('', 'Cart updated', {timeOut: 1500, progressBar: true, newestOnTop: true, positionClass: 'toast-bottom-right'})
+    },
+    removeTicket (event) {
+      var ev = this.searchEvent(event)
+      ev.quant -= 1
+      toastr.info('', 'Cart updated', {timeOut: 1500, progressBar: true, newestOnTop: true, positionClass: 'toast-bottom-right'})
+      // eslint-disable-next-line eqeqeq
+      if (ev.quant == 0) {
+        this.events_bought.splice(this.getEventIndex(event), 1)
+        // eslint-disable-next-line eqeqeq
+        if (this.events_bought.length == 0) {
+          document.getElementById('emptyCartMessage').style.display = 'block'
+          document.getElementById('checkoutButton').style.display = 'none'
+        }
+      }
+    },
+    deleteTicket (event) {
+      this.events_bought.splice(this.getEventIndex(event), 1)
+      // eslint-disable-next-line eqeqeq
+      if (this.events_bought.length == 0) {
+        document.getElementById('emptyCartMessage').style.display = 'block'
+        document.getElementById('checkoutButton').style.display = 'none'
+      }
+=======
     eliminar (event) {
       var index = this.temp.indexOf(event)
       this.temp.splice(index, 1)
@@ -263,9 +376,8 @@ export default {
     decrease (event) {
       var index = this.events_bought.indexOf(event)
       this.events_bought.splice(index, 1)
+>>>>>>> 3bb03fb6d3b12230fe080ea23a9ff03fc7b1461f
     }
   }
-
 }
-
 </script>

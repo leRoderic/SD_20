@@ -24,7 +24,7 @@ a {
 }
 
 .a2{
-  color: #236bef;
+  color: #db0404;
   text-decoration: none;
   letter-spacing: 1px;
 }
@@ -73,7 +73,7 @@ a {
   width: 100%;
   height: 100%;
   left: -200px;
-  background: #236bef;
+  background: #db0404;
   position: absolute;
   transition: all .35s ease-Out;
   bottom: 0;
@@ -86,3 +86,5 @@ a {
 #button-3:hover a {
   color: white;
 }
+
+
