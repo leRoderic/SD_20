@@ -33,7 +33,7 @@ class Orders(Resource):
         if not ev:
             return {'message': "Event with id {} not found".format(data.get('event_id'))}, 404
 
-        if user.available_money >= ev.price:
+        if user.available_money >= (ev.price*data.get('tickets_bought')):
             if data.get('tickets_bought') <= ev.total_available_tickets:
                 ev.total_available_tickets -= data.get('tickets_bought')
                 ev.save_to_db()

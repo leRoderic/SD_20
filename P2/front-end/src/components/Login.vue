@@ -65,14 +65,14 @@ a {
 
 <template>
   <div class="logincotainer" style="height: 100vh; margin-top: -60px">
-    <div class="animated slideInUp" id="signin">
+    <div class="animated slideInUp" id="signin" style="margin-top: 40px;">
       <div class="card" style="background-color: #343a40">
-        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.8/css/all.css">
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.10.2/css/all.css">
         <article class="card-body">
           <h1 class="card-title text-center mb-4 mt-1" style="font-family: Proxima; font-size: 3rem;
-           letter-spacing: 4px; animation-delay: 0.5s; color: white">TicketIt!<span class="badge badge-info"
+           letter-spacing: 4px; animation-delay: 0.5s; color: white">TicketIt!<span class="badge badge-pill badge-info"
                                                                                     style="font-family: Consolas;
-                                                                    font-size: 10px">Alpha</span></h1>
+                                                                    font-size: 10px">Beta</span></h1>
           <hr>
           <form>
             <div class="form-group">
@@ -95,23 +95,23 @@ a {
                 <input class="form-control" placeholder="Password" type="password" id="password" v-model="password">
               </div>
             </div>
-            <div class="form-group">
+            <div class="form-group" id="loginform">
               <div id="login">
-                <div class="buttona animated infinite pulse delay-5s" id="button-2" style="margin: 0px; margin-top: 20px; width: 100%">
+                <div class="buttona " id="button-2" style="margin: 0px; margin-top: 20px; width: 100%">
                   <div id="slide5" style="width: 100%;"></div>
                   <a href="#" id="btLogin" @click="doLogin" style="width: 100%">Sign in</a>
                 </div>
               </div>
               <div id="create">
-                <div class="buttona" id="button-2" style="margin: 0px; margin-top: 15px">
-                  <div id="slide5"></div>
+                <div class="buttona" id="button-2" style="margin: 0px; margin-top: 15px; width: 100%">
+                  <div id="slide5" style="width: 100%;"></div>
                   <a href="#" id="btCreate" @click="toggleSignIn">Create account</a>
                 </div>
               </div>
               <div id="events">
                 <div class="buttona" id="button-2" style="margin: 0px; margin-top: 15px; margin-bottom: -30px">
                   <div id="slide5"></div>
-                  <router-link to="/"><a id="btBack">Back to events</a></router-link>
+                  <a id="btBack" @click="back2Events">Back to events</a>
                 </div>
               </div>
             </div>
@@ -128,9 +128,9 @@ a {
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.8/css/all.css">
         <article class="card-body">
           <h1 class="card-title text-center mb-4 mt-1" style="font-family: Proxima; font-size: 3rem;
-           letter-spacing: 4px; animation-delay: 0.5s; color: white">TicketIt!<span class="badge badge-info"
+           letter-spacing: 4px; animation-delay: 0.5s; color: white">TicketIt!<span class="badge badge-pill badge-info"
                                                                                     style="font-family: Consolas;
-                                                                    font-size: 10px">Alpha</span></h1>
+                                                                    font-size: 10px">Beta</span></h1>
           <hr>
           <form>
             <div class="form-group">
@@ -153,20 +153,20 @@ a {
                 <input class="form-control" placeholder="Password" type="password" id="cpassword" v-model="password">
               </div>
             </div>
-            <div class="form-group">
-              <div id="login">
-                <div class="buttona animated infinite pulse delay-5s" id="button-2" style="margin: 0px; margin-top: 20px">
+            <div class="form-group" id="createform">
+              <div id="signup">
+                <div class="buttona " id="button-2" style="margin: 0px; margin-top: 20px">
                   <div id="slide5"></div>
                   <a href="#" id="btLogin" @click="createAccount">Create account</a>
                 </div>
               </div>
-              <div id="create">
-                <div class="buttona" id="button-2" style="margin: 0px; margin-top: 15px">
+              <div id="reset">
+                <div class="buttona" id="button-2" style="margin: 0px; margin-top: 15px; width: 100%">
                   <div id="slide5"></div>
                   <a href="#" id="btCreate" @click="resetInput">Reset</a>
                 </div>
               </div>
-              <div id="events">
+              <div id="back">
                 <div class="buttona" id="button-2" style="margin: 0px; margin-top: 15px; margin-bottom: -30px">
                   <div id="slide5"></div>
                   <a href="#" id="btBack" @click="toggleSignIn">Back to sign in</a>
@@ -211,25 +211,30 @@ export default {
         username: this.username,
         password: this.password
       }
+      this.toggleInputsSignIn()
       const path = `http://localhost:5000/login`
       axios.post(path, parameters)
         .then((res) => {
-          console.log(res.data.token)
           this.logged = true
           this.token = res.data.token
           this.find_match = true
           this.is_admin = this.getAccount()
-          toastr.success('', 'You are logged in!',
-            {timeOut: 1500, progressBar: true, newestOnTop: true, positionClass: 'toast-bottom-right'})
+          toastr.success('', 'Welcome back ' + this.username + '! Redirecting to events',
+            {timeOut: 2500, progressBar: true, newestOnTop: true, positionClass: 'toast-bottom-right'})
           this.$router.push({path: '/', query: {username: this.username, logged: this.logged, is_admin: this.is_admin, token: res.data.token}})
         })
         .catch((error) => {
           // eslint-disable-next-line
           console.error(error)
+          this.toggleInputsSignIn()
           this.user = ''
           toastr.error('', 'Username or password incorrect',
             {timeOut: 1500, progressBar: true, newestOnTop: true, positionClass: 'toast-bottom-right'})
         })
+    },
+    back2Events () {
+      this.logged = false
+      this.$router.push({path: '/', query: {logged: this.logged}})
     },
     getAccount () {
       const path = `http://localhost:5000/account/` + this.username
@@ -264,6 +269,24 @@ export default {
         this.password = ''
       }
     },
+    toggleInputsCreate () {
+      if (document.getElementById('createform').style.pointerEvents === 'none') {
+        document.getElementById('createform').style.pointerEvents = 'auto'
+      } else {
+        document.getElementById('createform').style.pointerEvents = 'none'
+      }
+      document.getElementById('cusername').disabled = !document.getElementById('cusername').disabled
+      document.getElementById('cpassword').disabled = !document.getElementById('cpassword').disabled
+    },
+    toggleInputsSignIn () {
+      if (document.getElementById('loginform').style.pointerEvents === 'none') {
+        document.getElementById('loginform').style.pointerEvents = 'auto'
+      } else {
+        document.getElementById('loginform').style.pointerEvents = 'none'
+      }
+      document.getElementById('username').disabled = !document.getElementById('username').disabled
+      document.getElementById('password').disabled = !document.getElementById('password').disabled
+    },
     doLogin () {
       // eslint-disable-next-line eqeqeq
       if (document.getElementById('username').value == '' || document.getElementById('password').value == '') {
@@ -276,6 +299,21 @@ export default {
       // eslint-disable-next-line eqeqeq
       if (document.getElementById('cusername').value == '' || document.getElementById('cpassword').value == '') {
         toastr.info('', 'Fill all fields to continue', {timeOut: 1500, progressBar: true, newestOnTop: true, positionClass: 'toast-bottom-right'})
+      } else {
+        this.toggleInputsCreate()
+        const path = 'http://localhost:5000/account'
+        axios.post(path, {'username': this.username, 'password': this.password})
+          .then((res) => {
+            toastr.success('', 'Welcome to TicketIt, ' + this.username + '! Redirecting to events', {timeOut: 2500, progressBar: true, newestOnTop: true, positionClass: 'toast-bottom-right'})
+            this.checkLogin()
+          })
+          .catch((error) => {
+          // eslint-disable-next-line
+            this.toggleInputsCreate()
+            toastr.error('', error.response.data.message,
+              {timeOut: 1500, progressBar: true, newestOnTop: true, positionClass: 'toast-bottom-right'})
+            this.user = ''
+          })
       }
     },
     resetInput () {

@@ -13,7 +13,7 @@ export default new Router({
       component: Events
     },
     {
-      path: '/login',
+      path: '/userlogin',
       name: 'Login',
       component: Login
     }

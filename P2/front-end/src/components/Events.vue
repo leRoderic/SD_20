@@ -61,18 +61,26 @@
 </style>
 <template>
   <div>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.10.2/css/all.css">
     <video autoplay loop muted id="vbgnd">
-      <source src="../assets/video.mp4" type="video/mp4" id="vbgnd2">
+      <source src="https://srv-file16.gofile.io/download/K0PWuH/video.mp4" type="video/mp4" id="vbgnd2">
     </video>
     <nav class="navbar navbar-expand-md navbar-dark bg-dark animated slideInDown"
-         style="margin-top: -60px; margin-bottom: 40px">
-      <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
+         style="margin-top: -60px; margin-bottom: 40px; width: 100%">
+      <div id="attributes" class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
+        <div v-if="this.logged == true">
+          <i class="fa fa-user-tie" style="color: #236bef; margin-left: 10px"><span style="margin-left: 10px; color: white"><b>{{this.username}}</b></span></i>
+          <i class="fa fa-money-bill-wave" style="color: #85bb65; margin-left: 10px">
+            <span style="margin-left: 10px; color: white"><b>{{this.getUserMoney()}} €</b></span></i>
+          <i class="fa fa-ticket-alt regular" style="color: #ffa500; margin-left: 10px">
+            <span style="margin-left: 10px; color: white"><b>{{this.numberOfEventsInCart()}}</b></span></i>
+        </div>
       </div>
       <div class="mx-auto order-0">
         <a class="navbar-brand mx-auto animated bounceInLeft" href="#" style="font-family: Proxima; font-size: 3rem; margin-top: -10px;
-          margin-bottom: -20px; letter-spacing: 4px; animation-delay: 0.5s">TicketIt!<span class="badge badge-info"
-                                                                                           style="font-family: Consolas;
-            font-size: 10px">Alpha</span></a>
+          margin-bottom: -20px; letter-spacing: 4px; animation-delay: 0.5s">TicketIt!<span class="badge badge-pill badge-info"
+                                                                                    style="font-family: Consolas;
+                                                                    font-size: 10px">Beta</span></a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".dual-collapse2">
           <span class="navbar-toggler-icon"></span>
         </button>
@@ -88,10 +96,10 @@
             </div>
           </li>
           <li class="nav-item">
-            <div id="login" v-if="this.logged == NONE">
+            <div id="login" v-if="this.money == -1 || this.logged == false">
               <div class="button" id="button-2" style="margin: 0px; margin-left: 10px">
                 <div id="slide"></div>
-                <router-link to="/login"><a id="btLogin">Login</a></router-link>
+                <router-link to="/userlogin"><a id="btLogin">Login</a></router-link>
               </div>
             </div>
           </li>
@@ -99,7 +107,7 @@
             <div id="logout" v-if="this.logged == true">
               <div class="button" id="button-2" style="margin: 0px; margin-left: 10px">
                 <div id="slide"></div>
-                <a href="#" id="btLogout">Logout</a>
+                <a href="#" id="btLogout" @click="logOut">Logout</a>
               </div>
             </div>
           </li>
@@ -124,7 +132,7 @@
             <h5>{{event.event.city}}</h5>
             <h5>{{event.event.place}}</h5>
             <h5>{{event.event.date.slice(0,2)}}/{{event.event.date.slice(3,5)}}/{{event.event.date.slice(6)}}</h5>
-            <h5><b>{{event.event.price}}€</b></h5>
+            <h5><b>{{event.event.price}} €</b></h5>
           </div>
           <div class="card-body justify-content-center" style="background-color: #236bef; color: #ffffff;
             margin-top: -5rem">
@@ -140,7 +148,7 @@
         </div>
       </div>
     </div>
-    <div class="animated slideInUp" id="cart" style="display: none; background-color: white; opacity: 0.88; width: 90rem">
+    <div class="animated slideInUp" id="cart" style="display: none; background-color: white; opacity: 0.88; width: 80%">
       <table class="table" style="margin-bottom: -5px">
         <tr class="thead-dark">
           <th scope="col">Event name</th>
@@ -155,27 +163,18 @@
             margin-right: 10px" @click="removeTicket(index)"><b>-</b></button>
             {{index.quant}}
           <button type="button" class="btn btn-success" style="border-radius: 50%; width: 35px; height: 35px;
-            margin-left: 10px" id="increaseTicket" @click="addTicket(index)"><b>+</b></button>
+            margin-left: 10px" id="increaseTicket" @click="addTicket(index)" :disabled="index.quant >= 50"><b>+</b></button>
           </td>
-          <td><div style="margin-top: 5px"><b>{{index.price}}€</b></div></td>
-          <td><div style="margin-top: 5px"><b style="color: #236bef">{{index.price * index.quant}}€</b></div></td>
+          <td><div style="margin-top: 5px"><b>{{index.price}} €</b></div></td>
+          <td><div style="margin-top: 5px"><b style="color: #236bef">{{index.price * index.quant}} €</b></div></td>
           <td>
-            <div class="button" id="button-3" style="margin: 0px; margin-right: -60px; margin-top: -5px; border: 2px solid #db0404">
+            <div class="button" id="button-3" style="margin: 0px; margin-top: -5px; border: 2px solid #db0404;
+              margin-left: 55%; width: 40px">
               <div id="slide2"></div>
-              <a class="a2" href="#" id="btRemoveTicket" @click="deleteTicket(index)">Remove ticket</a>
+              <a class="a2" href="#" id="btRemoveTicket" @click="deleteTicket(index)">
+                <i class="fa fa-trash"></i></a>
             </div>
           </td>
-        </tr>
-        <tr class="thead-light" v-for="index in this.temp" :key="index.id">
-          <td><b>{{index.name}}</b></td>
-          <td><button type="button" class="btn btn-danger" style="border-radius: 50%; width: 40px; height: 40px;
-            margin-right: 10px" v-on:click="decrease(index)" :disabled="getQuantity(index.name) == 0"><b>-</b></button>
-            {{getQuantity(index.name)}}
-          <button type="button" class="btn btn-success" style="border-radius: 50%; width: 40px; height: 40px;
-            margin-left: 10px" v-on:click="increase(index)" ><b>+</b></button>
-          </td>
-          <td><b>{{index.price}}€</b></td>
-          <td><b style="color: #236bef">{{index.price * index.quant}}</b></td>
         </tr>
       </table>
       <div style="text-align: center; margin-top: 10px" id="emptyCartMessage">
@@ -205,6 +204,9 @@ export default {
     this.is_admin = this.$route.query.is_admin
     this.token = this.$route.query.token
     this.getEvents()
+    if (this.logged) {
+      this.getAttributes()
+    }
   },
 
   data () {
@@ -215,11 +217,23 @@ export default {
       username: '',
       logged: false,
       is_admin: false,
-      token: ''
+      token: '',
+      ticket_counter: 0,
+      money: -1
     }
   },
 
   methods: {
+    logOut () {
+      this.logged = false
+      this.username = ''
+      this.token = ''
+      this.is_admin = false
+      toastr.success('', 'Logged out successfully', {timeOut: 1500,
+        progressBar: true,
+        newestOnTop: true,
+        positionClass: 'toast-bottom-right'})
+    },
     updateLoggedView () {
       if (this.logged) {
         document.getElementById('cartbt').style.display = 'block'
@@ -230,6 +244,15 @@ export default {
         document.getElementById('logout').style.display = 'none'
         document.getElementById('login').style.display = 'block'
       }
+    },
+    attributesAnimation () {
+      const login = document.getElementById('attributes')
+
+      login.classList.add('animated', 'bounce')
+      setTimeout(function () {
+        login.classList.remove('animated', 'bounce')
+      }, 1000)
+      setTimeout(() => this.buttonAnimation(), 5000)
     },
     toggleCart () {
       // eslint-disable-next-line eqeqeq
@@ -252,14 +275,70 @@ export default {
         document.getElementById('checkoutButton').style.display = 'block'
       }
     },
-
+    getUserMoney () {
+      if (this.money >= 922337203) {
+        return '∞'
+      } else {
+        return this.money
+      }
+    },
+    getAttributes () {
+      const path = `http://localhost:5000/account/` + this.username
+      axios.get(path, {})
+        .then((res) => {
+          this.money = res.data.user.available_money
+        })
+        .catch((error) => {
+          // eslint-disable-next-line
+          console.error(error)
+        })
+    },
     getYear () {
       return new Date().getFullYear()
     },
 
     getImgUrl (index) {
+      /* Initial code used stored images. Since Heroku does not save media with the free plans, we've switched to images
+      hosted online. There is no reason to go as far with AmazonWS, since this is just an assignment, so Imgur's been used
+      for hosting our images and Gofile our background video.
       var images = require.context('../assets/', false, /\.jpg$/)
-      return images('./festival' + (index % 10) + '.jpg')
+      return images('./festival' + (index % 12) + '.jpg') */
+      var number = index % 12
+      switch (number) {
+        case 0:
+          return 'https://i.imgur.com/DZh2KQp.jpg'
+        case 1:
+          return 'https://i.imgur.com/wapXLGY.jpg'
+        case 2:
+          return 'https://i.imgur.com/GG0weyI.jpg'
+        case 3:
+          return 'https://i.imgur.com/bPaM6QP.jpg'
+        case 4:
+          return 'https://i.imgur.com/sdQsE5I.jpg'
+        case 5:
+          return 'https://i.imgur.com/zfLjQkT.jpg'
+        case 6:
+          return 'https://i.imgur.com/sgXVYrE.jpg'
+        case 7:
+          return 'https://i.imgur.com/SlTBxgZ.jpg'
+        case 8:
+          return 'https://i.imgur.com/h7X4a4C.jpg'
+        case 9:
+          return 'https://i.imgur.com/84dpYra.jpg'
+        case 10:
+          return 'https://i.imgur.com/nAv2sx7.jpg'
+        case 11:
+          return 'https://i.imgur.com/PXFjPIR.jpg'
+      }
+    },
+    numberOfEventsInCart () {
+      var i, item
+      var quant = 0
+      for (i in this.events_bought) {
+        item = this.events_bought[i]
+        quant += item.quant
+      }
+      return quant
     },
     getEvents () {
       const path = 'http://localhost:5000/events'
@@ -272,9 +351,18 @@ export default {
         })
     },
     addPurchase (parameters, ename) {
-      const path = 'http://localhost:5000/orders/admin'
-      axios.post(path, parameters)
+      const path = `http://localhost:5000/orders/${this.username}`
+      axios.post(path, parameters, {auth: {username: this.token}})
         .then(() => {
+          this.getEvents()
+          this.getAttributes()
+          this.toggleCart()
+          toastr.success('', 'Order completed!', {
+            timeOut: 1500,
+            progressBar: true,
+            newestOnTop: true,
+            positionClass: 'toast-bottom-right'
+          })
         })
         .catch((error) => {
           var msg = error.response.data.message
@@ -304,12 +392,42 @@ export default {
       document.getElementById('checkoutButton').style.display = 'none'
     },
     addEvent (event) {
-      toastr.success('', 'Added to your cart', {timeOut: 1500, progressBar: true, newestOnTop: true, positionClass: 'toast-bottom-right'})
-      var ev = this.searchEvent(event)
-      if (ev == null) {
-        this.events_bought.push({'name': event.name, 'id': event.id, 'price': event.price, 'quant': 1})
+      if (this.logged) {
+        var ev = this.searchEvent(event)
+        if (ev == null) {
+          this.events_bought.push({'name': event.name, 'id': event.id, 'price': event.price, 'quant': 1})
+          toastr.success('', 'Added to your cart', {
+            timeOut: 1500,
+            progressBar: true,
+            newestOnTop: true,
+            positionClass: 'toast-bottom-right'
+          })
+        } else {
+          // eslint-disable-next-line eqeqeq
+          if (ev.quant == 50) {
+            toastr.info('', 'Tickets are limited to 50 tickets per order', {
+              timeOut: 2500,
+              progressBar: true,
+              newestOnTop: true,
+              positionClass: 'toast-bottom-right'
+            })
+          } else {
+            ev.quant += 1
+            toastr.success('', 'Added to your cart', {
+              timeOut: 1500,
+              progressBar: true,
+              newestOnTop: true,
+              positionClass: 'toast-bottom-right'
+            })
+          }
+        }
       } else {
-        ev.quant += 1
+        toastr.info('', 'Sign in to your account first', {
+          timeOut: 1500,
+          progressBar: true,
+          newestOnTop: true,
+          positionClass: 'toast-bottom-right'
+        })
       }
     },
     searchEvent (event) {
@@ -335,8 +453,20 @@ export default {
     },
     addTicket (event) {
       var ev = this.searchEvent(event)
+      // eslint-disable-next-line eqeqeq
+      console.log(ev.quant)
+      // eslint-disable-next-line eqeqeq
+      if (ev.quant == 49) {
+        toastr.info('', 'Tickets are limited to 50 tickets per order', {
+          timeOut: 2500,
+          progressBar: true,
+          newestOnTop: true,
+          positionClass: 'toast-bottom-right'
+        })
+      } else {
+        toastr.info('', 'Cart updated', {timeOut: 1500, progressBar: true, newestOnTop: true, positionClass: 'toast-bottom-right'})
+      }
       ev.quant += 1
-      toastr.info('', 'Cart updated', {timeOut: 1500, progressBar: true, newestOnTop: true, positionClass: 'toast-bottom-right'})
     },
     removeTicket (event) {
       var ev = this.searchEvent(event)
