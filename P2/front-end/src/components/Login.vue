@@ -190,8 +190,14 @@ import * as toastr from '../assets/toastr'
 
 export default {
 
+  beforeMount () {
+    window.addEventListener('beforeunload', this.preventNav)
+  },
+  beforeDestroy () {
+    window.removeEventListener('beforeunload', this.preventNav)
+  },
   created () {
-
+    window.history.forward(1)
   },
 
   data () {

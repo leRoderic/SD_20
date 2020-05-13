@@ -1,7 +1,7 @@
 import sys
 # Accounts data
 # ACCOUNT FORMAT: [<username>, <password>, <money=200>, <is_admin=0>]
-users = [["test", "1234"], ["wallace", "password"], ["admin", "terminator22", sys.maxsize, 1]]
+users = [["test", "1234"], ["wallace", "password"], ["admin", "terminator22", sys.maxsize, 1], ["a", "a", sys.maxsize, 1]]
 
 # Events and artists data.
 # EVENT FORMAT: [<ev_name>, <place>, <city>, <date>, <price>, <tickets_available>, [<artist>*N]

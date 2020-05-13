@@ -362,7 +362,14 @@ import * as toastr from '../assets/toastr'
 
 export default {
 
+  beforeMount () {
+    window.addEventListener('beforeunload', this.preventNav)
+  },
+  beforeDestroy () {
+    window.removeEventListener('beforeunload', this.preventNav)
+  },
   created () {
+    window.history.forward(1)
     this.username = this.$route.query.username
     this.logged = this.$route.query.logged
     this.is_admin = this.$route.query.is_admin
@@ -404,6 +411,9 @@ export default {
   },
 
   methods: {
+    preventNav (event) {
+      event.preventDefault()
+    },
     logOut () {
       this.logged = false
       this.username = ''
@@ -425,7 +435,7 @@ export default {
         .then(() => {
           this.getEvents()
           this.getAttributes()
-          this.toggleCart()
+          this.toggleCreateEvent()
           toastr.success('', 'Event created!', {
             timeOut: 1500,
             progressBar: true,
