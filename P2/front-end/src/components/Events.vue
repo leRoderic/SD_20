@@ -410,6 +410,7 @@ export default {
       is_admin: false,
       token: '',
       ticket_counter: 0,
+      currentEventEditId: -1,
       money: -1,
       addEventForm: {
         place: '',
@@ -447,6 +448,7 @@ export default {
         this.setInputDisable(true)
       } else {
         this.setInputDisable(false)
+        this.currentEventEditId = this.events[index].event.id
         this.editEventForm.name = this.events[index].event.name
         this.editEventForm.price = this.events[index].event.price
         this.editEventForm.date = '' + this.events[index].event.date.slice(6) + '-' + this.events[index].event.date.slice(3, 5) + '-' +
@@ -509,8 +511,40 @@ export default {
       }
       this.addEvent(parameters)
     },
+    updateEvent (params) {
+      const path = `http://localhost:5000/event/`
+      axios.put(path + this.currentEventEditId, params, {auth: {username: this.token}})
+        .then(() => {
+          this.getEvents()
+          this.getAttributes()
+          this.toggleUpdateEvent()
+          this.initForm(this.editEventForm)
+          toastr.success('', 'Event updated!', {
+            timeOut: 1500,
+            progressBar: true,
+            newestOnTop: true,
+            positionClass: 'toast-bottom-right'
+          })
+        })
+        .catch((error) => {
+          console.log(error)
+          // eslint-disable-next-line eqeqeq
+          toastr.error('', 'Event could not be updated',
+            {timeOut: 1500, progressBar: true, newestOnTop: true, positionClass: 'toast-bottom-right'})
+        })
+    },
     submitUpdateEvent () {
       this.emptyFormToast(this.editEventForm)
+      const parameters = {
+        place: this.editEventForm.place,
+        name: this.editEventForm.name,
+        city: this.editEventForm.city,
+        country: this.editEventForm.country,
+        date: this.editEventForm.date.slice(8) + '-' + this.editEventForm.date.slice(5, 7) + '-' + this.editEventForm.date.slice(0, 4),
+        price: this.editEventForm.price,
+        total_available_tickets: this.editEventForm.total_available_tickets
+      }
+      this.updateEvent(parameters)
     },
     initForm (form) {
       form.place = ''
