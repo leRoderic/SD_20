@@ -321,8 +321,8 @@ export default {
       }
     },
     resetInput () {
-      document.getElementById('cusername').value = ''
-      document.getElementById('cpassword').value = ''
+      this.username = ''
+      this.password = ''
     },
     getYear () {
       return new Date().getFullYear()

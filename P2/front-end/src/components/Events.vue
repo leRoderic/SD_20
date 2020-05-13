@@ -277,6 +277,11 @@
         </article>
       </div>
       <div style="text-align: center; margin-top: 0px">
+        <button type="button" class="btn btn-danger" style="width: 100%; border-radius: 0%; height: 30px" @click="initForm(addEventForm)">
+        <h4 style="text-transform: uppercase; text-decoration: none; font-size: .8em; letter-spacing: 1.5px">
+        <b>Reset</b></h4></button>
+      </div>
+      <div style="text-align: center; margin-top: 0px">
         <button type="button" class="btn btn-success" style="width: 100%; border-radius: 0%; height: 40px" @click="this.submitEvent">
         <h4 style="text-transform: uppercase; text-decoration: none; font-size: .8em; letter-spacing: 1.5px">
         <b>Submit</b></h4></button>
@@ -343,6 +348,11 @@
             </div>
           </form>
         </article>
+      </div>
+      <div style="text-align: center; margin-top: 0px">
+        <button type="button" class="btn btn-danger" style="width: 100%; border-radius: 0%; height: 30px" @click="initForm(editEventForm)">
+        <h4 style="text-transform: uppercase; text-decoration: none; font-size: .8em; letter-spacing: 1.5px">
+        <b>Reset</b></h4></button>
       </div>
       <div style="text-align: center; margin-top: 0px">
         <button type="button" class="btn btn-success" style="width: 100%; border-radius: 0%; height: 40px" @click="this.submitUpdateEvent">
@@ -436,6 +446,7 @@ export default {
           this.getEvents()
           this.getAttributes()
           this.toggleCreateEvent()
+          this.initForm(this.addEventForm)
           toastr.success('', 'Event created!', {
             timeOut: 1500,
             progressBar: true,
@@ -465,6 +476,14 @@ export default {
     },
     submitUpdateEvent () {
       this.emptyFormToast(this.editEventForm)
+    },
+    initForm (form) {
+      form.place = ''
+      form.name = ''
+      form.city = ''
+      form.date = ''
+      form.price = ''
+      form.total_available_tickets = ''
     },
     emptyFormToast (form) {
       if (form.place === '' || form.name === '' || form.city === '' || form.date === '' || form.price === '' ||
