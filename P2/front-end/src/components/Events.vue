@@ -457,7 +457,7 @@ export default {
         name: this.addEventForm.name,
         city: this.addEventForm.city,
         country: this.addEventForm.country,
-        date: this.addEventForm.date,
+        date: this.addEventForm.date.slice(8) + '-' + this.addEventForm.date.slice(5, 7) + '-' + this.addEventForm.date.slice(0, 4),
         price: this.addEventForm.price,
         total_available_tickets: this.addEventForm.total_available_tickets
       }
