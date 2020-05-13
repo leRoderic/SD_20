@@ -409,6 +409,9 @@ export default {
       this.username = ''
       this.token = ''
       this.is_admin = false
+      if (document.getElementById('eventsGrid').style.display === 'none') {
+        this.toggleCart()
+      }
       toastr.success('', 'Logged out successfully', {
         timeOut: 1500,
         progressBar: true,
