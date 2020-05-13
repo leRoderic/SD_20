@@ -63,7 +63,7 @@
   <div>
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.10.2/css/all.css">
     <video autoplay loop muted id="vbgnd">
-      <source src="https://srv-file16.gofile.io/download/K0PWuH/video.mp4" type="video/mp4" id="vbgnd2">
+      <source src="https://leroderic.github.io/video.mp4" type="video/mp4" id="vbgnd2">
     </video>
     <nav class="navbar navbar-expand-md navbar-dark bg-dark animated slideInDown"
          style="margin-top: -60px; margin-bottom: 40px; width: 100%">
@@ -159,8 +159,13 @@
               <div id="slide"></div>
               <a @click="addEventCart(event.event)">Add to cart</a>
             </div>
-            <div class="button" style="margin-bottom: 0px; border: 2px solid #db0404" v-else>
+            <div class="button" style="margin-bottom: 0px; border: 2px solid #db0404" v-if="event.event.total_available_tickets == 0">
               <a style="color: #db0404"><b>Sold out</b></a>
+            </div>
+            <div class="button" id="button-3" style="margin: 0px; margin-top: 10px; border: 2px solid #db0404" v-if="logged && is_admin">
+              <div id="slide2"></div>
+              <a class="a2" @click="remveEvent(event.event.id)">
+                Delete event</a>
             </div>
           </div>
         </div>
@@ -466,7 +471,11 @@ export default {
       this.username = ''
       this.token = ''
       this.is_admin = false
-      if (document.getElementById('eventsGrid').style.display === 'none') {
+      if (document.getElementById('createEventForm').style.display !== 'none') {
+        this.toggleCreateEvent()
+      } else if (document.getElementById('updateEventForm').style.display !== 'none') {
+        this.toggleUpdateEvent()
+      } else if (document.getElementById('cart').style.display !== 'none') {
         this.toggleCart()
       }
       toastr.success('', 'Logged out successfully', {
@@ -495,6 +504,25 @@ export default {
           console.log(error)
           // eslint-disable-next-line eqeqeq
           toastr.error('', 'Event could not be created',
+            {timeOut: 1500, progressBar: true, newestOnTop: true, positionClass: 'toast-bottom-right'})
+        })
+    },
+    remveEvent (id) {
+      const path = 'http://localhost:5000/event/' + id
+      axios.delete(path, {auth: {username: this.token}})
+        .then(() => {
+          this.getEvents()
+          toastr.success('', 'Event deleted', {
+            timeOut: 1500,
+            progressBar: true,
+            newestOnTop: true,
+            positionClass: 'toast-bottom-right'
+          })
+        })
+        .catch((error) => {
+          console.log(error)
+          // eslint-disable-next-line eqeqeq
+          toastr.error('', 'Event could not be deleted',
             {timeOut: 1500, progressBar: true, newestOnTop: true, positionClass: 'toast-bottom-right'})
         })
     },
