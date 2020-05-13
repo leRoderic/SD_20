@@ -65,7 +65,7 @@ a {
 
 <template>
   <div class="logincotainer" style="height: 100vh; margin-top: -60px">
-    <div class="animated slideInUp" id="signin" style="margin-top: 40px;">
+    <div class="animated slideInUp" id="signin" style="margin-top: 40px; border-radius: 0%">
       <div class="card" style="background-color: #343a40">
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.10.2/css/all.css">
         <article class="card-body">
@@ -82,7 +82,7 @@ a {
                 <span class="input-group-text" style="background-color: #236bef; border-color: #236bef"
                 ><i class="fa fa-user" style="color: white"></i> </span>
                 </div>
-                <input name="" class="form-control" placeholder="Username" type="email" id="username"
+                <input name="" class="form-control" placeholder="Username" type="text" id="username"
                        v-model="username">
               </div>
             </div>
@@ -123,7 +123,7 @@ a {
           Reserved.</h5>
       </div>
     </div>
-    <div class="animated slideInUp" id="createaccount" style="display: none">
+    <div class="animated slideInUp" id="createaccount" style="display: none; border-radius: 0%">
       <div class="card" style="background-color: #343a40">
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.8/css/all.css">
         <article class="card-body">
@@ -140,7 +140,7 @@ a {
                 <span class="input-group-text" style="background-color: #236bef; border-color: #236bef"
                 ><i class="fa fa-user" style="color: white"></i> </span>
                 </div>
-                <input name="" class="form-control" placeholder="Username" type="email" id="cusername"
+                <input name="" class="form-control" placeholder="Username" type="text" id="cusername"
                         v-model="username">
               </div>
             </div>
@@ -201,7 +201,7 @@ export default {
       password: '',
       logged: false,
       find_match: false,
-      is_admin: false
+      is_admin: 0
     }
   },
 
@@ -213,15 +213,15 @@ export default {
       }
       this.toggleInputsSignIn()
       const path = `http://localhost:5000/login`
+      this.getAccount()
       axios.post(path, parameters)
         .then((res) => {
           this.logged = true
           this.token = res.data.token
           this.find_match = true
-          this.is_admin = this.getAccount()
           toastr.success('', 'Welcome back ' + this.username + '! Redirecting to events',
             {timeOut: 2500, progressBar: true, newestOnTop: true, positionClass: 'toast-bottom-right'})
-          this.$router.push({path: '/', query: {username: this.username, logged: this.logged, is_admin: this.is_admin, token: res.data.token}})
+          this.$router.push({path: '/', query: {username: this.username, logged: this.logged, token: res.data.token, is_admin: this.is_admin}})
         })
         .catch((error) => {
           // eslint-disable-next-line
@@ -242,9 +242,7 @@ export default {
         .then((res) => {
           // eslint-disable-next-line eqeqeq
           if (res.data.user.is_admin == 1) {
-            return true
-          } else {
-            return false
+            this.is_admin = true
           }
         })
         .catch((error) => {
@@ -304,7 +302,7 @@ export default {
         const path = 'http://localhost:5000/account'
         axios.post(path, {'username': this.username, 'password': this.password})
           .then((res) => {
-            toastr.success('', 'Welcome to TicketIt, ' + this.username + '! Redirecting to events', {timeOut: 2500, progressBar: true, newestOnTop: true, positionClass: 'toast-bottom-right'})
+            // toastr.success('', 'Welcome to TicketIt, ' + this.username + '! Redirecting to events', {timeOut: 2500, progressBar: true, newestOnTop: true, positionClass: 'toast-bottom-right'})
             this.checkLogin()
           })
           .catch((error) => {

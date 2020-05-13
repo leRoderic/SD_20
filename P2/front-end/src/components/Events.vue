@@ -69,7 +69,8 @@
          style="margin-top: -60px; margin-bottom: 40px; width: 100%">
       <div id="attributes" class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
         <div v-if="this.logged == true">
-          <i class="fa fa-user-tie" style="color: #236bef; margin-left: 10px"><span style="margin-left: 10px; color: white"><b>{{this.username}}</b></span></i>
+          <i class="fa fa-user-tie" style="color: #236bef; margin-left: 10px"><span
+            style="margin-left: 10px; color: white"><b>{{this.username}}</b></span></i>
           <i class="fa fa-money-bill-wave" style="color: #85bb65; margin-left: 10px">
             <span style="margin-left: 10px; color: white"><b>{{this.getUserMoney()}} €</b></span></i>
           <i class="fa fa-ticket-alt regular" style="color: #ffa500; margin-left: 10px">
@@ -78,8 +79,9 @@
       </div>
       <div class="mx-auto order-0">
         <a class="navbar-brand mx-auto animated bounceInLeft" href="#" style="font-family: Proxima; font-size: 3rem; margin-top: -10px;
-          margin-bottom: -20px; letter-spacing: 4px; animation-delay: 0.5s">TicketIt!<span class="badge badge-pill badge-info"
-                                                                                    style="font-family: Consolas;
+          margin-bottom: -20px; letter-spacing: 4px; animation-delay: 0.5s">TicketIt!<span
+          class="badge badge-pill badge-info"
+          style="font-family: Consolas;
                                                                     font-size: 10px">Beta</span></a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".dual-collapse2">
           <span class="navbar-toggler-icon"></span>
@@ -87,6 +89,22 @@
       </div>
       <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
         <ul class="navbar-nav ml-auto animated bounceInLeft" style="animation-delay: 0.5s">
+          <li class="nav-item">
+            <div id="createEvent" v-if="this.logged == true &&  this.is_admin">
+              <div class="button" id="button-2" style="margin: 0px; margin-left: 10px">
+                <div id="slide"></div>
+                <a href="#" id="btAddEvent" @click="toggleCreateEvent">Add event</a>
+              </div>
+            </div>
+          </li>
+          <li class="nav-item">
+            <div id="updateEvent" v-if="this.logged == true &&  this.is_admin">
+              <div class="button" id="button-2" style="margin: 0px; margin-left: 10px">
+                <div id="slide"></div>
+                <a href="#" id="btUpdateEvent" @click="toggleUpdateEvent">Update event</a>
+              </div>
+            </div>
+          </li>
           <li class="nav-item">
             <div id="cartbt" v-if="this.logged == true">
               <div class="button" id="button-2" style="margin: 0px; margin-left: 10px">
@@ -139,7 +157,7 @@
             <h6>Tickets available: <b>{{event.event.total_available_tickets}}</b></h6>
             <div class="button" id="button-2" style="margin-bottom: 0px" v-if="event.event.total_available_tickets > 0">
               <div id="slide"></div>
-              <a @click="addEvent(event.event)">Add to cart</a>
+              <a @click="addEventCart(event.event)">Add to cart</a>
             </div>
             <div class="button" style="margin-bottom: 0px; border: 2px solid #db0404" v-else>
               <a style="color: #db0404"><b>Sold out</b></a>
@@ -158,15 +176,23 @@
           <th scope="col"></th>
         </tr>
         <tr class="thead-light" v-for="index in this.events_bought" :key="index.id">
-          <td><div style="margin-top: 5px"><b>{{index.name}}</b></div></td>
-          <td><button type="button" class="btn btn-danger" id="decreaseTicket" style="border-radius: 50%; width: 35px; height: 35px;
+          <td>
+            <div style="margin-top: 5px"><b>{{index.name}}</b></div>
+          </td>
+          <td>
+            <button type="button" class="btn btn-danger" id="decreaseTicket" style="border-radius: 50%; width: 35px; height: 35px;
             margin-right: 10px" @click="removeTicket(index)"><b>-</b></button>
             {{index.quant}}
-          <button type="button" class="btn btn-success" style="border-radius: 50%; width: 35px; height: 35px;
-            margin-left: 10px" id="increaseTicket" @click="addTicket(index)" :disabled="index.quant >= 50"><b>+</b></button>
+            <button type="button" class="btn btn-success" style="border-radius: 50%; width: 35px; height: 35px;
+            margin-left: 10px" id="increaseTicket" @click="addTicket(index)" :disabled="index.quant >= 50"><b>+</b>
+            </button>
           </td>
-          <td><div style="margin-top: 5px"><b>{{index.price}} €</b></div></td>
-          <td><div style="margin-top: 5px"><b style="color: #236bef">{{index.price * index.quant}} €</b></div></td>
+          <td>
+            <div style="margin-top: 5px"><b>{{index.price}} €</b></div>
+          </td>
+          <td>
+            <div style="margin-top: 5px"><b style="color: #236bef">{{index.price * index.quant}} €</b></div>
+          </td>
           <td>
             <div class="button" id="button-3" style="margin: 0px; margin-top: -5px; border: 2px solid #db0404;
               margin-left: 55%; width: 40px">
@@ -178,12 +204,150 @@
         </tr>
       </table>
       <div style="text-align: center; margin-top: 10px" id="emptyCartMessage">
-        <h2>Your cart is empty! <a href="#" @click="this.toggleCart" style="color: #236bef"><u>Let's fill it up!</u></a></h2>
+        <h2>Your cart is empty! <a href="#" @click="this.toggleCart" style="color: #236bef"><u>Let's fill it up!</u></a>
+        </h2>
       </div>
       <div style="text-align: center; margin-top: 10px" id="checkoutButton">
-        <button type="button" class="btn btn-success" style="width: 100%; border-radius: 0%; height: 40px" @click="completePurchase()">
+        <button type="button" class="btn btn-success" style="width: 100%; border-radius: 0%; height: 40px"
+                @click="completePurchase()">
           <h4 style="text-transform: uppercase; text-decoration: none; font-size: .8em; letter-spacing: 1.5px">
-          <b>Complete order</b></h4></button>
+            <b>Complete order</b></h4></button>
+      </div>
+    </div>
+    <div class="animated slideInUp" id="createEventForm" style="display: none; opacity: 0.88; width: 30%">
+      <div class="card" style="background-color: #343a40; border-radius: 0%">
+        <article class="card-body">
+          <form>
+            <div class="form-group">
+              <h4 style="color: white; margin-bottom: 20px"><b>Add new event</b></h4>
+              <div class="input-group">
+                <div class="input-group-prepend">
+                <span class="input-group-text" style="background-color: #236bef; border-color: #236bef"
+                ><i class="fas fa-sign" style="color: white"></i> </span>
+                </div>
+                <input name="" class="form-control" placeholder="Event name" type="text" v-model="this.addEventForm.name">
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="input-group">
+                <div class="input-group-prepend">
+                <span class="input-group-text" style="background-color: #236bef; border-color: #236bef; width: 42px">
+                  <i class="fas fa-euro-sign" style="color: white"></i> </span>
+                </div>
+                <input class="form-control" placeholder="Event price" type="number" v-model="this.addEventForm.price">
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="input-group">
+                <div class="input-group-prepend">
+                <span class="input-group-text" style="background-color: #236bef; border-color: #236bef; width: 42px">
+                  <i class="fas fa-calendar-day" style="color: white"></i> </span>
+                </div>
+                <input class="form-control" placeholder="Event date" type="date" v-model="this.addEventForm.date">
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="input-group">
+                <div class="input-group-prepend">
+                <span class="input-group-text" style="background-color: #236bef; border-color: #236bef; width: 42px">
+                  <i class="fas fa-city" style="color: white"></i> </span>
+                </div>
+                <input class="form-control" placeholder="Event city" type="text" v-model="this.addEventForm.city">
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="input-group">
+                <div class="input-group-prepend">
+                <span class="input-group-text" style="background-color: #236bef; border-color: #236bef; width: 42px">
+                  <i class="fas fa-map-marker-alt" style="color: white"></i> </span>
+                </div>
+                <input class="form-control" placeholder="Event place" type="text" v-model="this.addEventForm.place">
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="input-group">
+                <div class="input-group-prepend">
+                <span class="input-group-text" style="background-color: #236bef; border-color: #236bef; width: 42px">
+                  <i class="fas fa-ticket-alt" style="color: white"></i> </span>
+                </div>
+                <input class="form-control" placeholder="Number of tickets" type="number" v-model="this.addEventForm.total_available_tickets">
+              </div>
+            </div>
+          </form>
+        </article>
+      </div>
+      <div style="text-align: center; margin-top: 0px">
+        <button type="button" class="btn btn-success" style="width: 100%; border-radius: 0%; height: 40px" @click="this.submitEvent">
+        <h4 style="text-transform: uppercase; text-decoration: none; font-size: .8em; letter-spacing: 1.5px">
+        <b>Submit</b></h4></button>
+      </div>
+    </div>
+    <div class="animated slideInUp" id="updateEventForm" style="display: none; background-color: white; opacity: 0.88; width: 30%">
+      <div class="card" style="background-color: #343a40; border-radius: 0%">
+        <article class="card-body">
+          <form>
+            <div class="form-group">
+              <h4 style="color: white; margin-bottom: 20px"><b>Update event</b></h4>
+              <div class="input-group">
+                <div class="input-group-prepend">
+                <span class="input-group-text" style="background-color: #236bef; border-color: #236bef"
+                ><i class="fas fa-sign" style="color: white"></i> </span>
+                </div>
+                <input name="" class="form-control" placeholder="Event name" type="text" v-model="this.editEventForm.name">
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="input-group">
+                <div class="input-group-prepend">
+                <span class="input-group-text" style="background-color: #236bef; border-color: #236bef; width: 42px">
+                  <i class="fas fa-euro-sign" style="color: white"></i> </span>
+                </div>
+                <input class="form-control" placeholder="Event price" type="number" v-model="this.editEventForm.price">
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="input-group">
+                <div class="input-group-prepend">
+                <span class="input-group-text" style="background-color: #236bef; border-color: #236bef; width: 42px">
+                  <i class="fas fa-calendar-day" style="color: white"></i> </span>
+                </div>
+                <input class="form-control" placeholder="Event date" type="date" v-model="this.editEventForm.date">
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="input-group">
+                <div class="input-group-prepend">
+                <span class="input-group-text" style="background-color: #236bef; border-color: #236bef; width: 42px">
+                  <i class="fas fa-city" style="color: white"></i> </span>
+                </div>
+                <input class="form-control" placeholder="Event city" type="text" v-model="this.editEventForm.city">
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="input-group">
+                <div class="input-group-prepend">
+                <span class="input-group-text" style="background-color: #236bef; border-color: #236bef; width: 42px">
+                  <i class="fas fa-map-marker-alt" style="color: white"></i> </span>
+                </div>
+                <input class="form-control" placeholder="Event location" type="text" v-model="this.editEventForm.place">
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="input-group">
+                <div class="input-group-prepend">
+                <span class="input-group-text" style="background-color: #236bef; border-color: #236bef; width: 42px">
+                  <i class="fas fa-ticket-alt" style="color: white"></i> </span>
+                </div>
+                <input class="form-control" placeholder="Number of tickets" type="number" v-model="this.editEventForm.total_available_tickets">
+              </div>
+            </div>
+          </form>
+        </article>
+      </div>
+      <div style="text-align: center; margin-top: 0px">
+        <button type="button" class="btn btn-success" style="width: 100%; border-radius: 0%; height: 40px" @click="this.submitUpdateEvent">
+        <h4 style="text-transform: uppercase; text-decoration: none; font-size: .8em; letter-spacing: 1.5px">
+        <b>Submit</b></h4></button>
       </div>
     </div>
     <div id="footer">
@@ -219,7 +383,23 @@ export default {
       is_admin: false,
       token: '',
       ticket_counter: 0,
-      money: -1
+      money: -1,
+      addEventForm: {
+        place: '',
+        name: '',
+        city: '',
+        date: '',
+        price: '',
+        total_available_tickets: ''
+      },
+      editEventForm: {
+        place: '',
+        name: '',
+        city: '',
+        date: '',
+        price: '',
+        total_available_tickets: ''
+      }
     }
   },
 
@@ -229,10 +409,55 @@ export default {
       this.username = ''
       this.token = ''
       this.is_admin = false
-      toastr.success('', 'Logged out successfully', {timeOut: 1500,
+      toastr.success('', 'Logged out successfully', {
+        timeOut: 1500,
         progressBar: true,
         newestOnTop: true,
-        positionClass: 'toast-bottom-right'})
+        positionClass: 'toast-bottom-right'
+      })
+    },
+    addEvent (params) {
+      const path = `http://localhost:5000/event`
+      axios.post(path, params, {auth: {username: this.token}})
+        .then(() => {
+          this.getEvents()
+          this.getAttributes()
+          this.toggleCart()
+          toastr.success('', 'Event created!', {
+            timeOut: 1500,
+            progressBar: true,
+            newestOnTop: true,
+            positionClass: 'toast-bottom-right'
+          })
+        })
+        .catch((error) => {
+          console.log(error)
+          // eslint-disable-next-line eqeqeq
+          toastr.error('', 'Event could not be created',
+            {timeOut: 1500, progressBar: true, newestOnTop: true, positionClass: 'toast-bottom-right'})
+        })
+    },
+    submitEvent () {
+      this.emptyFormToast(this.addEventForm)
+      const parameters = {
+        place: this.addEventForm.place,
+        name: this.addEventForm.name,
+        city: this.addEventForm.city,
+        country: this.addEventForm.country,
+        date: this.addEventForm.date,
+        price: this.addEventForm.price,
+        total_available_tickets: this.addEventForm.total_available_tickets
+      }
+      this.addEvent(parameters)
+    },
+    submitUpdateEvent () {
+      this.emptyFormToast(this.editEventForm)
+    },
+    emptyFormToast (form) {
+      if (form.place === '' || form.name === '' || form.city === '' || form.date === '' || form.price === '' ||
+      form.total_available_tickets === '') {
+        toastr.info('', 'Fill all fields to continue', {timeOut: 1500, progressBar: true, newestOnTop: true, positionClass: 'toast-bottom-right'})
+      }
     },
     updateLoggedView () {
       if (this.logged) {
@@ -254,16 +479,58 @@ export default {
       }, 1000)
       setTimeout(() => this.buttonAnimation(), 5000)
     },
+    toggleUpdateEvent () {
+      // eslint-disable-next-line eqeqeq
+      if (document.getElementById('eventsGrid').style.display != 'none') {
+        document.getElementById('eventsGrid').style.display = 'none'
+        document.getElementById('createEvent').style.display = 'none'
+        document.getElementById('cartbt').style.display = 'none'
+        document.getElementById('updateEventForm').style.display = 'inline-block'
+        document.getElementById('btUpdateEvent').firstChild.data = 'Back to events'
+      } else {
+        document.getElementById('eventsGrid').style.display = 'inline-block'
+        document.getElementById('createEvent').style.display = 'inline-block'
+        document.getElementById('cartbt').style.display = 'inline-block'
+        document.getElementById('updateEventForm').style.display = 'none'
+        document.getElementById('btUpdateEvent').firstChild.data = 'Update event'
+        this.getEvents()
+      }
+    },
+    toggleCreateEvent () {
+      // eslint-disable-next-line eqeqeq
+      if (document.getElementById('eventsGrid').style.display != 'none') {
+        document.getElementById('eventsGrid').style.display = 'none'
+        document.getElementById('updateEvent').style.display = 'none'
+        document.getElementById('cartbt').style.display = 'none'
+        document.getElementById('createEventForm').style.display = 'inline-block'
+        document.getElementById('btAddEvent').firstChild.data = 'Back to events'
+      } else {
+        document.getElementById('eventsGrid').style.display = 'inline-block'
+        document.getElementById('updateEvent').style.display = 'inline-block'
+        document.getElementById('cartbt').style.display = 'inline-block'
+        document.getElementById('createEventForm').style.display = 'none'
+        document.getElementById('btAddEvent').firstChild.data = 'Add event'
+        this.getEvents()
+      }
+    },
     toggleCart () {
       // eslint-disable-next-line eqeqeq
       if (document.getElementById('eventsGrid').style.display != 'none') {
         document.getElementById('eventsGrid').style.display = 'none'
         document.getElementById('cart').style.display = 'inline-block'
         document.getElementById('btToggleCart').firstChild.data = 'Back to events'
+        if (this.is_admin) {
+          document.getElementById('updateEvent').style.display = 'none'
+          document.getElementById('createEvent').style.display = 'none'
+        }
       } else {
         document.getElementById('eventsGrid').style.display = 'inline-block'
         document.getElementById('cart').style.display = 'none'
         document.getElementById('btToggleCart').firstChild.data = 'View cart'
+        if (this.is_admin) {
+          document.getElementById('updateEvent').style.display = 'inline-block'
+          document.getElementById('createEvent').style.display = 'inline-block'
+        }
         this.getEvents()
       }
       // eslint-disable-next-line eqeqeq
@@ -290,7 +557,7 @@ export default {
         })
         .catch((error) => {
           // eslint-disable-next-line
-          console.error(error)
+            console.error(error)
         })
     },
     getYear () {
@@ -299,10 +566,10 @@ export default {
 
     getImgUrl (index) {
       /* Initial code used stored images. Since Heroku does not save media with the free plans, we've switched to images
-      hosted online. There is no reason to go as far with AmazonWS, since this is just an assignment, so Imgur's been used
-      for hosting our images and Gofile our background video.
-      var images = require.context('../assets/', false, /\.jpg$/)
-      return images('./festival' + (index % 12) + '.jpg') */
+        hosted online. There is no reason to go as far with AmazonWS, since this is just an assignment, so Imgur's been used
+        for hosting our images and Gofile our background video.
+        var images = require.context('../assets/', false, /\.jpg$/)
+        return images('./festival' + (index % 12) + '.jpg') */
       var number = index % 12
       switch (number) {
         case 0:
@@ -391,7 +658,7 @@ export default {
       document.getElementById('emptyCartMessage').style.display = 'block'
       document.getElementById('checkoutButton').style.display = 'none'
     },
-    addEvent (event) {
+    addEventCart (event) {
       if (this.logged) {
         var ev = this.searchEvent(event)
         if (ev == null) {
@@ -464,14 +731,24 @@ export default {
           positionClass: 'toast-bottom-right'
         })
       } else {
-        toastr.info('', 'Cart updated', {timeOut: 1500, progressBar: true, newestOnTop: true, positionClass: 'toast-bottom-right'})
+        toastr.info('', 'Cart updated', {
+          timeOut: 1500,
+          progressBar: true,
+          newestOnTop: true,
+          positionClass: 'toast-bottom-right'
+        })
       }
       ev.quant += 1
     },
     removeTicket (event) {
       var ev = this.searchEvent(event)
       ev.quant -= 1
-      toastr.info('', 'Cart updated', {timeOut: 1500, progressBar: true, newestOnTop: true, positionClass: 'toast-bottom-right'})
+      toastr.info('', 'Cart updated', {
+        timeOut: 1500,
+        progressBar: true,
+        newestOnTop: true,
+        positionClass: 'toast-bottom-right'
+      })
       // eslint-disable-next-line eqeqeq
       if (ev.quant == 0) {
         this.events_bought.splice(this.getEventIndex(event), 1)
