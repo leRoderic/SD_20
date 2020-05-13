@@ -225,7 +225,7 @@
                 <span class="input-group-text" style="background-color: #236bef; border-color: #236bef"
                 ><i class="fas fa-sign" style="color: white"></i> </span>
                 </div>
-                <input name="" class="form-control" placeholder="Event name" type="text" v-model="this.addEventForm.name">
+                <input name="" class="form-control" placeholder="Event name" type="text" v-model="addEventForm.name">
               </div>
             </div>
             <div class="form-group">
@@ -234,7 +234,7 @@
                 <span class="input-group-text" style="background-color: #236bef; border-color: #236bef; width: 42px">
                   <i class="fas fa-euro-sign" style="color: white"></i> </span>
                 </div>
-                <input class="form-control" placeholder="Event price" type="number" v-model="this.addEventForm.price">
+                <input class="form-control" placeholder="Event price" type="number" v-model="addEventForm.price">
               </div>
             </div>
             <div class="form-group">
@@ -243,7 +243,7 @@
                 <span class="input-group-text" style="background-color: #236bef; border-color: #236bef; width: 42px">
                   <i class="fas fa-calendar-day" style="color: white"></i> </span>
                 </div>
-                <input class="form-control" placeholder="Event date" type="date" v-model="this.addEventForm.date">
+                <input class="form-control" placeholder="Event date" type="date" v-model="addEventForm.date">
               </div>
             </div>
             <div class="form-group">
@@ -252,7 +252,7 @@
                 <span class="input-group-text" style="background-color: #236bef; border-color: #236bef; width: 42px">
                   <i class="fas fa-city" style="color: white"></i> </span>
                 </div>
-                <input class="form-control" placeholder="Event city" type="text" v-model="this.addEventForm.city">
+                <input class="form-control" placeholder="Event city" type="text" v-model="addEventForm.city">
               </div>
             </div>
             <div class="form-group">
@@ -261,7 +261,7 @@
                 <span class="input-group-text" style="background-color: #236bef; border-color: #236bef; width: 42px">
                   <i class="fas fa-map-marker-alt" style="color: white"></i> </span>
                 </div>
-                <input class="form-control" placeholder="Event place" type="text" v-model="this.addEventForm.place">
+                <input class="form-control" placeholder="Event place" type="text" v-model="addEventForm.place">
               </div>
             </div>
             <div class="form-group">
@@ -270,7 +270,7 @@
                 <span class="input-group-text" style="background-color: #236bef; border-color: #236bef; width: 42px">
                   <i class="fas fa-ticket-alt" style="color: white"></i> </span>
                 </div>
-                <input class="form-control" placeholder="Number of tickets" type="number" v-model="this.addEventForm.total_available_tickets">
+                <input class="form-control" placeholder="Number of tickets" type="number" v-model="addEventForm.total_available_tickets">
               </div>
             </div>
           </form>
@@ -293,7 +293,7 @@
                 <span class="input-group-text" style="background-color: #236bef; border-color: #236bef"
                 ><i class="fas fa-sign" style="color: white"></i> </span>
                 </div>
-                <input name="" class="form-control" placeholder="Event name" type="text" v-model="this.editEventForm.name">
+                <input name="" class="form-control" placeholder="Event name" type="text" v-model="editEventForm.name">
               </div>
             </div>
             <div class="form-group">
@@ -302,7 +302,7 @@
                 <span class="input-group-text" style="background-color: #236bef; border-color: #236bef; width: 42px">
                   <i class="fas fa-euro-sign" style="color: white"></i> </span>
                 </div>
-                <input class="form-control" placeholder="Event price" type="number" v-model="this.editEventForm.price">
+                <input class="form-control" placeholder="Event price" type="number" v-model="editEventForm.price">
               </div>
             </div>
             <div class="form-group">
@@ -311,7 +311,7 @@
                 <span class="input-group-text" style="background-color: #236bef; border-color: #236bef; width: 42px">
                   <i class="fas fa-calendar-day" style="color: white"></i> </span>
                 </div>
-                <input class="form-control" placeholder="Event date" type="date" v-model="this.editEventForm.date">
+                <input class="form-control" placeholder="Event date" type="date" v-model="editEventForm.date">
               </div>
             </div>
             <div class="form-group">
@@ -320,7 +320,7 @@
                 <span class="input-group-text" style="background-color: #236bef; border-color: #236bef; width: 42px">
                   <i class="fas fa-city" style="color: white"></i> </span>
                 </div>
-                <input class="form-control" placeholder="Event city" type="text" v-model="this.editEventForm.city">
+                <input class="form-control" placeholder="Event city" type="text" v-model="editEventForm.city">
               </div>
             </div>
             <div class="form-group">
@@ -329,7 +329,7 @@
                 <span class="input-group-text" style="background-color: #236bef; border-color: #236bef; width: 42px">
                   <i class="fas fa-map-marker-alt" style="color: white"></i> </span>
                 </div>
-                <input class="form-control" placeholder="Event location" type="text" v-model="this.editEventForm.place">
+                <input class="form-control" placeholder="Event location" type="text" v-model="editEventForm.place">
               </div>
             </div>
             <div class="form-group">
@@ -338,7 +338,7 @@
                 <span class="input-group-text" style="background-color: #236bef; border-color: #236bef; width: 42px">
                   <i class="fas fa-ticket-alt" style="color: white"></i> </span>
                 </div>
-                <input class="form-control" placeholder="Number of tickets" type="number" v-model="this.editEventForm.total_available_tickets">
+                <input class="form-control" placeholder="Number of tickets" type="number" v-model="editEventForm.total_available_tickets">
               </div>
             </div>
           </form>
