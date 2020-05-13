@@ -293,12 +293,22 @@
           <form>
             <div class="form-group">
               <h4 style="color: white; margin-bottom: 20px"><b>Update event</b></h4>
+              <div class="input-group" style="margin-bottom: 15px">
+                <div class="input-group-prepend">
+                <span class="input-group-text" style="background-color: #236bef; border-color: #236bef; color: white"
+                >Event</span>
+                </div>
+                <select class="form-control form-control-sm" style="height: auto" @change="updateEditFormData" id="eventSelector">
+                  <option value="-1">Select event to edit</option>
+                  <option v-for="(event, index) in events" :key="event.id" :value="index">{{event.event.name}}</option>
+                </select>
+              </div>
               <div class="input-group">
                 <div class="input-group-prepend">
                 <span class="input-group-text" style="background-color: #236bef; border-color: #236bef"
                 ><i class="fas fa-sign" style="color: white"></i> </span>
                 </div>
-                <input name="" class="form-control" placeholder="Event name" type="text" v-model="editEventForm.name">
+                <input class="form-control" placeholder="Event name" type="text" v-model="editEventForm.name" id="editEname" disabled="disabled">
               </div>
             </div>
             <div class="form-group">
@@ -307,7 +317,7 @@
                 <span class="input-group-text" style="background-color: #236bef; border-color: #236bef; width: 42px">
                   <i class="fas fa-euro-sign" style="color: white"></i> </span>
                 </div>
-                <input class="form-control" placeholder="Event price" type="number" v-model="editEventForm.price">
+                <input class="form-control" placeholder="Event price" type="number" v-model="editEventForm.price" id="editEprice" disabled="disabled">
               </div>
             </div>
             <div class="form-group">
@@ -316,7 +326,7 @@
                 <span class="input-group-text" style="background-color: #236bef; border-color: #236bef; width: 42px">
                   <i class="fas fa-calendar-day" style="color: white"></i> </span>
                 </div>
-                <input class="form-control" placeholder="Event date" type="date" v-model="editEventForm.date">
+                <input class="form-control" placeholder="Event date" type="date" v-model="editEventForm.date" id="editEdate" disabled="disabled">
               </div>
             </div>
             <div class="form-group">
@@ -325,7 +335,7 @@
                 <span class="input-group-text" style="background-color: #236bef; border-color: #236bef; width: 42px">
                   <i class="fas fa-city" style="color: white"></i> </span>
                 </div>
-                <input class="form-control" placeholder="Event city" type="text" v-model="editEventForm.city">
+                <input class="form-control" placeholder="Event city" type="text" v-model="editEventForm.city" id="editEcity" disabled="disabled">
               </div>
             </div>
             <div class="form-group">
@@ -334,7 +344,7 @@
                 <span class="input-group-text" style="background-color: #236bef; border-color: #236bef; width: 42px">
                   <i class="fas fa-map-marker-alt" style="color: white"></i> </span>
                 </div>
-                <input class="form-control" placeholder="Event location" type="text" v-model="editEventForm.place">
+                <input class="form-control" placeholder="Event location" type="text" v-model="editEventForm.place" id="editEplace" disabled="disabled">
               </div>
             </div>
             <div class="form-group">
@@ -343,7 +353,7 @@
                 <span class="input-group-text" style="background-color: #236bef; border-color: #236bef; width: 42px">
                   <i class="fas fa-ticket-alt" style="color: white"></i> </span>
                 </div>
-                <input class="form-control" placeholder="Number of tickets" type="number" v-model="editEventForm.total_available_tickets">
+                <input class="form-control" placeholder="Number of tickets" type="number" v-model="editEventForm.total_available_tickets" id="editEtickets" disabled="disabled">
               </div>
             </div>
           </form>
@@ -421,6 +431,31 @@ export default {
   },
 
   methods: {
+    setInputDisable (s) {
+      document.getElementById('editEname').disabled = s
+      document.getElementById('editEprice').disabled = s
+      document.getElementById('editEdate').disabled = s
+      document.getElementById('editEcity').disabled = s
+      document.getElementById('editEplace').disabled = s
+      document.getElementById('editEtickets').disabled = s
+    },
+    updateEditFormData () {
+      let selector = document.getElementById('eventSelector')
+      let index = selector.options[selector.selectedIndex].value
+      // eslint-disable-next-line eqeqeq
+      if (index == -1) {
+        this.setInputDisable(true)
+      } else {
+        this.setInputDisable(false)
+        this.editEventForm.name = this.events[index].event.name
+        this.editEventForm.price = this.events[index].event.price
+        this.editEventForm.date = '' + this.events[index].event.date.slice(6) + '-' + this.events[index].event.date.slice(3, 5) + '-' +
+        this.events[index].event.date.slice(0, 2)
+        this.editEventForm.city = this.events[index].event.city
+        this.editEventForm.place = this.events[index].event.place
+        this.editEventForm.total_available_tickets = this.events[index].event.total_available_tickets
+      }
+    },
     preventNav (event) {
       event.preventDefault()
     },
