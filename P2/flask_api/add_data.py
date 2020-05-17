@@ -9,11 +9,12 @@ app = create_app()
 app.app_context().push()
 
 # Cleaning database.
-print("add_data> Emptying database.")
-db.session.query(ArtistModel).delete()
-db.session.query(EventModel).delete()
-db.session.query(AccountsModel).delete()
-db.session.query(OrdersModel).delete()
+meta = db.metadata
+for table in reversed(meta.sorted_tables):
+    print ("add_data> Clearing table %s" % table)
+    db.session.execute(table.delete())
+db.session.commit()
+
 
 evnts, artsts, rep = 0, 0, 0
 for i in events:

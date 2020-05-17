@@ -30,39 +30,80 @@ class EventModel(db.Model):
 
     @classmethod
     def find_by_id(cls, idd):
+        """
+        Find event given its ID.
+
+        :param idd: event ID
+        :return: the event
+        """
         return db.session.query(EventModel).filter_by(id=idd).first()
 
     @classmethod
     def find_by_name(cls, name):
+        """
+        Find event given its name.
+
+        :param name: event name
+        :return: the event
+        """
         return db.session.query(EventModel).filter_by(name=" ".join(w.capitalize() for w in name.split(" "))).all()
 
     @classmethod
     def find_by_place(cls, place):
+        """
+        Find event by its place.
+
+        :param place: event place
+        :return: the event
+        """
         return db.session.query(EventModel).filter_by(place=" ".join(w.capitalize() for w in place.split(" "))).all()
 
     @classmethod
     def find_by_city(cls, city):
+        """
+        Find event by its city.
+
+        :param city: event city
+        :return: the event
+        """
         return db.session.query(EventModel).filter_by(city=" ".join(w.capitalize() for w in city.split(" "))).all()
 
     def artist_in_event(self, name):
+        """
+        Check if a given artist is in the event.
+
+        :param name: artist name
+        :return: true if it is false otherwise
+        """
         return name in [a.name for a in self.artists]
 
     def save_to_db(self):
+        """
+        Saves itself to the database.
+        """
         db.session.add(self)
         db.session.commit()
 
     def delete_from_db(self):
+        """
+        Deletes itself from the database.
+        """
         db.session.query(EventModel).filter_by(id=self.id).delete()
         db.session.commit()
 
     def json(self):
-        return {"event":{
+        """
+        EventModel to JSON.
+
+        :return: event info in JSON format.
+        """
+        return {"event": {
             "id": self.id,
             "name": self.name,
             "place": self.place,
             "city": self.city,
             "date": self.date,
-            "artists": [a.json() for a in self.artists],
+            "artists": [a.json()['artist'] for a in self.artists],
             "price": self.price,
             "total_available_tickets": self.total_available_tickets
         }}

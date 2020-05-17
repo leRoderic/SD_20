@@ -8,21 +8,42 @@ from models.order import OrdersModel
 class OrdersList(Resource):
 
     def get(self):
-        return {'orders': [a.json() for a in db.session.query(OrdersModel).all()]}, 200
+        """
+        Return all orders.
+
+        :return: all orders in JSON (200)
+        """
+        return {'orders': [a.json()['order'] for a in db.session.query(OrdersModel).all()]}, 200
 
 
 class Orders(Resource):
 
     def get(self, username):
+        """
+        Get all orders from a given user.
+
+        :param username: the user
+        :return: orders in JSON (200) | error user not found (404) | error no user has no orders (409)
+        """
         if not AccountsModel.find_by_username(username):
             return {'message': "User {} not found".format(username)}, 404
         ordrs = OrdersModel.find_by_username(username)
         if not ordrs:
             return {'message': "User {} has no orders".format(username)}, 409
-        return {'orders': [a.json() for a in ordrs]}, 200
+        return {'orders': [a.json()['order'] for a in ordrs]}, 200
 
     @auth.login_required()
     def post(self, username):
+        """
+        Add an order to a given user.
+
+        :param username: the user
+        :return: order in JSON (200) | error user not found (404)
+                                     | error tokens do not match (400)
+                                     | event in order not found (404)
+                                     | error not enough tickets available (409)
+                                     | error not enough money available (409)
+        """
         user = AccountsModel.find_by_username(username)
         if not user:
             return {'message': "User {} not found".format(username)}, 404
@@ -47,9 +68,12 @@ class Orders(Resource):
         return {'message': "User does not have enough money to purchase order."}, 409
 
     def __parse_request__(self):
-        parser = reqparse.RequestParser()  # create parameters parser from request
-        # define al input parameters need and its type
+        """
+        Parses JSON data from request.
+
+        :return: parsed data
+        """
+        parser = reqparse.RequestParser()
         parser.add_argument('event_id', type=int, required=True, help="This field cannot be left blank")
-        parser.add_argument('tickets_bought', type=int, required=True)  # action = "append" is needed to determine that is a
-        # list of strings
+        parser.add_argument('tickets_bought', type=int, required=True)
         return parser.parse_args()

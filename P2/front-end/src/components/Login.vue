@@ -62,9 +62,9 @@ a {
   color: black;
 }
 </style>
-
 <template>
   <div class="logincotainer" style="height: 100vh; margin-top: -60px">
+    <!-- SIGN IN FORM -->
     <div class="animated slideInUp" id="signin" style="margin-top: 40px; border-radius: 0%">
       <div class="card" style="background-color: #343a40">
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.10.2/css/all.css">
@@ -123,6 +123,7 @@ a {
           Reserved.</h5>
       </div>
     </div>
+    <!-- REGISTER FORM -->
     <div class="animated slideInUp" id="createaccount" style="display: none; border-radius: 0%">
       <div class="card" style="background-color: #343a40">
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.8/css/all.css">
@@ -183,7 +184,6 @@ a {
     </div>
   </div>
 </template>
-
 <script>
 import axios from 'axios'
 import * as toastr from '../assets/toastr'
@@ -199,7 +199,6 @@ export default {
   created () {
     window.history.forward(1)
   },
-
   data () {
     return {
       clicked: false,
@@ -210,9 +209,8 @@ export default {
       is_admin: 0
     }
   },
-
   methods: {
-    checkLogin () {
+    checkLogin (register) {
       const parameters = {
         username: this.username,
         password: this.password
@@ -225,8 +223,13 @@ export default {
           this.logged = true
           this.token = res.data.token
           this.find_match = true
-          toastr.success('', 'Welcome back ' + this.username + '! Redirecting to events',
-            {timeOut: 2500, progressBar: true, newestOnTop: true, positionClass: 'toast-bottom-right'})
+          if (register) {
+            toastr.success('', 'Welcome to TicketIt!, ' + this.username + '! Redirecting to events',
+              {timeOut: 2500, progressBar: true, newestOnTop: true, positionClass: 'toast-bottom-right'})
+          } else {
+            toastr.success('', 'Welcome back ' + this.username + '! Redirecting to events',
+              {timeOut: 2500, progressBar: true, newestOnTop: true, positionClass: 'toast-bottom-right'})
+          }
           this.$router.push({path: '/', query: {username: this.username, logged: this.logged, token: res.data.token, is_admin: this.is_admin}})
         })
         .catch((error) => {
@@ -247,7 +250,7 @@ export default {
       axios.get(path, {})
         .then((res) => {
           // eslint-disable-next-line eqeqeq
-          if (res.data.user.is_admin == 1) {
+          if (res.data.account.is_admin == 1) {
             this.is_admin = true
           }
         })
@@ -296,7 +299,7 @@ export default {
       if (document.getElementById('username').value == '' || document.getElementById('password').value == '') {
         toastr.info('', 'Fill all fields to continue', {timeOut: 1500, progressBar: true, newestOnTop: true, positionClass: 'toast-bottom-right'})
       } else {
-        this.checkLogin()
+        this.checkLogin(false)
       }
     },
     createAccount () {
@@ -308,8 +311,7 @@ export default {
         const path = 'http://localhost:5000/account'
         axios.post(path, {'username': this.username, 'password': this.password})
           .then((res) => {
-            // toastr.success('', 'Welcome to TicketIt, ' + this.username + '! Redirecting to events', {timeOut: 2500, progressBar: true, newestOnTop: true, positionClass: 'toast-bottom-right'})
-            this.checkLogin()
+            this.checkLogin(true)
           })
           .catch((error) => {
           // eslint-disable-next-line
@@ -355,7 +357,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-
-</style>

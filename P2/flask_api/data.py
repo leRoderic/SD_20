@@ -6,11 +6,11 @@ users = [["test", "1234"], ["wallace", "password"], ["admin", "terminator22", sy
 # Events and artists data.
 # EVENT FORMAT: [<ev_name>, <place>, <city>, <date>, <price>, <tickets_available>, [<artist>*N]
 # ARTIST FORMAT: [<name>, <country>, <genre>]
-events = [["Lovin Ibiza Festival", "Amnesia Ibiza", "Ibiza", "01-05-2020", "20", "1500",
+events = [["Lovin Ibiza Festival", "Amnesia Ibiza", "Ibiza", "01-05-2020", "35", "1500",
          [["Marco Faraone", "Italy", "electronic"],
           ["Danny Serrano", "Spain", "trap"],
           ["Catz 'n Dogz", "Poland", "electronic"]]],
-        ["Warm Up Festival 2020", "La fica", "Murcia", "01-10-2020", "42", "80000",[
+        ["Warm Up Festival 2020", "La fica", "Murcia", "01-10-2020", "42", "4000",[
             ["Leiva", "Spain", "pop"],
             ["Anni B Sweet", "Spain", "indie"],
             ["Kraftwek", "Germany", "electronic"],
@@ -22,7 +22,7 @@ events = [["Lovin Ibiza Festival", "Amnesia Ibiza", "Ibiza", "01-05-2020", "20",
             ["Viva Suecia", "Spain", "indie"],
             ["León Benavente", "Spain", "indie"],
             ["Rufus T.", "Spain", "rock"]]],
-        ["Mallorca Live Festival 2020", "Calvià", "Mallorca", "08-10-2020", "82", "15000",[
+        ["Mallorca Live Festival 2020", "Calvià", "Mallorca", "08-10-2020", "82", "6500",[
             ["Michael Kiwanuka", "England", "trap"],
             ["Miles Kane", "England", "indie"],
             ["Kate Tempest", "England", "hip hop"],

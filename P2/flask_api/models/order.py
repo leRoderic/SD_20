@@ -18,17 +18,34 @@ class OrdersModel(db.Model):
 
     @classmethod
     def find_by_username(cls, username):
+        """
+        Find an order by its account username.
+
+        :param username: account username
+        :return: the orders
+        """
         return db.session.query(OrdersModel).filter_by(username=username).all()
 
     def save_to_db(self):
+        """
+        Saves itself to the database.
+        """
         db.session.add(self)
         db.session.commit()
 
     def delete_from_db(self):
+        """"
+        Deletes itself from the database.
+        """
         db.session.query(OrdersModel).filter_by(id=self.id).delete()
         db.session.commit()
 
     def json(self):
+        """
+        OrderModel to JSON.
+
+        :return: OrderModel data in JSON format.
+        """
         ev = EventModel.find_by_id(self.id_event)
         return {"order": {
             "id": self.id,

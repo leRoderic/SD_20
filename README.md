@@ -4,5 +4,4 @@
 
 ## [Repo prácticas](https://github.com/UB-GEI-SD/A)
 
-## Práctica 2 - [Sesión 6](http://ub-gei-sd.github.io/Pr2_VUE_4.html)
-![__](https://media.giphy.com/media/YFkpsHWCsNUUo/giphy.gif)
+## Práctica 2 - [Sesión 7](http://ub-gei-sd.github.io/Heroku/)

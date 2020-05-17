@@ -65,6 +65,7 @@
     <video autoplay loop muted id="vbgnd">
       <source src="https://leroderic.github.io/video.mp4" type="video/mp4" id="vbgnd2">
     </video>
+    <!-- NAVBAR -->
     <nav class="navbar navbar-expand-md navbar-dark bg-dark animated slideInDown"
          style="margin-top: -60px; margin-bottom: 40px; width: 100%">
       <div id="attributes" class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
@@ -132,45 +133,57 @@
         </ul>
       </div>
     </nav>
+    <!-- EVENTS GRID -->
     <div id="eventsGrid">
       <div class="flex-container animated slideInUp">
-        <div class="card" style="width: 18rem; opacity: 0.88" v-for="(event, index) in events" :key="event.id">
+        <div class="card" style="width: 18rem; opacity: 0.88" v-for="(event, index) in this.events" :key="event.id">
           <img class="card-img-top" :src="getImgUrl(index)" alt="asd">
           <div class="card-body h-100" style="margin-bottom: -10rem">
-            <h4 class="card-title">{{ event.event.name}}</h4>
+            <h4 class="card-title">{{event.name}}</h4>
           </div>
           <div class="card-body" style="background-color: #236bef; color: #ffffff; height: 300px; overflow: auto;
             margin-top: 1rem">
             <div>
-              <h6 v-for="(artist) in event.event.artists" :key="artist.id" style="list-style-type: none">
+              <h6 v-for="(artist) in event.artists" :key="artist.id" style="list-style-type: none">
                 {{artist.name}}</h6>
             </div>
           </div>
           <div class="card-body h-100">
-            <h5>{{event.event.city}}</h5>
-            <h5>{{event.event.place}}</h5>
-            <h5>{{event.event.date.slice(0,2)}}/{{event.event.date.slice(3,5)}}/{{event.event.date.slice(6)}}</h5>
-            <h5><b>{{event.event.price}} €</b></h5>
+            <h5>{{event.city}}</h5>
+            <h5>{{event.place}}</h5>
+            <h5>{{event.date.slice(0,2)}}/{{event.date.slice(3,5)}}/{{event.date.slice(6)}}</h5>
+            <h5><b>{{event.price}} €</b></h5>
           </div>
           <div class="card-body justify-content-center" style="background-color: #236bef; color: #ffffff;
             margin-top: -5rem">
-            <h6>Tickets available: <b>{{event.event.total_available_tickets}}</b></h6>
-            <div class="button" id="button-2" style="margin-bottom: 0px" v-if="event.event.total_available_tickets > 0">
+            <h6>Tickets available: <b>{{event.total_available_tickets}}</b></h6>
+            <div class="button" id="button-2" style="margin-bottom: 0px" v-if="event.total_available_tickets > 0">
               <div id="slide"></div>
-              <a @click="addEventCart(event.event)">Add to cart</a>
+              <a @click="addEventCart(event)">Add to cart</a>
             </div>
-            <div class="button" style="margin-bottom: 0px; border: 2px solid #db0404" v-if="event.event.total_available_tickets == 0">
+            <div class="button" style="margin-bottom: 0px; border: 2px solid #db0404" v-if="event.total_available_tickets == 0">
               <a style="color: #db0404"><b>Sold out</b></a>
+            </div>
+            <div class="button" id="button-4" style="margin: 0px; margin-top: 10px; border: 2px solid #fffb00; width: 100px" v-if="logged && is_admin">
+              <div id="slide3"></div>
+              <a class="a2" @click="toggleAddArtist(event)">
+                Add artist</a>
+            </div>
+            <div class="button" id="button-4" style="margin: 0px; margin-top: 10px; border: 2px solid #fffb00; width: 140px" v-if="logged && is_admin">
+              <div id="slide3"></div>
+              <a class="a2" @click="toggleRemoveArtist(event)">
+                Remove artist</a>
             </div>
             <div class="button" id="button-3" style="margin: 0px; margin-top: 10px; border: 2px solid #db0404" v-if="logged && is_admin">
               <div id="slide2"></div>
-              <a class="a2" @click="remveEvent(event.event.id)">
+              <a class="a2" @click="remveEvent(event.id)">
                 Delete event</a>
             </div>
           </div>
         </div>
       </div>
     </div>
+    <!-- CART POP-UP -->
     <div class="animated slideInUp" id="cart" style="display: none; background-color: white; opacity: 0.88; width: 80%">
       <table class="table" style="margin-bottom: -5px">
         <tr class="thead-dark">
@@ -219,6 +232,7 @@
             <b>Complete order</b></h4></button>
       </div>
     </div>
+    <!-- CREATE EVENT FORM -->
     <div class="animated slideInUp" id="createEventForm" style="display: none; opacity: 0.88; width: 30%">
       <div class="card" style="background-color: #343a40; border-radius: 0%">
         <article class="card-body">
@@ -289,9 +303,10 @@
       <div style="text-align: center; margin-top: 0px">
         <button type="button" class="btn btn-success" style="width: 100%; border-radius: 0%; height: 40px" @click="this.submitEvent">
         <h4 style="text-transform: uppercase; text-decoration: none; font-size: .8em; letter-spacing: 1.5px">
-        <b>Submit</b></h4></button>
+        <b>Create event</b></h4></button>
       </div>
     </div>
+    <!-- UPDATE EVENT FORM -->
     <div class="animated slideInUp" id="updateEventForm" style="display: none; background-color: white; opacity: 0.88; width: 30%">
       <div class="card" style="background-color: #343a40; border-radius: 0%">
         <article class="card-body">
@@ -305,7 +320,7 @@
                 </div>
                 <select class="form-control form-control-sm" style="height: auto" @change="updateEditFormData" id="eventSelector">
                   <option value="-1">Select event to edit</option>
-                  <option v-for="(event, index) in events" :key="event.id" :value="index">{{event.event.name}}</option>
+                  <option v-for="(event, index) in events" :key="event.id" :value="index">{{event.name}}</option>
                 </select>
               </div>
               <div class="input-group">
@@ -372,9 +387,145 @@
       <div style="text-align: center; margin-top: 0px">
         <button type="button" class="btn btn-success" style="width: 100%; border-radius: 0%; height: 40px" @click="this.submitUpdateEvent">
         <h4 style="text-transform: uppercase; text-decoration: none; font-size: .8em; letter-spacing: 1.5px">
-        <b>Submit</b></h4></button>
+        <b>Update event</b></h4></button>
       </div>
     </div>
+    <!-- ADD ARTIST FORM -->
+    <div class="animated slideInUp" id="addArtistForm" style="display: none; background-color: white; opacity: 0.88; width: auto">
+      <div class="card" style="background-color: #343a40; border-radius: 0%">
+        <article class="card-body">
+          <form>
+            <div class="form-group">
+              <h4 style="color: white; margin-bottom: 20px"><b>Add artist to: {{this.editArtist.name}}</b></h4>
+              <div class="input-group">
+                <div class="input-group-prepend">
+                <span class="input-group-text" style="background-color: #236bef; border-color: #236bef"
+                ><i class="fas fa-user" style="color: white"></i> </span>
+                </div>
+                <input class="form-control" placeholder="Artist name" type="text" id="aArtistName" v-model="addArtistForm.name">
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="input-group">
+                <div class="input-group-prepend">
+                <span class="input-group-text" style="background-color: #236bef; border-color: #236bef; width: 42px">
+                  <i class="fas fa-map-marker-alt" style="color: white"></i> </span>
+                </div>
+                <input class="form-control" placeholder="Artist country" type="text" id="aArtistCountry" v-model="addArtistForm.country">
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="input-group" style="margin-bottom: 15px">
+                <div class="input-group-prepend">
+                <span class="input-group-text" style="background-color: #236bef; border-color: #236bef; color: white"
+                >Genre</span>
+                </div>
+                <select class="form-control form-control-sm" style="height: auto" id="addGenreSelector" v-model="addArtistForm.genre">
+                  <option value="NONE">Select artist genre</option>
+                  <option value="REGGAE">Reggae</option>
+                  <option value="POP">Pop</option>
+                  <option value="TRAP">Trap</option>
+                  <option value="HIP HOP">Hip-Hop</option>
+                  <option value="ROCK">Rock</option>
+                  <option value="INDIE">Indie</option>
+                  <option value="HEAVY">Heavy</option>
+                  <option value="ELECTRONIC">Electronic</option>
+                  <option value="OTHER">Other</option>
+                </select>
+              </div>
+            </div>
+          </form>
+        </article>
+      </div>
+      <div class="card" style="background-color: #343a40; border-radius: 0%" >
+        <article class="card-body">
+          <form>
+            <div class="form-group">
+              <h4 style="color: white; margin-bottom: 20px"><b>Available artists in database</b></h4>
+              <div class="input-group" style="height: 10rem; overflow: auto; width: auto">
+                <table class="table" style="margin-bottom: -5px">
+                  <tr class="thead-dark">
+                    <th scope="col">Name</th>
+                    <th scope="col">Country</th>
+                    <th scope="col">Genre</th>
+                  </tr>
+                  <tr class="thead-light" v-for="index in this.artists" :key="index.id">
+                    <td v-if="!chkArtistInEvent(index.id)">
+                      <div style="margin-top: 5px; color: white"><b>{{index.name}}</b></div>
+                    </td>
+                    <td v-if="!chkArtistInEvent(index.id)">
+                      <div style="margin-top: 5px; color: white"><b>{{index.country}}</b></div>
+                    </td>
+                    <td v-if="!chkArtistInEvent(index.id)">
+                      <div style="margin-top: 5px; color: white"><b style="color: #236bef">{{index.genre}}</b></div>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+            </div>
+          </form>
+        </article>
+      </div>
+      <div style="text-align: center; margin-top: 0px">
+        <button type="button" class="btn btn-light" style="width: 100%; border-radius: 0%; height: 30px" @click="toggleAddArtist({
+        name: 'None'
+      })">
+        <h4 style="text-transform: uppercase; text-decoration: none; font-size: .8em; letter-spacing: 1.5px">
+        <b>Back to events</b></h4></button>
+      </div>
+      <div style="text-align: center; margin-top: 0px">
+        <button type="button" class="btn btn-danger" style="width: 100%; border-radius: 0%; height: 30px" @click="initFormA(addArtistForm)">
+        <h4 style="text-transform: uppercase; text-decoration: none; font-size: .8em; letter-spacing: 1.5px">
+        <b>Reset</b></h4></button>
+      </div>
+      <div style="text-align: center; margin-top: 0px">
+        <button type="button" class="btn btn-success" style="width: 100%; border-radius: 0%; height: 40px" @click="eventWhereModifyArtist(editArtist)">
+        <h4 style="text-transform: uppercase; text-decoration: none; font-size: .8em; letter-spacing: 1.5px">
+        <b>Add artist</b></h4></button>
+      </div>
+    </div>
+    <!-- REMOVE ARTIST FORM -->
+    <div class="animated slideInUp" id="removeArtistForm" style="display: none; background-color: white; opacity: 0.88; width: 30%">
+      <div class="card" style="background-color: #343a40; border-radius: 0%">
+        <article class="card-body">
+          <form>
+            <div class="form-group">
+              <h4 style="color: white; margin-bottom: 20px"><b>Remove artist from: {{this.editArtist.name}}</b></h4>
+            </div>
+            <div class="form-group">
+              <div class="input-group" style="margin-bottom: 15px">
+                <div class="input-group-prepend">
+                <span class="input-group-text" style="background-color: #236bef; border-color: #236bef; color: white"
+                >Select artist</span>
+                </div>
+                <select class="form-control form-control-sm" style="height: auto" id="remArtistSelector" v-model="deleteArtistForm.id">
+                  <option value="-1">Select artist to delete</option>
+                  <option v-for="(artist) in artistsList" :key="artist.id" :value="artist.id">{{artist.name}}</option>
+                </select>
+              </div>
+            </div>
+          </form>
+        </article>
+      </div>
+      <div style="text-align: center; margin-top: 0px">
+        <button type="button" class="btn btn-light" style="width: 100%; border-radius: 0%; height: 30px" @click="toggleRemoveArtist({
+        name: 'None'
+      })">
+        <h4 style="text-transform: uppercase; text-decoration: none; font-size: .8em; letter-spacing: 1.5px">
+        <b>Back to events</b></h4></button>
+      </div>
+      <div style="text-align: center; margin-top: 0px">
+        <button type="button" class="btn btn-danger" style="width: 100%; border-radius: 0%; height: 30px" @click="initFormA(deleteArtistForm)">
+        <h4 style="text-transform: uppercase; text-decoration: none; font-size: .8em; letter-spacing: 1.5px">
+        <b>Reset</b></h4></button>
+      </div>
+      <div style="text-align: center; margin-top: 0px">
+        <button type="button" class="btn btn-success" style="width: 100%; border-radius: 0%; height: 40px" @click="eventWhereDeleteArtist(editArtist)">
+        <h4 style="text-transform: uppercase; text-decoration: none; font-size: .8em; letter-spacing: 1.5px">
+        <b>Remove artist</b></h4></button>
+      </div>
+    </div>
+    <!-- FOOTER -->
     <div id="footer">
       <h5 style="margin-top: 80px; color: white">&copy; Copyright {{this.getYear()}} TicketIt!. All Rights
         Reserved.</h5>
@@ -404,7 +555,6 @@ export default {
       this.getAttributes()
     }
   },
-
   data () {
     return {
       events_bought: [],
@@ -413,10 +563,16 @@ export default {
       username: '',
       logged: false,
       is_admin: false,
+      artistsList: [],
+      editArtist: {
+        name: 'None'
+      },
       token: '',
       ticket_counter: 0,
       currentEventEditId: -1,
       money: -1,
+      artists: [],
+      artistsEvent: [],
       addEventForm: {
         place: '',
         name: '',
@@ -432,10 +588,21 @@ export default {
         date: '',
         price: '',
         total_available_tickets: ''
+      },
+      addArtistForm: {
+        id: -1,
+        name: '',
+        country: '',
+        genre: 'NONE'
+      },
+      deleteArtistForm: {
+        id: -1,
+        name: '',
+        country: '',
+        genre: ''
       }
     }
   },
-
   methods: {
     setInputDisable (s) {
       document.getElementById('editEname').disabled = s
@@ -445,22 +612,127 @@ export default {
       document.getElementById('editEplace').disabled = s
       document.getElementById('editEtickets').disabled = s
     },
+    eventWhereDeleteArtist (event) {
+      let selector = document.getElementById('remArtistSelector')
+      let artID = selector.options[selector.selectedIndex].value
+      const path = 'http://localhost:5000/event/' + event.id + '/artist/' + artID
+      axios.delete(path, {auth: {username: this.token}})
+        .then((res) => {
+          this.toggleRemoveArtist({name: 'None'})
+          this.initFormA(this.deleteArtistForm)
+          toastr.success('', 'Artist removed from event', {
+            timeOut: 1500,
+            progressBar: true,
+            newestOnTop: true,
+            positionClass: 'toast-bottom-right'
+          })
+        })
+        .catch((error) => {
+          console.log(error)
+          // eslint-disable-next-line eqeqeq
+          toastr.error('', 'Artist could not be removed',
+            {timeOut: 1500, progressBar: true, newestOnTop: true, positionClass: 'toast-bottom-right'})
+        })
+    },
+    getArtistsEvent (id) {
+      const path = 'http://localhost:5000/event/' + id + '/artists'
+      axios.get(path)
+        .then((res) => {
+          this.artistsEvent = res.data.artists
+        })
+        .catch((error) => {
+          console.log(error)
+        })
+    },
+    getArtists () {
+      const path = 'http://localhost:5000/artists'
+      axios.get(path)
+        .then((res) => {
+          this.artists = res.data.artists
+        })
+        .catch((error) => {
+          console.log(error)
+        })
+    },
+    getArtistsInEvent (event) {
+      const path = 'http://localhost:5000/event/' + event.id + '/artists'
+      axios.get(path)
+        .then((res) => {
+          this.artistsList = res.data.artists
+        })
+        .catch((error) => {
+          console.log(error)
+        })
+    },
+    chkArtistInEvent (id) {
+      var i, item
+      for (i in this.artistsEvent) {
+        item = this.artistsEvent[i]
+        // eslint-disable-next-line eqeqeq
+        if (item.id == id) {
+          return true
+        }
+      }
+      return false
+    },
+    eventWhereModifyArtist (event) {
+      this.emptyFormToast(this.addArtistForm)
+      let selector = document.getElementById('addGenreSelector')
+      let genre = selector.options[selector.selectedIndex].value
+      // eslint-disable-next-line eqeqeq
+      if (genre == 'NONE') {
+        toastr.info('', 'Select artist genre', {timeOut: 1500, progressBar: true, newestOnTop: true, positionClass: 'toast-bottom-right'})
+      } else {
+        const path = 'http://localhost:5000/event/' + event.id + '/artist'
+        var params = {
+          name: this.capitalize(this.addArtistForm.name),
+          country: this.capitalize(this.addArtistForm.country),
+          genre: genre
+        }
+        axios.post(path, params, {auth: {username: this.token}})
+          .then((res) => {
+            this.toggleAddArtist({name: 'None'})
+            this.initFormA(this.addArtistForm)
+            toastr.success('', 'Artist added to event', {
+              timeOut: 1500,
+              progressBar: true,
+              newestOnTop: true,
+              positionClass: 'toast-bottom-right'
+            })
+          })
+          .catch((error) => {
+            console.log(error)
+            // eslint-disable-next-line eqeqeq
+            toastr.error('', 'Artist could not be added, because it either does not exist or the data typed into the' +
+              'form is wrong.',
+            {timeOut: 1500, progressBar: true, newestOnTop: true, positionClass: 'toast-bottom-right'})
+          })
+      }
+    },
+    capitalize (str) {
+      var splitStr = str.toLowerCase().split(' ')
+      for (var i = 0; i < splitStr.length; i++) {
+        splitStr[i] = splitStr[i].charAt(0).toUpperCase() + splitStr[i].substring(1)
+      }
+      return splitStr.join(' ')
+    },
     updateEditFormData () {
       let selector = document.getElementById('eventSelector')
       let index = selector.options[selector.selectedIndex].value
       // eslint-disable-next-line eqeqeq
       if (index == -1) {
         this.setInputDisable(true)
+        this.initForm(this.editEventForm)
       } else {
         this.setInputDisable(false)
-        this.currentEventEditId = this.events[index].event.id
-        this.editEventForm.name = this.events[index].event.name
-        this.editEventForm.price = this.events[index].event.price
-        this.editEventForm.date = '' + this.events[index].event.date.slice(6) + '-' + this.events[index].event.date.slice(3, 5) + '-' +
-        this.events[index].event.date.slice(0, 2)
-        this.editEventForm.city = this.events[index].event.city
-        this.editEventForm.place = this.events[index].event.place
-        this.editEventForm.total_available_tickets = this.events[index].event.total_available_tickets
+        this.currentEventEditId = this.events[index].id
+        this.editEventForm.name = this.events[index].name
+        this.editEventForm.price = this.events[index].price
+        this.editEventForm.date = '' + this.events[index].date.slice(6) + '-' + this.events[index].date.slice(3, 5) + '-' +
+        this.events[index].date.slice(0, 2)
+        this.editEventForm.city = this.events[index].city
+        this.editEventForm.place = this.events[index].place
+        this.editEventForm.total_available_tickets = this.events[index].total_available_tickets
       }
     },
     preventNav (event) {
@@ -477,6 +749,10 @@ export default {
         this.toggleUpdateEvent()
       } else if (document.getElementById('cart').style.display !== 'none') {
         this.toggleCart()
+      } else if (document.getElementById('removeArtistForm').style.display !== 'none') {
+        this.toggleRemoveArtist(null)
+      } else if (document.getElementById('addArtistForm').style.display !== 'none') {
+        this.toggleAddArtist(null)
       }
       toastr.success('', 'Logged out successfully', {
         timeOut: 1500,
@@ -488,7 +764,7 @@ export default {
     addEvent (params) {
       const path = `http://localhost:5000/event`
       axios.post(path, params, {auth: {username: this.token}})
-        .then(() => {
+        .then((res) => {
           this.getEvents()
           this.getAttributes()
           this.toggleCreateEvent()
@@ -510,7 +786,7 @@ export default {
     remveEvent (id) {
       const path = 'http://localhost:5000/event/' + id
       axios.delete(path, {auth: {username: this.token}})
-        .then(() => {
+        .then((res) => {
           this.getEvents()
           toastr.success('', 'Event deleted', {
             timeOut: 1500,
@@ -542,7 +818,7 @@ export default {
     updateEvent (params) {
       const path = `http://localhost:5000/event/`
       axios.put(path + this.currentEventEditId, params, {auth: {username: this.token}})
-        .then(() => {
+        .then((res) => {
           this.getEvents()
           this.getAttributes()
           this.toggleUpdateEvent()
@@ -573,6 +849,12 @@ export default {
         total_available_tickets: this.editEventForm.total_available_tickets
       }
       this.updateEvent(parameters)
+    },
+    initFormA (form) {
+      form.id = -1
+      form.name = ''
+      form.country = ''
+      form.genre = 'NONE'
     },
     initForm (form) {
       form.place = ''
@@ -607,6 +889,45 @@ export default {
         login.classList.remove('animated', 'bounce')
       }, 1000)
       setTimeout(() => this.buttonAnimation(), 5000)
+    },
+    toggleAddArtist (event) {
+      this.editArtist = event
+      // eslint-disable-next-line eqeqeq
+      if (document.getElementById('eventsGrid').style.display != 'none') {
+        document.getElementById('eventsGrid').style.display = 'none'
+        document.getElementById('createEvent').style.display = 'none'
+        document.getElementById('cartbt').style.display = 'none'
+        document.getElementById('updateEvent').style.display = 'none'
+        document.getElementById('addArtistForm').style.display = 'inline-block'
+        this.getArtists()
+        this.getArtistsEvent(event.id)
+      } else {
+        this.getEvents()
+        document.getElementById('eventsGrid').style.display = 'inline-block'
+        document.getElementById('createEvent').style.display = 'inline-block'
+        document.getElementById('cartbt').style.display = 'inline-block'
+        document.getElementById('updateEvent').style.display = 'inline-block'
+        document.getElementById('addArtistForm').style.display = 'none'
+      }
+    },
+    toggleRemoveArtist (event) {
+      this.editArtist = event
+      // eslint-disable-next-line eqeqeq
+      if (document.getElementById('eventsGrid').style.display != 'none') {
+        document.getElementById('eventsGrid').style.display = 'none'
+        document.getElementById('createEvent').style.display = 'none'
+        document.getElementById('cartbt').style.display = 'none'
+        document.getElementById('updateEvent').style.display = 'none'
+        document.getElementById('removeArtistForm').style.display = 'inline-block'
+        this.getArtistsInEvent(event)
+      } else {
+        this.getEvents()
+        document.getElementById('eventsGrid').style.display = 'inline-block'
+        document.getElementById('createEvent').style.display = 'inline-block'
+        document.getElementById('cartbt').style.display = 'inline-block'
+        document.getElementById('updateEvent').style.display = 'inline-block'
+        document.getElementById('removeArtistForm').style.display = 'none'
+      }
     },
     toggleUpdateEvent () {
       // eslint-disable-next-line eqeqeq
@@ -682,7 +1003,7 @@ export default {
       const path = `http://localhost:5000/account/` + this.username
       axios.get(path, {})
         .then((res) => {
-          this.money = res.data.user.available_money
+          this.money = res.data.account.available_money
         })
         .catch((error) => {
           // eslint-disable-next-line
@@ -692,14 +1013,13 @@ export default {
     getYear () {
       return new Date().getFullYear()
     },
-
     getImgUrl (index) {
       /* Initial code used stored images. Since Heroku does not save media with the free plans, we've switched to images
         hosted online. There is no reason to go as far with AmazonWS, since this is just an assignment, so Imgur's been used
         for hosting our images and Gofile our background video.
         var images = require.context('../assets/', false, /\.jpg$/)
         return images('./festival' + (index % 12) + '.jpg') */
-      var number = index % 12
+      var number = index % 24
       switch (number) {
         case 0:
           return 'https://i.imgur.com/DZh2KQp.jpg'
@@ -725,6 +1045,30 @@ export default {
           return 'https://i.imgur.com/nAv2sx7.jpg'
         case 11:
           return 'https://i.imgur.com/PXFjPIR.jpg'
+        case 12:
+          return 'https://i.imgur.com/LXn81qH.jpg'
+        case 13:
+          return 'https://i.imgur.com/883y7kz.jpg'
+        case 14:
+          return 'https://i.imgur.com/1IqD8uR.jpg'
+        case 15:
+          return 'https://i.imgur.com/AZUDTLp.jpg'
+        case 16:
+          return 'https://i.imgur.com/hKgORps.jpg'
+        case 17:
+          return 'https://i.imgur.com/rtzmmZj.jpg'
+        case 18:
+          return 'https://i.imgur.com/xMZDO8r.jpg'
+        case 19:
+          return 'https://i.imgur.com/MzCrLvx.jpg'
+        case 20:
+          return 'https://i.imgur.com/tYVX7WS.jpg'
+        case 21:
+          return 'https://i.imgur.com/stjmyP9.jpg'
+        case 22:
+          return 'https://i.imgur.com/1yEsNnZ.jpg'
+        case 23:
+          return 'https://i.imgur.com/BhBxz5H.jpg'
       }
     },
     numberOfEventsInCart () {
@@ -749,7 +1093,7 @@ export default {
     addPurchase (parameters, ename) {
       const path = `http://localhost:5000/orders/${this.username}`
       axios.post(path, parameters, {auth: {username: this.token}})
-        .then(() => {
+        .then((res) => {
           this.getEvents()
           this.getAttributes()
           this.toggleCart()
@@ -849,8 +1193,6 @@ export default {
     },
     addTicket (event) {
       var ev = this.searchEvent(event)
-      // eslint-disable-next-line eqeqeq
-      console.log(ev.quant)
       // eslint-disable-next-line eqeqeq
       if (ev.quant == 49) {
         toastr.info('', 'Tickets are limited to 50 tickets per order', {
