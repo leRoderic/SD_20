@@ -103,8 +103,8 @@ class AccountsModel(db.Model):
         """
         return {"account": {
             "username": self.username,
-            "available_money": self.available_money,
-            "is_admin": self.is_admin
+            "is_admin": self.is_admin,
+            "available_money": self.available_money
         }}
 
 

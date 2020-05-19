@@ -61,7 +61,7 @@
 </style>
 <template>
   <div>
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.10.2/css/all.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.13.0/css/all.css">
     <video autoplay loop muted id="vbgnd">
       <source src="https://leroderic.github.io/video.mp4" type="video/mp4" id="vbgnd2">
     </video>
@@ -151,18 +151,23 @@
           <div class="card-body h-100">
             <h5>{{event.city}}</h5>
             <h5>{{event.place}}</h5>
-            <h5>{{event.date.slice(0,2)}}/{{event.date.slice(3,5)}}/{{event.date.slice(6)}}</h5>
+            <h5 v-if="event.total_available_tickets >= 0">{{event.date.slice(8)}}/{{event.date.slice(5,7)}}/{{event.date.slice(0,4)}}</h5>
+            <h5 v-if="event.total_available_tickets == -1" style="text-decoration: line-through">{{event.date.slice(8)}}/{{event.date.slice(5,7)}}/{{event.date.slice(0,4)}}</h5>
             <h5><b>{{event.price}} €</b></h5>
           </div>
           <div class="card-body justify-content-center" style="background-color: #236bef; color: #ffffff;
             margin-top: -5rem">
-            <h6>Tickets available: <b>{{event.total_available_tickets}}</b></h6>
+            <h6 v-if="event.total_available_tickets >= 0">Tickets available: <b>{{event.total_available_tickets}}</b></h6>
+            <h6 v-if="event.total_available_tickets == -1">Tickets available: <b>N/A</b></h6>
             <div class="button" id="button-2" style="margin-bottom: 0px" v-if="event.total_available_tickets > 0">
               <div id="slide"></div>
               <a @click="addEventCart(event)">Add to cart</a>
             </div>
             <div class="button" style="margin-bottom: 0px; border: 2px solid #db0404" v-if="event.total_available_tickets == 0">
               <a style="color: #db0404"><b>Sold out</b></a>
+            </div>
+            <div class="button" style="margin-bottom: 0px; border: 2px solid #db0404" v-if="event.total_available_tickets == -1">
+              <a style="color: #db0404"><b>Cancelled</b></a>
             </div>
             <div class="button" id="button-4" style="margin: 0px; margin-top: 10px; border: 2px solid #fffb00; width: 100px" v-if="logged && is_admin">
               <div id="slide3"></div>
@@ -664,6 +669,17 @@ export default {
           console.log(error)
         })
     },
+    chkArtistExists (name) {
+      var i, item
+      for (i in this.artists) {
+        item = this.artists[i]
+        // eslint-disable-next-line eqeqeq
+        if (item.name == name) {
+          return true
+        }
+      }
+      return false
+    },
     chkArtistInEvent (id) {
       var i, item
       for (i in this.artistsEvent) {
@@ -674,6 +690,15 @@ export default {
         }
       }
       return false
+    },
+    addNewArtist (param) {
+      const path = 'http://localhost:5000/artist'
+      axios.post(path, param, {auth: {username: this.token}})
+        .then((res) => {
+        })
+        .catch((error) => {
+          console.log(error)
+        })
     },
     eventWhereModifyArtist (event) {
       this.emptyFormToast(this.addArtistForm)
@@ -688,6 +713,11 @@ export default {
           name: this.capitalize(this.addArtistForm.name),
           country: this.capitalize(this.addArtistForm.country),
           genre: genre
+        }
+        this.getArtists()
+        if (!this.chkArtistExists(params.name)) {
+          console.log('does not exist')
+          this.addNewArtist(params)
         }
         axios.post(path, params, {auth: {username: this.token}})
           .then((res) => {
@@ -728,8 +758,7 @@ export default {
         this.currentEventEditId = this.events[index].id
         this.editEventForm.name = this.events[index].name
         this.editEventForm.price = this.events[index].price
-        this.editEventForm.date = '' + this.events[index].date.slice(6) + '-' + this.events[index].date.slice(3, 5) + '-' +
-        this.events[index].date.slice(0, 2)
+        this.editEventForm.date = this.events[index].date
         this.editEventForm.city = this.events[index].city
         this.editEventForm.place = this.events[index].place
         this.editEventForm.total_available_tickets = this.events[index].total_available_tickets
@@ -809,7 +838,7 @@ export default {
         name: this.addEventForm.name,
         city: this.addEventForm.city,
         country: this.addEventForm.country,
-        date: this.addEventForm.date.slice(8) + '-' + this.addEventForm.date.slice(5, 7) + '-' + this.addEventForm.date.slice(0, 4),
+        date: this.addEventForm.date,
         price: this.addEventForm.price,
         total_available_tickets: this.addEventForm.total_available_tickets
       }
@@ -844,7 +873,7 @@ export default {
         name: this.editEventForm.name,
         city: this.editEventForm.city,
         country: this.editEventForm.country,
-        date: this.editEventForm.date.slice(8) + '-' + this.editEventForm.date.slice(5, 7) + '-' + this.editEventForm.date.slice(0, 4),
+        date: this.editEventForm.date,
         price: this.editEventForm.price,
         total_available_tickets: this.editEventForm.total_available_tickets
       }
@@ -1122,7 +1151,7 @@ export default {
       for (i in this.events_bought) {
         item = this.events_bought[i]
         const parameters = {
-          'event_id': item.id,
+          'id_event': item.id,
           'tickets_bought': item.quant
         }
         this.addPurchase(parameters, item.name)

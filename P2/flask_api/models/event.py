@@ -46,7 +46,7 @@ class EventModel(db.Model):
         :param name: event name
         :return: the event
         """
-        return db.session.query(EventModel).filter_by(name=" ".join(w.capitalize() for w in name.split(" "))).all()
+        return db.session.query(EventModel).filter_by(name=" ".join(w.capitalize() for w in name.split(" "))).first()
 
     @classmethod
     def find_by_place(cls, place):

@@ -6,11 +6,11 @@ users = [["test", "1234"], ["wallace", "password"], ["admin", "terminator22", sy
 # Events and artists data.
 # EVENT FORMAT: [<ev_name>, <place>, <city>, <date>, <price>, <tickets_available>, [<artist>*N]
 # ARTIST FORMAT: [<name>, <country>, <genre>]
-events = [["Lovin Ibiza Festival", "Amnesia Ibiza", "Ibiza", "01-05-2020", "35", "1500",
+events = [["Lovin Ibiza Festival", "Amnesia Ibiza", "Ibiza", "2020-06-05", "35", "-1",
          [["Marco Faraone", "Italy", "electronic"],
           ["Danny Serrano", "Spain", "trap"],
           ["Catz 'n Dogz", "Poland", "electronic"]]],
-        ["Warm Up Festival 2020", "La fica", "Murcia", "01-10-2020", "42", "4000",[
+        ["Warm Up Festival 2020", "La fica", "Murcia", "2020-10-01", "42", "4000",[
             ["Leiva", "Spain", "pop"],
             ["Anni B Sweet", "Spain", "indie"],
             ["Kraftwek", "Germany", "electronic"],
@@ -22,7 +22,7 @@ events = [["Lovin Ibiza Festival", "Amnesia Ibiza", "Ibiza", "01-05-2020", "35",
             ["Viva Suecia", "Spain", "indie"],
             ["León Benavente", "Spain", "indie"],
             ["Rufus T.", "Spain", "rock"]]],
-        ["Mallorca Live Festival 2020", "Calvià", "Mallorca", "08-10-2020", "82", "6500",[
+        ["Mallorca Live Festival 2020", "Calvià", "Mallorca", "2020-08-10", "82", "0",[
             ["Michael Kiwanuka", "England", "trap"],
             ["Miles Kane", "England", "indie"],
             ["Kate Tempest", "England", "hip hop"],
@@ -35,10 +35,10 @@ events = [["Lovin Ibiza Festival", "Amnesia Ibiza", "Ibiza", "01-05-2020", "35",
             ["Miss Caffeina", "Spain", "indie"],
             ["Shinova", "Spain", "rock"],
             ["Monarchy", "England", "pop"]]],
-        ["Festival Tomavistas 2020", "Parque Enrique Tierno Galván", "Madrid", "03-09-2020", "100", "10000", [
+        ["Festival Tomavistas 2020", "Parque Enrique Tierno Galván", "Madrid", "2020-09-03", "100", "10000", [
             ["Jarvis Cocker", "England", "pop"],
             ["Novedades Carminha", "Spain", "rock"],
-            ["Allah-Las", "USA", "rock"],
+            ["Allah Las", "USA", "rock"],
             ["Cate Le Bon", "Wales", "indie"],
             ["Maika Makovski", "Spain", "pop"],
             ["León Benavente", "Spain", "indie"],
@@ -56,7 +56,7 @@ events = [["Lovin Ibiza Festival", "Amnesia Ibiza", "Ibiza", "01-05-2020", "35",
             ["Jessy Lanzan", "Canada", "electronic"],
             ["Bigott", "Spain", "indie"],
             ["Chloral", "Spain", "rock"]]],
-        ["Primavera Sound 2020", "Oporto", "Portugal", "26-08-2020", "110", "10000", [
+        ["Primavera Sound 2020", "Oporto", "Portugal", "2020-08-26", "110", "10000", [
             ["Lana Del Rey", "USA", "pop"],
             ["Tyler, the Creator", "USA", "hip hop"],
             ["Yo La Tengo", "USA", "indie"],
@@ -71,12 +71,12 @@ events = [["Lovin Ibiza Festival", "Amnesia Ibiza", "Ibiza", "01-05-2020", "35",
             ["La Favi", "Spain", "reggae"],
             ["Die Katapult", "Spain", "electronic"],
             ["Lorena Álvarez", "Spain", "indie"]]],
-        ["Madrid Puro Reggaeton Festival", "Ifema", "Madrid", "26-06-2020", "50", "7500", [
+        ["Madrid Puro Reggaeton Festival", "Ifema", "Madrid", "2020-06-26", "50", "7500", [
             ["Bad Bunny", "Puerto Rico", "reggae"],
             ["Daddy Yankee", "Puerto Rico", "reggae"],
             ["Maikel Delacalle", "Spain", "reggae"],
             ["Natti Natasha", "Republica Dominicana", "reggae"]]],
-        ["Interestelar Sevilla 2020", "CAAC", "Sevilla", "04-09-2020", "60", "3500", [
+        ["Interestelar Sevilla 2020", "CAAC", "Sevilla", "2020-04-09", "60", "3500", [
             ["Leiva", "Spain", "pop"],
             ["Viva Suecia", "Spain", "indie"],
             ["Loquillo", "Spain", "rock"],
@@ -86,16 +86,16 @@ events = [["Lovin Ibiza Festival", "Amnesia Ibiza", "Ibiza", "01-05-2020", "35",
             ["El Niño De La Hipoteca", "Spain", "rock"],
             ["Fuel Fandango", "Spain", "rock"],
             ["Lionware", "Spain", "other"]]],
-        ["Granada Sound 2020", "Cortijo del Conde", "Granada", "18-09-2020", "38", "2000", [
+        ["Granada Sound 2020", "Cortijo del Conde", "Granada", "2020-09-18", "38", "2000", [
             ["Dorian", "Spain", "indie"],
             ["Leiva", "Spain", "pop"],
             ["Amaral", "Spain", "rock"],
             ["Viva Suecia", "Spain", "indie"],
             ["Guitarricadelafuente", "Spain", "other"],
             ["Mando Diao", "Sweeden", "indie"]]],
-        ["Festardor 2020", "Hornos Altos", "Valencia", "08-10-2020", "40", "3500", [
+        ["Festardor 2020", "Hornos Altos", "Valencia", "2020-10-08", "40", "3500", [
             ["La Polla Records", "Puerto Rico", "rock"]]],
-        ["BBK Music Legends", "Goietxa Bidea", "Bilbao", "05-06-2021", "75", "5500", [
+        ["BBK Music Legends", "Goietxa Bidea", "Bilbao", "2021-06-05", "75", "5500", [
             ["Lucinda Williams", "USA", "rock"],
             ["The Jayhawks", "USA", "rock"],
             ["Eric Burdon", "England", "rock"],
@@ -103,7 +103,7 @@ events = [["Lovin Ibiza Festival", "Amnesia Ibiza", "Ibiza", "01-05-2020", "35",
             ["Anari", "Spain", "rock"],
             ["Joanna Connor", "USA", "other"],
             ["North Mississippi Allstars", "USA", "rock"]]],
-        ["Bull Music Festival 2020", "Cortijo del Conde", "Granada", "09-10-2021", "30", "6500", [
+        ["Bull Music Festival 2020", "Cortijo del Conde", "Granada", "2021-10-09", "30", "6500", [
             ["Natos y Waor", "Spain", "other"],
             ["El Kanka", "Spain", "trap"],
             ["Lola Indigo", "Spain", "pop"],
@@ -112,7 +112,7 @@ events = [["Lovin Ibiza Festival", "Amnesia Ibiza", "Ibiza", "01-05-2020", "35",
             ["Fyahbwoy", "Spain", "reggae"],
             ["Miguel Campello", "Spain", "reggae"],
             ["Second", "Spain", "indie"]]],
-        ["Cranc Festival 2020", "Mahón", "Islas Baleares", "20-11-2021", "55", "8000", [
+        ["Cranc Festival 2020", "Mahón", "Islas Baleares", "2021-11-20", "55", "8000", [
             ["Black Lips", "USA", "rock"],
             ["Holly Miranda", "USA", "pop"],
             ["Manel", "Spain", "indie"],

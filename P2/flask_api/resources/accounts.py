@@ -1,5 +1,6 @@
 from flask_restful import Resource, reqparse
 from db import db
+from lock import lock
 from models.account import AccountsModel, auth
 from models.order import OrdersModel
 
@@ -26,7 +27,7 @@ class Accounts(Resource):
         """
         user = AccountsModel.find_by_username(username)
         if not user:
-            return {'message': "User {} not found".format(username)}, 404
+            return {'message': "User ['username': {}] not found".format(username)}, 404
 
         return user.json(), 200
 
@@ -34,15 +35,16 @@ class Accounts(Resource):
         """
         Add new user.
 
-        :return: new user in JSON (200) | error username already taken (409)
+        :return: new user in JSON (201) | error username already taken (409)
         """
         data = self.__parse_request__()
-        acc = AccountsModel.find_by_username(data.get('username'))
-        if acc:
-            return {'message': "A user with that username already exists, log in or choose another username"}, 409
-        acc = AccountsModel(data.get('username'))
-        acc.save_to_db(data.get('password'))
-        return acc.json(), 200
+        with lock.lock:
+            acc = AccountsModel.find_by_username(data.get('username'))
+            if acc:
+                return {'message': "A user with ['username': {}] already exists".format(data.get('username'))}, 409
+            acc = AccountsModel(data.get('username'))
+            acc.save_to_db(data.get('password'))
+            return acc.json(), 201
 
     @auth.login_required(role='admin')
     def delete(self, username):
@@ -52,14 +54,15 @@ class Accounts(Resource):
         :param username: username of the account to delete
         :return: message ok (200) | error account not found (404)
         """
-        to_delete = AccountsModel.find_by_username(username)
-        if not to_delete:
-            return {'message': "There is no user {}, therefore it cannot be deleted".format(username)}, 404
-        u_orders = OrdersModel.find_by_username(username)
-        for i in u_orders:
-            i.delete_from_db()
-        to_delete.delete_from_db()
-        return {'message': "User {} and its orders has successfully been deleted".format(username)}, 200
+        with lock.lock:
+            to_delete = AccountsModel.find_by_username(username)
+            if not to_delete:
+                return {'message': "User ['username': {}] not found".format(username)}, 404
+            u_orders = OrdersModel.find_by_username(username)
+            for i in u_orders:
+                i.delete_from_db()
+            to_delete.delete_from_db()
+            return {'message': "User ['username': {}] deleted".format(username)}, 200
 
     def __parse_request__(self):
         """
@@ -68,6 +71,6 @@ class Accounts(Resource):
         :return: parsed data
         """
         parser = reqparse.RequestParser()
-        parser.add_argument('username', type=str, required=True, help="This field cannot be left blank")
-        parser.add_argument('password', type=str, required=True, help="This field cannot be left blank")
+        parser.add_argument('username', type=str, required=True, help="Operation not valid: 'username' not provided")
+        parser.add_argument('password', type=str, required=True, help="Operation not valid: 'password' not provided")
         return parser.parse_args()
