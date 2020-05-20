@@ -1,7 +1,0 @@
-C: STRT 25
-S: CASH 10
-C: BETT
-S: LOOT 2
-S: PLAY '0' 
-S: DICE 25 '2' '5' '4' '6' '3'
-S: ERRO '35' Exiting due to error Read timed out

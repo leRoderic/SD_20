@@ -1,7 +1,0 @@
-C: STRT 1
-S: CASH 10
-C: BETT
-S: LOOT 2
-S: PLAY 0
-S: DICE 1 2 3 3 6 4
-S: ERRO 16 Connection reset

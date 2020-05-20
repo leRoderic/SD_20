@@ -1,8 +1,0 @@
-C2: STRT 25
-S: CASH 10
-C2: BETT
-S: LOOT 2
-S: PLAY '1' 
-S: DICE 25 '3' '3' '5' '4' '4'
-C2: EXIT
-S: ERRO '48' The other player left, aborting game and exiting

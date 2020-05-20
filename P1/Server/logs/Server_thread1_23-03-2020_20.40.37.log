@@ -1,9 +1,0 @@
-C1: STRT 111
-S: CASH 10
-C1: BETT
-S: LOOT 2
-S: PLAY '0' 
-S: DICE 111 '5' '1' '1' '2' '1'
-C1: PASS 111
-S: PNTS 111 0
-S: ERRO '37' Exiting due to error Connection reset
