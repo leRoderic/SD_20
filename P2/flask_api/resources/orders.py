@@ -62,12 +62,20 @@ class Orders(Resource):
             if user.available_money >= (ev.price * data.get('tickets_bought')):
                 if data.get('tickets_bought') <= ev.total_available_tickets:
                     ev.total_available_tickets -= data.get('tickets_bought')
-                    ev.save_to_db()
                     user.available_money -= ev.price * data.get('tickets_bought')
                     order = OrdersModel(user.username, ev.id, data.get('tickets_bought'))
+                    if user.available_money < 0:
+                        db.session.rollback()
+                        return {'message': "User ['username': {}] does not have enough money to purchase order"
+                                           "".format(username)}, 400
+                    elif ev.total_available_tickets < 0:
+                        db.session.rollback()
+                        return {'message': "Not enough available tickets in event ['id': {}, 'name': {}]"
+                                           "".format(ev.id, ev.name)}, 400
+                    '''ev.save_to_db()
                     order.save_to_db()
                     user.orders.append(order)
-                    user.save_to_db()
+                    user.save_to_db()'''
                     return order.json(), 200
                 return {'message': "Not enough available tickets in event ['id': {}, 'name': {}]"
                                    "".format(ev.id, ev.name)}, 400
