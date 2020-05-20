@@ -8,7 +8,7 @@ class ProductionConfig(Config):
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     STATIC_FOLDER = "/static"
     TEMPLATE_FOLDER = "/templates"
-    SECRET_KEY = config('M2CjZ52aDgtvt3XXRWBktEPY64EqtxhJ', default='localhost')
+    SECRET_KEY = config('SECRET_KEY', default='localhost')
 
 class DevelopmentConfig(Config):
     DEBUG = True
