@@ -1043,62 +1043,11 @@ export default {
       return new Date().getFullYear()
     },
     getImgUrl (index) {
-      /* Initial code used stored images. Since Heroku does not save media with the free plans, we've switched to images
-        hosted online. There is no reason to go as far with AmazonWS, since this is just an assignment, so Imgur's been used
-        for hosting our images and Gofile our background video.
-        var images = require.context('../assets/', false, /\.jpg$/)
-        return images('./festival' + (index % 12) + '.jpg') */
+      /* Our images as well as our background video are hosted in a private github repo. This is to avoid losing them
+      *  in the free Heroku plan.
+      */
       var number = index % 24
-      switch (number) {
-        case 0:
-          return 'https://i.imgur.com/DZh2KQp.jpg'
-        case 1:
-          return 'https://i.imgur.com/wapXLGY.jpg'
-        case 2:
-          return 'https://i.imgur.com/GG0weyI.jpg'
-        case 3:
-          return 'https://i.imgur.com/bPaM6QP.jpg'
-        case 4:
-          return 'https://i.imgur.com/sdQsE5I.jpg'
-        case 5:
-          return 'https://i.imgur.com/zfLjQkT.jpg'
-        case 6:
-          return 'https://i.imgur.com/sgXVYrE.jpg'
-        case 7:
-          return 'https://i.imgur.com/SlTBxgZ.jpg'
-        case 8:
-          return 'https://i.imgur.com/h7X4a4C.jpg'
-        case 9:
-          return 'https://i.imgur.com/84dpYra.jpg'
-        case 10:
-          return 'https://i.imgur.com/nAv2sx7.jpg'
-        case 11:
-          return 'https://i.imgur.com/PXFjPIR.jpg'
-        case 12:
-          return 'https://i.imgur.com/LXn81qH.jpg'
-        case 13:
-          return 'https://i.imgur.com/883y7kz.jpg'
-        case 14:
-          return 'https://i.imgur.com/1IqD8uR.jpg'
-        case 15:
-          return 'https://i.imgur.com/AZUDTLp.jpg'
-        case 16:
-          return 'https://i.imgur.com/hKgORps.jpg'
-        case 17:
-          return 'https://i.imgur.com/rtzmmZj.jpg'
-        case 18:
-          return 'https://i.imgur.com/xMZDO8r.jpg'
-        case 19:
-          return 'https://i.imgur.com/MzCrLvx.jpg'
-        case 20:
-          return 'https://i.imgur.com/tYVX7WS.jpg'
-        case 21:
-          return 'https://i.imgur.com/stjmyP9.jpg'
-        case 22:
-          return 'https://i.imgur.com/1yEsNnZ.jpg'
-        case 23:
-          return 'https://i.imgur.com/BhBxz5H.jpg'
-      }
+      return 'https://leroderic.github.io/ticketit/imgs/f' + (number + 1) + '.jpg'
     },
     numberOfEventsInCart () {
       var i, item
