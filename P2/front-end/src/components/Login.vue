@@ -216,7 +216,7 @@ export default {
         password: this.password
       }
       this.toggleInputsSignIn()
-      const path = `http://localhost:5000/login`
+      const path = `https://a4-eventright.herokuapp.com/login`
       this.getAccount()
       axios.post(path, parameters)
         .then((res) => {
@@ -246,7 +246,7 @@ export default {
       this.$router.push({path: '/', query: {logged: this.logged}})
     },
     getAccount () {
-      const path = `http://localhost:5000/account/` + this.username
+      const path = `https://a4-eventright.herokuapp.com/account/` + this.username
       axios.get(path, {})
         .then((res) => {
           // eslint-disable-next-line eqeqeq
@@ -308,7 +308,7 @@ export default {
         toastr.info('', 'Fill all fields to continue', {timeOut: 1500, progressBar: true, newestOnTop: true, positionClass: 'toast-bottom-right'})
       } else {
         this.toggleInputsCreate()
-        const path = 'http://localhost:5000/account'
+        const path = 'https://a4-eventright.herokuapp.com/account'
         axios.post(path, {'username': this.username, 'password': this.password})
           .then((res) => {
             this.checkLogin(true)

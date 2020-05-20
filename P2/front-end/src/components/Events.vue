@@ -620,7 +620,7 @@ export default {
     eventWhereDeleteArtist (event) {
       let selector = document.getElementById('remArtistSelector')
       let artID = selector.options[selector.selectedIndex].value
-      const path = 'http://localhost:5000/event/' + event.id + '/artist/' + artID
+      const path = 'https://a4-eventright.herokuapp.com/event/' + event.id + '/artist/' + artID
       axios.delete(path, {auth: {username: this.token}})
         .then((res) => {
           this.toggleRemoveArtist({name: 'None'})
@@ -640,7 +640,7 @@ export default {
         })
     },
     getArtistsEvent (id) {
-      const path = 'http://localhost:5000/event/' + id + '/artists'
+      const path = 'https://a4-eventright.herokuapp.com/event/' + id + '/artists'
       axios.get(path)
         .then((res) => {
           this.artistsEvent = res.data.artists
@@ -650,7 +650,7 @@ export default {
         })
     },
     getArtists () {
-      const path = 'http://localhost:5000/artists'
+      const path = 'https://a4-eventright.herokuapp.com/artists'
       axios.get(path)
         .then((res) => {
           this.artists = res.data.artists
@@ -660,7 +660,7 @@ export default {
         })
     },
     getArtistsInEvent (event) {
-      const path = 'http://localhost:5000/event/' + event.id + '/artists'
+      const path = 'https://a4-eventright.herokuapp.com/event/' + event.id + '/artists'
       axios.get(path)
         .then((res) => {
           this.artistsList = res.data.artists
@@ -692,7 +692,7 @@ export default {
       return false
     },
     addNewArtist (param) {
-      const path = 'http://localhost:5000/artist'
+      const path = 'https://a4-eventright.herokuapp.com/artist'
       axios.post(path, param, {auth: {username: this.token}})
         .then((res) => {
         })
@@ -708,7 +708,7 @@ export default {
       if (genre == 'NONE') {
         toastr.info('', 'Select artist genre', {timeOut: 1500, progressBar: true, newestOnTop: true, positionClass: 'toast-bottom-right'})
       } else {
-        const path = 'http://localhost:5000/event/' + event.id + '/artist'
+        const path = 'https://a4-eventright.herokuapp.com/event/' + event.id + '/artist'
         var params = {
           name: this.capitalize(this.addArtistForm.name),
           country: this.capitalize(this.addArtistForm.country),
@@ -791,7 +791,7 @@ export default {
       })
     },
     addEvent (params) {
-      const path = `http://localhost:5000/event`
+      const path = `https://a4-eventright.herokuapp.com/event`
       axios.post(path, params, {auth: {username: this.token}})
         .then((res) => {
           this.getEvents()
@@ -813,7 +813,7 @@ export default {
         })
     },
     remveEvent (id) {
-      const path = 'http://localhost:5000/event/' + id
+      const path = 'https://a4-eventright.herokuapp.com/event/' + id
       axios.delete(path, {auth: {username: this.token}})
         .then((res) => {
           this.getEvents()
@@ -845,7 +845,7 @@ export default {
       this.addEvent(parameters)
     },
     updateEvent (params) {
-      const path = `http://localhost:5000/event/`
+      const path = `https://a4-eventright.herokuapp.com/event/`
       axios.put(path + this.currentEventEditId, params, {auth: {username: this.token}})
         .then((res) => {
           this.getEvents()
@@ -1029,7 +1029,7 @@ export default {
       }
     },
     getAttributes () {
-      const path = `http://localhost:5000/account/` + this.username
+      const path = `https://a4-eventright.herokuapp.com/account/` + this.username
       axios.get(path, {})
         .then((res) => {
           this.money = res.data.account.available_money
@@ -1059,7 +1059,7 @@ export default {
       return quant
     },
     getEvents () {
-      const path = 'http://localhost:5000/events'
+      const path = 'https://a4-eventright.herokuapp.com/events'
       axios.get(path)
         .then((res) => {
           this.events = res.data.events
@@ -1069,7 +1069,7 @@ export default {
         })
     },
     addPurchase (parameters, ename) {
-      const path = `http://localhost:5000/orders/${this.username}`
+      const path = `https://a4-eventright.herokuapp.com/orders/${this.username}`
       axios.post(path, parameters, {auth: {username: this.token}})
         .then((res) => {
           this.getEvents()
