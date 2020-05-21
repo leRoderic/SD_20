@@ -11,6 +11,7 @@ def create_app():
     app = Flask(__name__)
     environment = config['development']
     if config_decouple('PRODUCTION', default=False):
+        print("CHANGE TO PROD")
         environment = config['production']
     app.config.from_object(environment)
     db = SQLAlchemy(app)
