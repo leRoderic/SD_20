@@ -12,11 +12,11 @@ class ProductionConfig(Config):
 
 class DevelopmentConfig(Config):
     DEBUG = True
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///data.db'
+    SQLALCHEMY_DATABASE_URI = config('DATABASE_URL', default='localhost')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    STATIC_FOLDER = "../P2/front-end/dist/static"
-    TEMPLATE_FOLDER = "../P2/front-end/dist"
-    SECRET_KEY = "M2CjZ52aDgtvt3XXRWBktEPY64EqtxhJ"
+    STATIC_FOLDER = "/static"
+    TEMPLATE_FOLDER = "/templatess"
+    SECRET_KEY = config('SECRET_KEY', default='localhost')
 
 config = {
     'development': DevelopmentConfig,
