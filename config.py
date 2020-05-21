@@ -1,6 +1,10 @@
 from decouple import config
 class Config:
-    pass
+    if config('PRODUCTION', default='localhost'):
+        return ProductionConfig(this)
+    else:
+        return DevelopmentConfig(this)
+    
 
 class ProductionConfig(Config):
     DEBUG = False
