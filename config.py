@@ -15,7 +15,7 @@ class DevelopmentConfig(Config):
     SQLALCHEMY_DATABASE_URI = config('sqlite:///data.db', default='localhost')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     STATIC_FOLDER = "/static"
-    TEMPLATE_FOLDER = "/templates"
+    TEMPLATE_FOLDER = "/templatess"
     SECRET_KEY = config('SECRET_KEY', default='localhost')
 
 config = {
