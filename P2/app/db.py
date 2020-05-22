@@ -10,7 +10,7 @@ db = SQLAlchemy()
 def create_app():
     app = Flask(__name__)
     environment = config['development']
-    print(config_decouple('PRODUCTION', default=False))
+    print(type(config_decouple('PRODUCTION')))
     if config_decouple('PRODUCTION', default=False):
         print("CHANGE TO PROD")
         environment = config['production']
