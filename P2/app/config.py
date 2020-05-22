@@ -4,7 +4,6 @@ class Config:
 
 class ProductionConfig(Config):
     DEBUG = False
-    print("ITS CONFIG")
     SQLALCHEMY_DATABASE_URI = config('DATABASE_URL', default='localhost')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     STATIC_FOLDER = "/static"
@@ -13,7 +12,6 @@ class ProductionConfig(Config):
 
 class DevelopmentConfig(Config):
     DEBUG = True
-    print("ITS DEVELOPMENT")
     SQLALCHEMY_DATABASE_URI = 'sqlite:///data.db'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     STATIC_FOLDER = "../P2/front-end/dist/static"
