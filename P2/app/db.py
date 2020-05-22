@@ -10,8 +10,8 @@ db = SQLAlchemy()
 def create_app():
     app = Flask(__name__)
     environment = config['development']
-    print(type(config_decouple('PRODUCTION')))
-    if config_decouple('PRODUCTION'):
+    print(type(config_decouple('PRODUCTION', cast=bool, default=False)))
+    if config_decouple('PRODUCTION', cast=bool, default=False):
         environment = config['production']
     app.config.from_object(environment)
     db = SQLAlchemy(app)
