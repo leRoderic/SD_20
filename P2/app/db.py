@@ -11,7 +11,7 @@ def create_app():
     app = Flask(__name__)
     environment = config['development']
     print(type(config_decouple('PRODUCTION')))
-    if config_decouple('PRODUCTION', default=False):
+    if config_decouple('PRODUCTION') == 'True':
         print("CHANGE TO PROD")
         environment = config['production']
     app.config.from_object(environment)
