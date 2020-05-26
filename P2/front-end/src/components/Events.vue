@@ -541,7 +541,7 @@
 import axios from 'axios'
 import * as toastr from '../assets/toastr'
 
-let api = 'http://127.0.0.1:5000/'
+let api = 'https://a4-eventright.herokuapp.com/'
 export default {
 
   beforeMount () {
