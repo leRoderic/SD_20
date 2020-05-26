@@ -48,7 +48,7 @@ class Artist(Resource):
         return {'message': "Artist with ['id': {}] not found".format(id)}, 404
 
     @auth.login_required(role='admin')
-    def post(self, id=None):
+    def post(self):
         """
         Add a new artist given all its info. Optionally, the ID can also be given and will be used if it has not been
         used already (this was a requirement on one of the first sessions).
@@ -62,7 +62,7 @@ class Artist(Resource):
             if art:
                 return {'message': "An artist with ['name': {}] already exists".format(art.name)}, 409
             new_artist = ArtistModel(" ".join(w.capitalize() for w in data.get('name').split(" ")),
-                                     data.get('country'), data.get('genre'), id)
+                                     data.get('country'), data.get('genre'))
             new_artist.save_to_db()
             return new_artist.json(), 201
 
@@ -84,17 +84,12 @@ class Artist(Resource):
     @auth.login_required(role='admin')
     def put(self, id):
         """
-        Add new artist with the given ID if it does not exist, otherwise modify artist with the given ID with the new
-        given data.
+        Modify artist with the given ID with the new given data.
 
         :param id: artist ID
         :return: created or modified artist info in a JSON structure (200) | bad request (400) | artist not found (404)
         """
         data = self.__parse_request__()
-        existing = ArtistModel.find_by_name(data.get('name'))
-        if existing:
-            return {"message": "Artist name modification not allowed, artist with ['name': {}] "
-                               "already exists".format(existing.name)}, 400
         with lock.lock:
             existing = ArtistModel.find_by_id(id)
             if not existing:

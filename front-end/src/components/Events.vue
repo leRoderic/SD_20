@@ -541,6 +541,7 @@
 import axios from 'axios'
 import * as toastr from '../assets/toastr'
 
+let api = 'http://127.0.0.1:5000/'
 export default {
 
   beforeMount () {
@@ -620,7 +621,7 @@ export default {
     eventWhereDeleteArtist (event) {
       let selector = document.getElementById('remArtistSelector')
       let artID = selector.options[selector.selectedIndex].value
-      const path = 'http://localhost:5000/event/' + event.id + '/artist/' + artID
+      const path = api + '/event/' + event.id + '/artist/' + artID
       axios.delete(path, {auth: {username: this.token}})
         .then((res) => {
           this.toggleRemoveArtist({name: 'None'})
@@ -640,7 +641,7 @@ export default {
         })
     },
     getArtistsEvent (id) {
-      const path = 'http://localhost:5000/event/' + id + '/artists'
+      const path = api + '/event/' + id + '/artists'
       axios.get(path)
         .then((res) => {
           this.artistsEvent = res.data.artists
@@ -650,7 +651,7 @@ export default {
         })
     },
     getArtists () {
-      const path = 'http://localhost:5000/artists'
+      const path = api + '/artists'
       axios.get(path)
         .then((res) => {
           this.artists = res.data.artists
@@ -660,7 +661,7 @@ export default {
         })
     },
     getArtistsInEvent (event) {
-      const path = 'http://localhost:5000/event/' + event.id + '/artists'
+      const path = api + '/event/' + event.id + '/artists'
       axios.get(path)
         .then((res) => {
           this.artistsList = res.data.artists
@@ -692,7 +693,7 @@ export default {
       return false
     },
     addNewArtist (param) {
-      const path = 'http://localhost:5000/artist'
+      const path = api + '/artist'
       axios.post(path, param, {auth: {username: this.token}})
         .then((res) => {
         })
@@ -708,7 +709,7 @@ export default {
       if (genre == 'NONE') {
         toastr.info('', 'Select artist genre', {timeOut: 1500, progressBar: true, newestOnTop: true, positionClass: 'toast-bottom-right'})
       } else {
-        const path = 'http://localhost:5000/event/' + event.id + '/artist'
+        const path = api + '/event/' + event.id + '/artist'
         var params = {
           name: this.capitalize(this.addArtistForm.name),
           country: this.capitalize(this.addArtistForm.country),
@@ -716,7 +717,6 @@ export default {
         }
         this.getArtists()
         if (!this.chkArtistExists(params.name)) {
-          console.log('does not exist')
           this.addNewArtist(params)
         }
         axios.post(path, params, {auth: {username: this.token}})
@@ -791,7 +791,7 @@ export default {
       })
     },
     addEvent (params) {
-      const path = `http://localhost:5000/event`
+      const path = api + `/event`
       axios.post(path, params, {auth: {username: this.token}})
         .then((res) => {
           this.getEvents()
@@ -813,7 +813,7 @@ export default {
         })
     },
     remveEvent (id) {
-      const path = 'http://localhost:5000/event/' + id
+      const path = api + '/event/' + id
       axios.delete(path, {auth: {username: this.token}})
         .then((res) => {
           this.getEvents()
@@ -845,7 +845,7 @@ export default {
       this.addEvent(parameters)
     },
     updateEvent (params) {
-      const path = `http://localhost:5000/event/`
+      const path = api + `/event/`
       axios.put(path + this.currentEventEditId, params, {auth: {username: this.token}})
         .then((res) => {
           this.getEvents()
@@ -1029,7 +1029,7 @@ export default {
       }
     },
     getAttributes () {
-      const path = `http://localhost:5000/account/` + this.username
+      const path = api + `/account/` + this.username
       axios.get(path, {})
         .then((res) => {
           this.money = res.data.account.available_money
@@ -1059,7 +1059,7 @@ export default {
       return quant
     },
     getEvents () {
-      const path = 'http://localhost:5000/events'
+      const path = api + '/events'
       axios.get(path)
         .then((res) => {
           this.events = res.data.events
@@ -1069,7 +1069,7 @@ export default {
         })
     },
     addPurchase (parameters, ename) {
-      const path = `http://localhost:5000/orders/${this.username}`
+      const path = api + `/orders/${this.username}`
       axios.post(path, parameters, {auth: {username: this.token}})
         .then((res) => {
           this.getEvents()
@@ -1083,16 +1083,10 @@ export default {
           })
         })
         .catch((error) => {
-          var msg = error.response.data.message
+          console.log(error)
           // eslint-disable-next-line eqeqeq
-          if (msg == 'Not enough available tickets in event.') {
-            toastr.error('', 'Tickets for the event \'' + ename + '\' are sold out!',
-              {timeOut: 1500, progressBar: true, newestOnTop: true, positionClass: 'toast-bottom-right'})
-            // eslint-disable-next-line eqeqeq
-          } else if (msg == 'User does not have enough money to purchase order.') {
-            toastr.error('', 'You don\'t have enough money to purchase tickets for the event \'' + ename + '\'!',
-              {timeOut: 1500, progressBar: true, newestOnTop: true, positionClass: 'toast-bottom-right'})
-          }
+          toastr.error('', 'Purchase process not completed. Either you don\'t have enough money or the aren\'t any ' +
+            'tickets available left', {timeOut: 1500, progressBar: true, newestOnTop: true, positionClass: 'toast-bottom-right'})
         })
     },
     completePurchase () {

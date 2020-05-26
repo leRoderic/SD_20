@@ -187,6 +187,7 @@ a {
 <script>
 import axios from 'axios'
 import * as toastr from '../assets/toastr'
+let api = 'http://127.0.0.1:5000/'
 
 export default {
 
@@ -216,7 +217,7 @@ export default {
         password: this.password
       }
       this.toggleInputsSignIn()
-      const path = `http://localhost:5000/login`
+      const path = api + `/login`
       this.getAccount()
       axios.post(path, parameters)
         .then((res) => {
@@ -246,7 +247,7 @@ export default {
       this.$router.push({path: '/', query: {logged: this.logged}})
     },
     getAccount () {
-      const path = `http://localhost:5000/account/` + this.username
+      const path = api + `/account/` + this.username
       axios.get(path, {})
         .then((res) => {
           // eslint-disable-next-line eqeqeq
@@ -308,15 +309,16 @@ export default {
         toastr.info('', 'Fill all fields to continue', {timeOut: 1500, progressBar: true, newestOnTop: true, positionClass: 'toast-bottom-right'})
       } else {
         this.toggleInputsCreate()
-        const path = 'http://localhost:5000/account'
+        const path = api + '/account'
         axios.post(path, {'username': this.username, 'password': this.password})
           .then((res) => {
             this.checkLogin(true)
           })
           .catch((error) => {
           // eslint-disable-next-line
+            console.log(error)
             this.toggleInputsCreate()
-            toastr.error('', error.response.data.message,
+            toastr.error('', 'User already exists, log in or choose another one',
               {timeOut: 1500, progressBar: true, newestOnTop: true, positionClass: 'toast-bottom-right'})
             this.user = ''
           })
