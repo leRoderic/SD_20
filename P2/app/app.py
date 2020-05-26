@@ -16,20 +16,21 @@ from models.artist import ArtistModel
 from models.event import EventModel
 from models.account import AccountsModel
 from models.order import OrdersModel
+
 migrate = Migrate(app, db)
 
+api.add_resource(Accounts, '/account', '/account/<string:username>')
+api.add_resource(AccountsList, '/accounts')
+api.add_resource(Artist, '/artist/<int:id>', '/artist')
+api.add_resource(ArtistEventsList, '/artist/<int:id>/events')
+api.add_resource(ArtistList, '/artists')
 api.add_resource(EventArtist, '/event/<int:id_event>/artist/<id_artist>', '/event/<int:id_event>/artist')
 api.add_resource(EventArtistsList, '/event/<int:id>/artists')
 api.add_resource(EventList, '/events')
 api.add_resource(Event, '/event/<int:id>', '/event')
-api.add_resource(ArtistEventsList, '/artist/<int:id>/events')
-api.add_resource(ArtistList, '/artists')
-api.add_resource(Artist, '/artist/<int:id>', '/artist')
+api.add_resource(Login, '/login')
 api.add_resource(Orders, '/orders/<string:username>')
 api.add_resource(OrdersList, '/orders')
-api.add_resource(AccountsList, '/accounts')
-api.add_resource(Accounts, '/account', '/account/<string:username>')
-api.add_resource(Login, '/login')
 
 
 @app.route('/')

@@ -1,8 +1,8 @@
-from db import db
+from db import db, secret_key
 from passlib.apps import custom_app_context as pwd_context
 from itsdangerous import (TimedJSONWebSignatureSerializer as Serializer, BadSignature, SignatureExpired)
 from flask_httpauth import HTTPBasicAuth
-from flask import g, current_app
+from flask import g
 from models import order
 
 auth = HTTPBasicAuth()
@@ -40,7 +40,7 @@ class AccountsModel(db.Model):
         :param token: the token
         :return: matched account
         """
-        s = Serializer(current_app.secret_key)
+        s = Serializer(secret_key)
         try:
             data = s.loads(token)
         except SignatureExpired:
@@ -57,7 +57,7 @@ class AccountsModel(db.Model):
         :param expiration: token expiration
         :return: token
         """
-        s = Serializer(current_app.secret_key, expires_in=expiration)
+        s = Serializer(secret_key, expires_in=expiration)
         return s.dumps({'username': self.username})
 
     def hash_password(self, password):

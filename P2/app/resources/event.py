@@ -132,7 +132,7 @@ class Event(Resource):
         return {'message': "Event with ['id': {}] not found".format(id)}, 404
 
     @auth.login_required(role='admin')
-    def post(self, id=None):
+    def post(self):
         """
         Add a new event given all its info. Optionally, the ID can also be given and will be used if it has not been
         used already (this was a requirement on one of the first sessions).
@@ -170,7 +170,7 @@ class Event(Resource):
     @auth.login_required(role='admin')
     def put(self, id):
         """
-        Add a new event  with the given ID if it does not exist, otherwise modify event with the given ID with the new
+        Modify event with the given ID with the new
         given data.
 
         :param id: event ID
