@@ -41,7 +41,7 @@ class Orders(Resource):
         Add an order to a given user.
 
         :param username: the user
-        :return: order in JSON (200) | error user not found (404)
+        :return: order in JSON (201) | error user not found (404)
                                      | error tokens do not match (400)
                                      | event in order not found (404)
                                      | error not enough tickets available (409)
@@ -78,7 +78,7 @@ class Orders(Resource):
                     order.save_to_db()
                     user.orders.append(order)
                     user.save_to_db()
-                    return order.json(), 200
+                    return order.json(), 201
                 return {'message': "Not enough available tickets in event ['id': {}, 'name': {}]"
                                    "".format(ev.id, ev.name)}, 400
             return {'message': "User ['username': {}] does not have enough money to purchase order"
