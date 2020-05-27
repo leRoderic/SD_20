@@ -41,7 +41,7 @@ class Orders(Resource):
         Add an order to a given user.
 
         :param username: the user
-        :return: order in JSON (200) | error user not found (404)
+        :return: order in JSON (201) | error user not found (404)
                                      | error tokens do not match (400)
                                      | event in order not found (404)
                                      | error not enough tickets available (409)
