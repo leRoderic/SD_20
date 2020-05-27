@@ -78,7 +78,7 @@ class Orders(Resource):
                     order.save_to_db()
                     user.orders.append(order)
                     user.save_to_db()
-                    return order.json(), 200
+                    return order.json(), 201
                 return {'message': "Not enough available tickets in event ['id': {}, 'name': {}]"
                                    "".format(ev.id, ev.name)}, 400
             return {'message': "User ['username': {}] does not have enough money to purchase order"
