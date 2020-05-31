@@ -36,3 +36,6 @@ api.add_resource(OrdersList, '/orders')
 @app.route('/')
 def render_vue():
     return render_template("index.html")
+
+if __name__ == "__main__":
+	app.run()
